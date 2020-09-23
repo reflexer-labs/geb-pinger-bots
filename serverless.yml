@@ -1,0 +1,24 @@
+service: geb-pinger-bots
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    NODE_ENV: dev
+
+plugins:
+  - serverless-plugin-typescript 
+  - serverless-offline
+
+package:
+  exclude:
+    - config/.env.pro
+  include:
+    - config/.env.dev
+
+functions:
+  updateChainlinkETHMedianizer:
+    handler: src/index.updateChainlinkETHMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(20 minutes)
