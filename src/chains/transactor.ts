@@ -9,7 +9,7 @@ export class Transactor {
         // Take care of gas limit
         let gasLimit: BigNumber
         try {
-            gasLimit = (await this.signer.estimateGas(tx)).add(1000)
+            gasLimit = (await this.signer.estimateGas(tx)).add(100000)
         } catch (err) {
             const message =
                 'Transaction revert at gas estimation, still try to send it with 500k gas.'
