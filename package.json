@@ -1,7 +1,7 @@
 {
     "name": "geb-pinger-bots",
     "version": "1.0.0",
-    "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system",
+    "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system.",
     "main": "index.js",
     "scripts": {
         "local-test": "serverless invoke local --function",
