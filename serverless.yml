@@ -1,24 +1,69 @@
+org: reflexer
+app: geb-pinger-bots
 service: geb-pinger-bots
 
 provider:
   name: aws
   runtime: nodejs12.x
-  environment:
-    NODE_ENV: dev
+  region: "us-west-1"
+  environment: ${self:custom.${opt:stage, 'test'}}
+
+custom:
+  # Redirect to either prod or test conf below
+  kovan: ${self:custom.prod}
+  mainnet: ${self:custom.prod}
+
+  # Default env var for local testing
+  test:
+    ETH_RPC: http://localhost:8545/
+    ACCOUNTS_PASSPHRASE: age wish praise cinnamon pelican target early popular bitter sadness uncle smoke female scorpion cat sweet soldier robot pepper poet fat recycle crater such
+    MEDIANIZER_ETH_ADDRESS: "0x0"
+    MEDIANIZER_RAI_ADDRESS: "0x0"
+    MEDIANIZER_FLX_ADDRESS: "0x0"
+    FSM_ETH_ADDRESS: "0x0"
+    FSM_RAI_ADDRESS: "0x0"
+    FSM_FLX_ADDRESS: "0x0"
+    ORACLE_RELAYER_ADDRESS: "0x0"
+    MIN_ETH_BALANCE: "500000000000000000"
+
+  # Fetch env vars from severless dashboard (depends on stage, either kovan or mainnet)
+  prod:
+    ETH_RPC: ${param:ETH_RPC, self:custom.test.ETH_RPC}
+    ACCOUNTS_PASSPHRASE: ${param:ACCOUNTS_PASSPHRASE}
+    MEDIANIZER_ETH_ADDRESS: ${param:MEDIANIZER_ETH_ADDRESS}
+    MEDIANIZER_RAI_ADDRESS: ${param:MEDIANIZER_RAI_ADDRESS}
+    MEDIANIZER_FLX_ADDRESS: ${param:MEDIANIZER_RAI_ADDRESS}
+    FSM_ETH_ADDRESS: ${param:FSM_ETH_ADDRESS}
+    FSM_RAI_ADDRESS: ${param:FSM_ETH_ADDRESS}
+    FSM_FLX_ADDRESS: ${param:FSM_ETH_ADDRESS}
+    ORACLE_RELAYER_ADDRESS: ${param:ORACLE_RELAYER_ADDRESS}
+    MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, self:custom.test.MIN_ETH_BALANCE}
 
 plugins:
-  - serverless-plugin-typescript 
+  - serverless-plugin-typescript
   - serverless-offline
-
-package:
-  exclude:
-    - config/.env.pro
-  include:
-    - config/.env.dev
 
 functions:
   updateChainlinkETHMedianizer:
     handler: src/index.updateChainlinkETHMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(20 minutes)
+
+  updateUniswapRAIMedianizer:
+    handler: src/index.updateUniswapRAIMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(20 minutes)
+
+  updateETHFsm:
+    handler: src/index.updateETHFsm
+    timeout: 240
+    events:
+      - schedule: rate(20 minutes)
+
+  balanceChecker:
+    handler: src/index.balanceChecker
     timeout: 240
     events:
       - schedule: rate(20 minutes)

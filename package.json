@@ -1,61 +1,63 @@
 {
-  "name": "geb-pinger-bots",
-  "version": "1.0.0",
-  "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system",
-  "main": "index.js",
-  "scripts": {
-    "local": "serverless invoke local --function",
-    "deploy": "serverless deploy",
-    "test": "NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
-    "coverage": "nyc --reporter lcov npm run test"
-  },
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "mongoose": "^5.9.10"
-  },
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.51",
-    "@types/chai": "^4.2.11",
-    "@types/dotenv-safe": "^8.1.0",
-    "@types/lambda-tester": "^3.6.0",
-    "@types/mocha": "^7.0.2",
-    "@types/mongoose": "^5.7.14",
-    "@types/sinon": "^9.0.0",
-    "@types/supertest": "^2.0.8",
-    "chai": "^4.2.0",
-    "istanbul": "^0.4.5",
-    "lambda-tester": "^4.0.1",
-    "mocha": "^7.1.2",
-    "husky": "^4.2.5",
-    "prettier": "^2.1.1",
-    "lint-staged": "^10.2.13",
-    "nyc": "^15.0.1",
-    "serverless-offline": "^5.12.1",
-    "serverless-plugin-typescript": "^1.1.9",
-    "sinon": "^9.0.2",
-    "ts-node": "^8.9.1",
-    "typescript": "^3.8.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,md,json,ts}": "prettier --write"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/reflexer-labs/geb-pinger-bots.git"
-  },
-  "keywords": [
-    "geb",
-    "pinger",
-    "bot",
-    "RAI",
-    "Reflexer",
-    "FLX"
-  ],
-  "author": "Guillaume Felley <guillaume@reflexer.finance>",
-  "license": "ISC"
+    "name": "geb-pinger-bots",
+    "version": "1.0.0",
+    "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system",
+    "main": "index.js",
+    "scripts": {
+        "local-test": "serverless invoke local --function",
+        "local-kovan": "serverless invoke local --stage kovan --function",
+        "deploy": "serverless deploy --stage kovan",
+        "test": "NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
+        "coverage": "nyc --reporter lcov npm run test"
+    },
+    "dependencies": {
+        "ethers": "^5.0.14",
+        "geb.js": "0.0.12",
+        "mongoose": "^5.9.10"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.51",
+        "@types/chai": "^4.2.11",
+        "@types/dotenv-safe": "^8.1.0",
+        "@types/lambda-tester": "^3.6.0",
+        "@types/mocha": "^7.0.2",
+        "@types/mongoose": "^5.7.14",
+        "@types/sinon": "^9.0.0",
+        "@types/supertest": "^2.0.8",
+        "chai": "^4.2.0",
+        "istanbul": "^0.4.5",
+        "lambda-tester": "^4.0.1",
+        "mocha": "^7.1.2",
+        "husky": "^4.2.5",
+        "prettier": "^2.1.1",
+        "lint-staged": "^10.2.13",
+        "nyc": "^15.0.1",
+        "serverless-offline": "^5.12.1",
+        "serverless-plugin-typescript": "^1.1.9",
+        "sinon": "^9.0.2",
+        "ts-node": "^8.9.1",
+        "typescript": "^3.8.3"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,md,json,ts}": "prettier --write"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/reflexer-labs/geb-pinger-bots.git"
+    },
+    "keywords": [
+        "geb",
+        "pinger",
+        "bot",
+        "RAI",
+        "Reflexer",
+        "FLX"
+    ],
+    "author": "Guillaume Felley <guillaume@reflexer.finance>",
+    "license": "ISC"
 }
