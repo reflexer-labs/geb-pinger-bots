@@ -29,7 +29,7 @@ export class Transactor {
     } catch (err) {
       const message = 'Transaction revert at gas estimation, still try to send it with 500k gas.'
       console.warn(message)
-      notifier.sendAllChannels(message)
+      await notifier.sendAllChannels(message)
       gasLimit = BigNumber.from(500000)
     }
     tx.gasLimit = gasLimit

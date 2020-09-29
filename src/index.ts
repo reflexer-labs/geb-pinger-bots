@@ -19,10 +19,19 @@ type EnvVar =
   | 'FSM_FLX_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
   | 'REWARD_RECEIVER'
+  | 'SLACK_HOOK_URL'
+  | 'TWILIO_AUTH_TOKEN'
+  | 'TWILIO_SEND_NUMBER'
+  | 'TWILIO_SID'
 
 const env = process.env as { [key in EnvVar]: string }
 
-export const notifier = new Notifier()
+export const notifier = new Notifier(
+  env.SLACK_HOOK_URL,
+  env.TWILIO_AUTH_TOKEN,
+  env.TWILIO_SID,
+  env.TWILIO_SEND_NUMBER
+)
 
 // Chainlink ETH medianizer
 export const updateChainlinkETHMedianizer = async () => {
@@ -70,14 +79,18 @@ export const updateRAIFsm = async () => {
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
-  const pingerList = [
-    PingerAccount.MEDIANIZER_ETH,
-    PingerAccount.MEDIANIZER_RAI,
-    PingerAccount.FSM_ETH,
-    PingerAccount.FSM_RAI,
+  const pingerList: [string, number][] = [
+    ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
+    ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
+    ['ETH FSM', PingerAccount.FSM_ETH],
+    ['RAI FSM', PingerAccount.FSM_RAI],
   ]
-  const addresses = pingerList.map((x) => getAddress(env.ACCOUNTS_PASSPHRASE, x))
+
+  const bots: [string, string][] = pingerList.map((x) => [
+    x[0],
+    getAddress(env.ACCOUNTS_PASSPHRASE, x[1]),
+  ])
   const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
-  const checker = new BalanceChecker(addresses, BigNumber.from(env.MIN_ETH_BALANCE), provider)
+  const checker = new BalanceChecker(bots, BigNumber.from(env.MIN_ETH_BALANCE), provider)
   await checker.check()
 }

@@ -11,9 +11,11 @@
     "coverage": "nyc --reporter lcov npm run test"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "ethers": "^5.0.14",
     "geb.js": "0.0.13",
-    "mongoose": "^5.9.10"
+    "mongoose": "^5.9.10",
+    "twilio": "^3.49.4"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",
