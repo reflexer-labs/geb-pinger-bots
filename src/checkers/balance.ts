@@ -1,16 +1,13 @@
 import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
-import { Checker } from './base'
 
-export class BalanceChecker extends Checker {
+export class BalanceChecker {
   constructor(
     // [Bot name, bot address][]
     private bots: [string, string][],
     private minBalance: BigNumber,
     private provider: ethers.providers.Provider
-  ) {
-    super()
-  }
+  ) {}
 
   async check() {
     for (let bot of this.bots) {

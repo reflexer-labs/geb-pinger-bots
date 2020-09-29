@@ -2,6 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import { ETH_A } from 'geb.js/lib/utils'
 import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
+import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
 import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
@@ -25,6 +26,11 @@ type EnvVar =
   | 'TWILIO_AUTH_TOKEN'
   | 'TWILIO_SEND_NUMBER'
   | 'TWILIO_SID'
+  | 'SCHEDULER_INTERVAL_ETH_MEDIAN'
+  | 'SCHEDULER_INTERVAL_RAI_MEDIAN'
+  | 'SCHEDULER_INTERVAL_ETH_FSM'
+  | 'SCHEDULER_INTERVAL_RAI_FSM'
+  | 'MAX_LIVENESS_DELAY'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -102,5 +108,19 @@ export const balanceChecker = async () => {
   ])
   const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
   const checker = new BalanceChecker(bots, BigNumber.from(env.MIN_ETH_BALANCE), provider)
+  await checker.check()
+}
+
+export const livenessChecker = async () => {
+  // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
+  const checks: [string, string, number][] = [
+    ['ETH medianizer', env.MEDIANIZER_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['RAI medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['ETH FSM', env.FSM_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['RAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+  ]
+
+  const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
+  const checker = new LivenessChecker(checks, provider)
   await checker.check()
 }
