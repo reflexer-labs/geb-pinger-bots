@@ -1,65 +1,90 @@
 import { ethers } from 'ethers'
-import { contracts, GebEthersProvider } from 'geb.js'
-import { BasePinger } from './base'
+import { contracts, GebEthersProvider, TransactionRequest } from 'geb.js'
+import { notifier } from '..'
+import { Transactor } from '../chains/transactor'
 
-export abstract class FsmPinger extends BasePinger {
-  protected fsm: contracts.Osm
-  constructor(osmAddress: string, wallet: ethers.Signer) {
-    super(wallet)
+export class CoinFsmPinger {
+  private fsm: contracts.Osm
+  private transactor: Transactor
+  constructor(osmAddress: string, protected wallet: ethers.Signer) {
     const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
     this.fsm = new contracts.Osm(osmAddress, gebProvider)
+    this.transactor = new Transactor(wallet)
   }
 
-  protected async updateResults(): Promise<boolean> {
-    if (await this.fsm.passedDelay()) {
-      await this.sendPing(this.fsm.updateResult())
-      return true
-    } else {
-      console.log('FSM not yet ready to be updated')
-      return false
+  public async ping() {
+    let tx: TransactionRequest
+
+    // Simulate call
+    try {
+      tx = this.fsm.updateResult()
+      await this.transactor.ethCall(tx)
+    } catch (err) {
+      if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
+        console.log('FSM not yet ready to be updated')
+      } else {
+        notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+      }
+      return
     }
+
+    // Send transaction
+    const hash = await this.transactor.ethSend(tx)
+    console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
 
-export class CollateralFsmPinger extends FsmPinger {
+export class CollateralFsmPinger {
+  private fsm: contracts.Osm
   private oracleRelayer: contracts.OracleRelayer
+  private transactor: Transactor
+
   constructor(
     osmAddress: string,
     oracleRelayerAddress: string,
     private collateralType: string,
-    wallet: ethers.Signer
+    private wallet: ethers.Signer
   ) {
-    super(osmAddress, wallet)
     const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
+    this.fsm = new contracts.Osm(osmAddress, gebProvider)
     this.oracleRelayer = new contracts.OracleRelayer(oracleRelayerAddress, gebProvider)
+    this.transactor = new Transactor(wallet)
   }
 
   public async ping() {
-    // Try to send an update results to the OSM
-    const fsmDidUpdate: boolean = await this.updateResults()
-    if (fsmDidUpdate) {
-      // If an update was sent, update also the oracle relayer
-      const tx = this.oracleRelayer.updateCollateralPrice(this.collateralType)
-      const provider = this.wallet.provider as ethers.providers.Provider
+    let txFsm: TransactionRequest
 
-      // Manually increment the nonce since the previous tx is still pending
-      tx.nonce = (await provider.getTransactionCount(await this.wallet.getAddress(), 'latest')) + 1
+    // Save the current nonce
+    const provider = this.wallet.provider as ethers.providers.Provider
+    const currentNonce = await provider.getTransactionCount(
+      await this.wallet.getAddress(),
+      'latest'
+    )
 
-      // Send the oracle relayer tx
-      await this.sendPing(tx)
+    // Simulate call
+    try {
+      txFsm = this.fsm.updateResult()
+      await this.transactor.ethCall(txFsm)
+    } catch (err) {
+      if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
+        console.log('FSM not yet ready to be updated')
+      } else {
+        notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+      }
+      return
     }
-  }
-}
 
-export class CoinFsmPinger extends FsmPinger {
-  constructor(osmAddress: string, wallet: ethers.Signer) {
-    super(osmAddress, wallet)
-  }
+    // Send OSM transaction
+    const hash = await this.transactor.ethSend(txFsm)
+    console.log(`Update sent, transaction hash: ${hash}`)
 
-  public async ping() {
-    const fsmDidUpdate: boolean = await this.updateResults()
-    if (fsmDidUpdate) {
-      // TODO: Update the rate setter
-    }
+    // Directly update the relayer after updating the OSM
+    let txRelayer = this.oracleRelayer.updateCollateralPrice(this.collateralType)
+
+    // Manually increment the nonce since the previous tx is still pending
+    txRelayer.nonce = currentNonce + 1
+
+    // Send oracle relayer transaction
+    await this.transactor.ethSend(txRelayer)
   }
 }

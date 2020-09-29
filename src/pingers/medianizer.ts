@@ -1,53 +1,102 @@
 import { ethers, BigNumber } from 'ethers'
-import { GebEthersProvider, contracts } from 'geb.js'
-import { BasePinger } from './base'
+import { GebEthersProvider, contracts, TransactionRequest } from 'geb.js'
+import { notifier } from '..'
+import { Transactor } from '../chains/transactor'
 
-export class MedianizerPinger extends BasePinger {
-    // We use an UniswapMedian contract but it can be a Chainlink Median as well
-    protected medianizer: contracts.UniswapMedian
+export class ChainlinkMedianizerPinger {
+  // We use an UniswapMedian contract but it can be a Chainlink Median as well
+  protected medianizer: contracts.ChainlinkMedianEthusd
+  protected transactor: Transactor
 
-    constructor(
-        medianizerAddress: string,
-        wallet: ethers.Signer,
-        public minMedianizerUpdateInterval: number
-    ) {
-        super(wallet)
-        const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
-        this.medianizer = new contracts.UniswapMedian(medianizerAddress, gebProvider)
+  constructor(
+    medianizerAddress: string,
+    private wallet: ethers.Signer,
+    protected minMedianizerUpdateInterval: number,
+    protected rewardReceiver: string
+  ) {
+    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
+    this.transactor = new Transactor(this.wallet)
+    this.medianizer = new contracts.ChainlinkMedianEthusd(medianizerAddress, gebProvider)
+  }
+
+  public async ping() {
+    let tx: TransactionRequest
+
+    // Since Chainlink median can be updated by the uniswap median, check that it wasn't updated too recently
+    const lastUpdate = await this.medianizer.lastUpdateTime()
+    const provider = this.wallet.provider as ethers.providers.Provider
+    const currentBlockTime = (await provider.getBlock('latest')).timestamp
+    if (BigNumber.from(currentBlockTime).sub(lastUpdate).lte(this.minMedianizerUpdateInterval)) {
+      console.log(
+        `Medianizer recently updated, not updating at the moment (minMedianizerUpdateInterval).`
+      )
+      return
     }
 
-    public async ping() {
-        const lastUpdate = await this.medianizer.lastUpdateTime()
-        const provider = this.wallet.provider as ethers.providers.Provider
-        const currentBlockTime = (await provider.getBlock('latest')).timestamp
-        if (
-            BigNumber.from(currentBlockTime).sub(lastUpdate).lte(this.minMedianizerUpdateInterval)
-        ) {
-            console.log(
-                `Medianizer recently updated, not updating at the moment (minMedianizerUpdateInterval).`
-            )
-            return
-        }
+    // Send the caller reward to specified address or send the reward to the pinger bot
+    let rewardReceiver =
+      !this.rewardReceiver || this.rewardReceiver === ''
+        ? await this.wallet.getAddress()
+        : this.rewardReceiver
 
-        const tx = this.medianizer.updateResult(await this.wallet.getAddress())
-        await this.sendPing(tx)
+    // Simulate call
+    try {
+      tx = this.medianizer.updateResult(rewardReceiver)
+      await this.transactor.ethCall(tx)
+    } catch (err) {
+      if (err.startsWith('ChainlinkPriceFeedMedianizer/invalid-timestamp')) {
+        console.log('Chainlink aggregator is stale waiting for an update')
+      } else {
+        notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+      }
+      return
     }
+
+    // Send transaction
+    const hash = await this.transactor.ethSend(tx)
+    console.log(`Update sent, transaction hash: ${hash}`)
+  }
 }
 
-export class UniswapMedianizerPinger extends MedianizerPinger {
-    public async ping() {
-        // Uniswap oracle can't only be call every interval (windowSize / granularity)
-        const provider = this.wallet.provider as ethers.providers.Provider
-        const now = BigNumber.from((await provider.getBlock('latest')).timestamp)
-        const observationIndex = await this.medianizer.observationIndexOf(now)
-        const timeElapsedSinceLatest = now.sub(
-            (await this.medianizer.uniswapObservations(observationIndex)).timestamp
-        )
-        const periodSize = await this.medianizer.periodSize()
-        if (timeElapsedSinceLatest.gt(periodSize)) {
-            await super.ping()
-        } else {
-            console.log('Uniswap median cannot yet be updated')
-        }
+export class UniswapMedianizerPinger {
+  protected medianizer: contracts.UniswapMedian
+  protected transactor: Transactor
+
+  constructor(
+    medianizerAddress: string,
+    protected wallet: ethers.Signer,
+    protected minMedianizerUpdateInterval: number,
+    protected rewardReceiver: string
+  ) {
+    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
+    this.transactor = new Transactor(this.wallet)
+    this.medianizer = new contracts.UniswapMedian(medianizerAddress, gebProvider)
+  }
+
+  public async ping() {
+    let tx: TransactionRequest
+
+    // Send the caller reward to specified address or send the reward to the pinger bot
+    let rewardReceiver =
+      !this.rewardReceiver || this.rewardReceiver === ''
+        ? await this.wallet.getAddress()
+        : this.rewardReceiver
+
+    // Simulate call
+    try {
+      tx = this.medianizer.updateResult(rewardReceiver)
+      await this.transactor.ethCall(tx)
+    } catch (err) {
+      if (err.startsWith('UniswapConsecutiveSlotsPriceFeedMedianizer/not-enough-time-elapsed')) {
+        console.log('Uniswap median cannot yet be updated')
+      } else {
+        notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+      }
+      return
     }
+
+    // Send transaction
+    const hash = await this.transactor.ethSend(tx)
+    console.log(`Update sent, transaction hash: ${hash}`)
+  }
 }

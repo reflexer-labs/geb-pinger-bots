@@ -25,6 +25,7 @@ custom:
     FSM_FLX_ADDRESS: '0x0'
     ORACLE_RELAYER_ADDRESS: '0x0'
     MIN_ETH_BALANCE: '500000000000000000'
+    REWARD_RECEIVER: '0x0'
 
   # Fetch env vars from severless dashboard (depends on stage, either kovan or mainnet)
   prod:
@@ -38,6 +39,7 @@ custom:
     FSM_FLX_ADDRESS: ${param:FSM_FLX_ADDRESS}
     ORACLE_RELAYER_ADDRESS: ${param:ORACLE_RELAYER_ADDRESS}
     MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, self:custom.test.MIN_ETH_BALANCE}
+    REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
 
 plugins:
   - serverless-plugin-typescript

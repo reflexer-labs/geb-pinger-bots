@@ -4,7 +4,7 @@ import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
 import { Notifier } from './notifications/notifier'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
-import { MedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
+import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
 import { getAddress, getWallet } from './utils/wallet'
 
 type EnvVar =
@@ -18,6 +18,7 @@ type EnvVar =
   | 'FSM_RAI_ADDRESS'
   | 'FSM_FLX_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
+  | 'REWARD_RECEIVER'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -26,14 +27,24 @@ export const notifier = new Notifier()
 // Chainlink ETH medianizer
 export const updateChainlinkETHMedianizer = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.MEDIANIZER_ETH)
-  const pinger = new MedianizerPinger(env.MEDIANIZER_ETH_ADDRESS, wallet, 600)
+  const pinger = new ChainlinkMedianizerPinger(
+    env.MEDIANIZER_ETH_ADDRESS,
+    wallet,
+    600,
+    env.REWARD_RECEIVER
+  )
   await pinger.ping()
 }
 
 // Uniswap RAI medianizer
 export const updateUniswapRAIMedianizer = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.MEDIANIZER_RAI)
-  const pinger = new UniswapMedianizerPinger(env.MEDIANIZER_RAI_ADDRESS, wallet, 0)
+  const pinger = new UniswapMedianizerPinger(
+    env.MEDIANIZER_RAI_ADDRESS,
+    wallet,
+    0,
+    env.REWARD_RECEIVER
+  )
   await pinger.ping()
 }
 
