@@ -5,6 +5,7 @@ import { BalanceChecker } from './checkers/balance'
 import { Notifier } from './notifications/notifier'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
 import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
+import { TaxCollectorPinger } from './pingers/tax-collector'
 import { getAddress, getWallet } from './utils/wallet'
 
 type EnvVar =
@@ -18,6 +19,7 @@ type EnvVar =
   | 'FSM_RAI_ADDRESS'
   | 'FSM_FLX_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
+  | 'TAX_COLLECTOR_ADDRESS'
   | 'REWARD_RECEIVER'
   | 'SLACK_HOOK_URL'
   | 'TWILIO_AUTH_TOKEN'
@@ -76,6 +78,13 @@ export const updateRAIFsm = async () => {
   await pinger.ping()
 }
 
+// Tax collector
+export const updateTaxCollector = async () => {
+  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.TAX_COLLECTOR)
+  const pinger = new TaxCollectorPinger(env.TAX_COLLECTOR_ADDRESS, wallet, ETH_A)
+  await pinger.ping()
+}
+
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
@@ -84,6 +93,7 @@ export const balanceChecker = async () => {
     ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['RAI FSM', PingerAccount.FSM_RAI],
+    ['Tax collector', PingerAccount.TAX_COLLECTOR],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [

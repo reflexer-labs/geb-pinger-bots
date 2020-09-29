@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import { BigNumber, ethers } from 'ethers'
 import { TransactionRequest, utils } from 'geb.js'
 import { notifier } from '..'
@@ -34,23 +35,26 @@ export class Transactor {
     }
     tx.gasLimit = gasLimit
 
-    // Take care of gas price
-    // TODO: Gas APIs
+    // Try fetching gas price from gasnow.org or use node default
+    try {
+      tx.gasPrice = await this.gasNowPriceAPI()
+    } catch {}
 
     // Send transaction
     let response: ethers.providers.TransactionResponse
     try {
       response = await this.signer.sendTransaction(tx)
+      return response.hash
     } catch (err) {
-      let errorMessage: any
-      try {
-        errorMessage = utils.decodeChainError(err)
-      } catch (err) {
-        errorMessage = err.message ? err.message : err
-      }
-      throw new Error(`EthSend failure: ${errorMessage}`)
+      const errorMessage = err.reason || JSON.stringify(err)
+      notifier.sendAllChannels(`Error send transaction: ${errorMessage}`)
+      throw errorMessage
     }
+  }
 
-    return response.hash
+  private async gasNowPriceAPI() {
+    const url = 'https://www.gasnow.org/api/v3/gas/price?utm_source=:RFX'
+    const resp = await Axios.get(url)
+    return resp.data.data.fast
   }
 }

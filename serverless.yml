@@ -24,6 +24,7 @@ custom:
     FSM_RAI_ADDRESS: '0x0'
     FSM_FLX_ADDRESS: '0x0'
     ORACLE_RELAYER_ADDRESS: '0x0'
+    TAX_COLLECTOR_ADDRESS: '0x0'
     MIN_ETH_BALANCE: '500000000000000000'
     REWARD_RECEIVER: '0x0'
 
@@ -38,6 +39,7 @@ custom:
     FSM_RAI_ADDRESS: ${param:FSM_RAI_ADDRESS}
     FSM_FLX_ADDRESS: ${param:FSM_FLX_ADDRESS}
     ORACLE_RELAYER_ADDRESS: ${param:ORACLE_RELAYER_ADDRESS}
+    TAX_COLLECTOR_ADDRESS: ${param:TAX_COLLECTOR_ADDRESS}
     MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, self:custom.test.MIN_ETH_BALANCE}
     REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
     SLACK_HOOK_URL: ${param:SLACK_HOOK_URL, ''}
@@ -73,6 +75,12 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+
+  updateTaxCollector:
+    handler: src/index.updateTaxCollector
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_TAX_COLLECTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker
