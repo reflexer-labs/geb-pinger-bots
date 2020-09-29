@@ -47,7 +47,7 @@ export class Transactor {
       return response.hash
     } catch (err) {
       const errorMessage = err.reason || JSON.stringify(err)
-      notifier.sendAllChannels(`Error send transaction: ${errorMessage}`)
+      await notifier.sendAllChannels(`Error send transaction: ${errorMessage}`)
       throw errorMessage
     }
   }

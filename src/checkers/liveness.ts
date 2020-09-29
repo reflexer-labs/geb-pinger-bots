@@ -20,14 +20,14 @@ export class LivenessChecker {
       try {
         lastUpdated = await contract.lastUpdateTime()
       } catch (err) {
-        notifier.sendAllChannels(
+        await notifier.sendAllChannels(
           `Could not fetch last update Time for livness check of ${check[0]}`
         )
         continue
       }
       const timSinceLastUpdate = BigNumber.from(Math.floor(Date.now() / 1000)).sub(lastUpdated)
       if (timSinceLastUpdate.gt(check[2] * 60)) {
-        notifier.sendAllChannels(
+        await notifier.sendAllChannels(
           `${check[0]} at address ${
             check[1]
           } could not be updated for more than ${timSinceLastUpdate.div(60).toString()}min`
