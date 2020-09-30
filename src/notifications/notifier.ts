@@ -22,7 +22,7 @@ export class Notifier {
     await this.twilioError(message)
   }
   private formatMessage(message: string): string {
-    return `ERROR ${process.env.AWS_LAMBDA_FUNCTION_NAME}: ${message}`
+    return `ERROR ${process.env.AWS_REGION}:${process.env.AWS_LAMBDA_FUNCTION_NAME}: ${message}`
   }
 
   public logError(message) {
