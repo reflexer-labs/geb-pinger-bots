@@ -31,6 +31,7 @@ type EnvVar =
   | 'SCHEDULER_INTERVAL_ETH_FSM'
   | 'SCHEDULER_INTERVAL_RAI_FSM'
   | 'MAX_LIVENESS_DELAY'
+  | 'PHONE_NOTIFICATION_RECEIVER'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -38,7 +39,8 @@ export const notifier = new Notifier(
   env.SLACK_HOOK_URL,
   env.TWILIO_AUTH_TOKEN,
   env.TWILIO_SID,
-  env.TWILIO_SEND_NUMBER
+  env.TWILIO_SEND_NUMBER,
+  JSON.parse(env.PHONE_NOTIFICATION_RECEIVER)
 )
 
 // Chainlink ETH medianizer
