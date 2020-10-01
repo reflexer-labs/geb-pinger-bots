@@ -6,6 +6,7 @@ import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
 import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
+import { PauseExecutor } from './pingers/pause-executor'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { getAddress, getWallet } from './utils/wallet'
 
@@ -32,6 +33,8 @@ type EnvVar =
   | 'SCHEDULER_INTERVAL_RAI_FSM'
   | 'MAX_LIVENESS_DELAY'
   | 'PHONE_NOTIFICATION_RECEIVER'
+  | 'GEB_SUBGRAPH_URL'
+  | 'DS_PAUSE_ADDRESS'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -93,6 +96,12 @@ export const updateTaxCollector = async () => {
   await pinger.ping()
 }
 
+export const pauseExecutor = async () => {
+  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.PAUSE_EXECUTOR)
+  const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
+  await pinger.ping()
+}
+
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
@@ -102,6 +111,7 @@ export const balanceChecker = async () => {
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['RAI FSM', PingerAccount.FSM_RAI],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
+    ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [

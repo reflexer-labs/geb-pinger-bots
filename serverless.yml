@@ -52,6 +52,8 @@ custom:
     TWILIO_SEND_NUMBER: ${param:TWILIO_SEND_NUMBER, ''}
     TWILIO_SID: ${param:TWILIO_SID, ''}
     PHONE_NOTIFICATION_RECEIVER: ${param:PHONE_NOTIFICATION_RECEIVER, '[]'}
+    DS_PAUSE_ADDRESS: ${param:DS_PAUSE_ADDRESS}
+    GEB_SUBGRAPH_URL: ${param:GEB_SUBGRAPH_URL}
 
 plugins:
   - serverless-plugin-typescript
@@ -87,6 +89,12 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_TAX_COLLECTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+
+  pauseExecutor:
+    handler: src/index.pauseExecutor
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_PAUSE_EXECUTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker
