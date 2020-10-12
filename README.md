@@ -1,9 +1,14 @@
 # Geb pinger bots
 
-## Test
+## Install
 
-Start the testchain:
+```bash
+npm i -g serverless
+serverless login
 
-```
-docker run -p 8545:8545 reflexer/testchain-pyflex:testchain-median-fixed-discount-uniswap-multisig-safe
+# Deploy to AWS
+npm run deploy
+
+# Run a function locally
+npm run local-kovan updateChainlinkETHMedianizer
 ```
