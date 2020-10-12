@@ -35,6 +35,7 @@ type EnvVar =
   | 'PHONE_NOTIFICATION_RECEIVER'
   | 'GEB_SUBGRAPH_URL'
   | 'DS_PAUSE_ADDRESS'
+  | 'RATE_SETTER_ADDRESS'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -85,7 +86,12 @@ export const updateETHFsm = async () => {
 // RAI FSM
 export const updateRAIFsm = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.FSM_RAI)
-  const pinger = new CoinFsmPinger(env.FSM_RAI_ADDRESS, wallet)
+  const pinger = new CoinFsmPinger(
+    env.FSM_RAI_ADDRESS,
+    env.RATE_SETTER_ADDRESS,
+    env.REWARD_RECEIVER,
+    wallet
+  )
   await pinger.ping()
 }
 
