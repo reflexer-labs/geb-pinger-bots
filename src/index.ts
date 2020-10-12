@@ -133,9 +133,10 @@ export const livenessChecker = async () => {
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number][] = [
     ['ETH medianizer', env.MEDIANIZER_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
-    ['RAI medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['PRAI medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['ETH FSM', env.FSM_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
-    ['RAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['PRAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['Rate setter', env.RATE_SETTER_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
   ]
 
   const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)

@@ -21,7 +21,7 @@ export class LivenessChecker {
         lastUpdated = await contract.lastUpdateTime()
       } catch (err) {
         await notifier.sendAllChannels(
-          `Could not fetch last update Time for livness check of ${check[0]}`
+          `Could not fetch last update Time for liveness check of ${check[0]}`
         )
         continue
       }
