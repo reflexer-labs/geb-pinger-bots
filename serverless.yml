@@ -102,8 +102,8 @@ functions:
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_BALANCE, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
-  livenessChecker:
-    handler: src/index.livenessChecker
-    timeout: 240
-    events:
-      - schedule: rate(${param:SCHEDULER_INTERVAL_LIVENESS, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  # livenessChecker:
+  #   handler: src/index.livenessChecker
+  #   timeout: 240
+  #   events:
+  #     - schedule: rate(${param:SCHEDULER_INTERVAL_LIVENESS, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)

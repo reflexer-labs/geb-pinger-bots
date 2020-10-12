@@ -59,7 +59,7 @@ export class ChainlinkMedianizerPinger {
 }
 
 export class UniswapMedianizerPinger {
-  protected medianizer: contracts.UniswapMedian
+  protected medianizer: contracts.UniswapConsecutiveSlotsMedianRaiusd
   protected transactor: Transactor
 
   constructor(
@@ -70,7 +70,10 @@ export class UniswapMedianizerPinger {
   ) {
     const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
     this.transactor = new Transactor(this.wallet)
-    this.medianizer = new contracts.UniswapMedian(medianizerAddress, gebProvider)
+    this.medianizer = new contracts.UniswapConsecutiveSlotsMedianRaiusd(
+      medianizerAddress,
+      gebProvider
+    )
   }
 
   public async ping() {
