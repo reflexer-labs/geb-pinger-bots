@@ -129,8 +129,7 @@ export const livenessChecker = async () => {
     ['ETH medianizer', env.MEDIANIZER_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['RAI medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['ETH FSM', env.FSM_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
-    // TODO: Remove when DSM is fixed
-    // ['RAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['RAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
   ]
 
   const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
