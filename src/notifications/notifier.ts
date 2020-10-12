@@ -26,13 +26,20 @@ export class Notifier {
     this.logError(message)
 
     // Slack notification
-    await this.slackError(message)
+    // await this.slackError(message)
 
     // Twilio notification
-    await this.twilioError(message)
+    // await this.twilioError(message)
   }
   private formatMessage(message: string): string {
-    return `ERROR ${process.env.AWS_REGION}:${process.env.AWS_LAMBDA_FUNCTION_NAME}: ${message}`
+    const botName = (process.env.AWS_LAMBDA_FUNCTION_NAME as string).split('-')[4]
+    const network = (process.env.AWS_LAMBDA_FUNCTION_NAME as string).split('-')[3]
+    return `Geb pinger bot error
+  Region: ${process.env.AWS_REGION}
+  Network: ${network}
+  Bot name: ${botName}
+  Details: ${message}
+`
   }
 
   public logError(message) {
