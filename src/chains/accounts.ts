@@ -7,4 +7,5 @@ export enum PingerAccount {
   PAUSE_EXECUTOR = 5,
   MEDIANIZER_FLX = 6,
   FSM_FLX = 7,
+  STABILITY_FEE_TREASURY = 7,
 }

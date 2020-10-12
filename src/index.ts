@@ -7,6 +7,7 @@ import { Notifier } from './notifications/notifier'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
 import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
+import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { getAddress, getWallet } from './utils/wallet'
 
@@ -36,6 +37,7 @@ type EnvVar =
   | 'GEB_SUBGRAPH_URL'
   | 'DS_PAUSE_ADDRESS'
   | 'RATE_SETTER_ADDRESS'
+  | 'STABILITY_FEE_TREASURY_ADDRESS'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -102,6 +104,16 @@ export const updateTaxCollector = async () => {
   await pinger.ping()
 }
 
+export const updateStabilityFeeTreasury = async () => {
+  const wallet = getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.STABILITY_FEE_TREASURY
+  )
+  const pinger = new StabilityFeeTreasuryPinger(env.STABILITY_FEE_TREASURY_ADDRESS, wallet)
+  await pinger.ping()
+}
+
 export const pauseExecutor = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.PAUSE_EXECUTOR)
   const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
@@ -111,13 +123,14 @@ export const pauseExecutor = async () => {
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
-  const pingerList: [string, number][] = [
+  const pingerList: [string, number, string?][] = [
     ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
     ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['RAI FSM', PingerAccount.FSM_RAI],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
+    ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [
@@ -131,12 +144,18 @@ export const balanceChecker = async () => {
 
 export const livenessChecker = async () => {
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
-  const checks: [string, string, number][] = [
+  const checks: [string, string, number, string?][] = [
     ['ETH medianizer', env.MEDIANIZER_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['PRAI medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['ETH FSM', env.FSM_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['PRAI FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['Rate setter', env.RATE_SETTER_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    [
+      'Stability fee treasury transfer surplus',
+      env.STABILITY_FEE_TREASURY_ADDRESS,
+      347040, // 241 Days
+      'latestSurplusTransferTime',
+    ],
   ]
 
   const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
