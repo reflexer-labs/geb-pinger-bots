@@ -5,8 +5,13 @@ service: geb-pinger-bots
 provider:
   name: aws
   runtime: nodejs12.x
-  region: 'us-west-1'
+  region: 'us-west-2'
   environment: ${self:custom.${opt:stage, 'test'}}
+  vpc:
+    subnetIds:
+      # A VPC with a subnet needs to be manually configured on the AWS dashboard
+      # The subnet needs a NAT gateway with internet access.
+      - ${param:AWS_VPC_SUBNET_ID}
 
 custom:
   # Redirect to either prod or test conf below
