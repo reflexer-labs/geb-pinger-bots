@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@reflexer-finance/geb-admin": "0.0.20",
+    "aws-sdk": "^2.771.0",
     "axios": "^0.20.0",
     "ethers": "^5.0.14",
     "mongoose": "^5.9.10",
