@@ -21,6 +21,7 @@ export class CoinFsmPinger {
 
   public async ping() {
     let tx: TransactionRequest
+    let didUpdateFsm = false
 
     // Save the current nonce
     const provider = this.wallet.provider as ethers.providers.Provider
@@ -33,29 +34,49 @@ export class CoinFsmPinger {
     try {
       tx = this.fsm.updateResult()
       await this.transactor.ethCall(tx)
+      // Send transaction
+      const hash = await this.transactor.ethSend(tx)
+      didUpdateFsm = true
+      console.log(`Update sent, transaction hash: ${hash}`)
     } catch (err) {
       if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
         console.log('FSM not yet ready to be updated')
       } else {
-        await notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+        await notifier.sendAllChannels(`Unexpected error while simulating call: ${err}`)
       }
-      return
     }
 
-    // Send transaction
-    let hash = await this.transactor.ethSend(tx)
-    console.log(`Update sent, transaction hash: ${hash}`)
-
     // Update rate setter
-    const seed = Math.floor(Math.random() * 4200) + 42
-    tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
+    if (
+      didUpdateFsm ||
+      (await this.fsm.lastUpdateTime()).gt(await this.rateSetter.lastUpdateTime())
+    ) {
+      // Only update rate setter if: We just updated the FSM OR the FSM update more recently than the rate setter.
+      try {
+        // Pick a random seed, its value does not matter
+        const seed = Math.floor(Math.random() * 4200) + 42
+        tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
+        await this.transactor.ethCall(tx)
+      } catch (err) {
+        if (err.startsWith('RateSetter/wait-more')) {
+          console.log('Rate setter not yet ready to be updated')
+        } else {
+          await notifier.sendAllChannels(`Unexpected error while simulating call: ${err}`)
+        }
+        return
+      }
 
-    // Manually increment the nonce since the previous tx is still pending
-    tx.nonce = currentNonce + 1
+      if (didUpdateFsm) {
+        // Manually increment the nonce since the previous tx is still pending
+        tx.nonce = currentNonce + 1
+      }
 
-    // Send oracle relayer transaction
-    hash = await await this.transactor.ethSend(tx)
-    console.log(`Rate setter update sent, transaction hash: ${hash}`)
+      // Send oracle relayer transaction
+      const hash = await await this.transactor.ethSend(tx)
+      console.log(`Rate setter update sent, transaction hash: ${hash}`)
+    } else {
+      console.log(`Rate setter does not need to be updated`)
+    }
   }
 }
 
