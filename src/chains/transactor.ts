@@ -11,9 +11,9 @@ export class Transactor {
       return await this.signer.call(tx)
     } catch (err) {
       // Try decoding the error before throw
-      let decodedErr: string
+      let decodedErr: string | null
       try {
-        decodedErr = utils.decodeChainError(err)
+        decodedErr = utils.getRequireString(err)
       } catch {
         throw err
       }
