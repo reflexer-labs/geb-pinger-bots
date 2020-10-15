@@ -3,7 +3,7 @@ import { GebEthersProvider } from 'geb.js'
 import { adminContracts } from '@reflexer-finance/geb-admin'
 import { Transactor } from '../chains/transactor'
 import { notifier } from '..'
-import { graphQlQuery } from '../utils/subgraph'
+import { fetchPendingProposals } from '../utils/subgraph'
 
 export class PauseExecutor {
   private dsPause: adminContracts.DsProtestPause
@@ -19,36 +19,8 @@ export class PauseExecutor {
     this.dsPause = new adminContracts.DsProtestPause(dsPauseAddress, gebProvider)
   }
 
-  private async fetchPendingProposals() {
-    const query = `{
-      dsPauseScheduledTransactions(where: {executed: false}){
-      proposalSender
-      proposalTarget
-      codeHash
-      transactionData
-      fullTransactionHash
-      earliestExecutionTime
-      transactionDescription
-      }
-    }`
-
-    const resp = await graphQlQuery(this.gebSubgraphUrl, query)
-
-    type ProposalQueryData = {
-      codeHash: string
-      earliestExecutionTime: string
-      proposalSender: string
-      proposalTarget: string
-      fullTransactionHash: string
-      transactionData: string
-      transactionDescription: string
-    }
-
-    return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
-  }
-
   public async ping() {
-    const proposals = await this.fetchPendingProposals()
+    const proposals = await fetchPendingProposals(this.gebSubgraphUrl)
     console.log(`${proposals} pending found`)
 
     const provider = this.wallet.provider as ethers.providers.Provider

@@ -2,6 +2,23 @@ import { S3 } from 'aws-sdk'
 
 export const STATUS_KEY = 'status.json'
 
+export type StatusInfo = {
+  // Network name
+  [key: string]: {
+    // When was this executed
+    timestamp: number
+    lastBlock: number
+    status: {
+      // Contract name
+      [key: string]: boolean
+    }
+    // Contract name
+    lastUpdated: {
+      [key: string]: number
+    }
+  }
+}
+
 export class Store {
   private s3: S3
   constructor(private bucket: string, awsId: string, awsSecret: string) {
@@ -32,7 +49,7 @@ export class Store {
 
   public async getJson(key: string) {
     const that = this
-    return new Promise<Object>((res, err) => {
+    return new Promise<StatusInfo>((res, err) => {
       that.s3.getObject(
         {
           Bucket: this.bucket,

@@ -118,6 +118,7 @@ export const updateStabilityFeeTreasury = async () => {
   await pinger.ping()
 }
 
+// DS pause executor
 export const pauseExecutor = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.PAUSE_EXECUTOR)
   const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
@@ -164,6 +165,12 @@ export const livenessChecker = async () => {
 
   const provider = getProvider(env.ETH_RPC)
   const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
-  const checker = new LivenessChecker(checks, provider, store)
+  const checker = new LivenessChecker(
+    checks,
+    provider,
+    store,
+    env.GEB_SUBGRAPH_URL,
+    env.DS_PAUSE_ADDRESS
+  )
   await checker.check()
 }
