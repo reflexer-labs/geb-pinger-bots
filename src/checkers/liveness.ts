@@ -5,6 +5,8 @@ import { STATUS_KEY, Store } from '../utils/store'
 type StatusInfo = {
   // Network name
   [key: string]: {
+    // When was this executed
+    timestamp: number
     status: {
       // Contract name
       [key: string]: boolean
@@ -26,8 +28,11 @@ export class LivenessChecker {
 
   async check() {
     const networkName = (await this.provider.getNetwork()).name
+
+    // Prepare the results object
     let newStatus: StatusInfo = {
       [networkName]: {
+        timestamp: Math.floor(Date.now() / 1000),
         status: {},
         lastUpdated: {},
       },
@@ -67,6 +72,7 @@ export class LivenessChecker {
       }
     }
 
+    // Store the results in S3
     await this.store.mergedPutJson(STATUS_KEY, newStatus)
   }
 }
