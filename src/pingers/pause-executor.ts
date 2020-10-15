@@ -26,6 +26,7 @@ export class PauseExecutor {
       proposalTarget
       codeHash
       transactionData
+      fullTransactionHash
       earliestExecutionTime
       transactionDescription
       }
@@ -38,6 +39,7 @@ export class PauseExecutor {
       earliestExecutionTime: string
       proposalSender: string
       proposalTarget: string
+      fullTransactionHash: string
       transactionData: string
       transactionDescription: string
     }
@@ -47,17 +49,13 @@ export class PauseExecutor {
 
   public async ping() {
     const proposals = await this.fetchPendingProposals()
+    console.log(`${proposals} pending found`)
+
     const provider = this.wallet.provider as ethers.providers.Provider
     const currentTimestamp = (await provider.getBlock('latest')).timestamp
 
     for (let proposal of proposals) {
-      const fullHash = await this.dsPause.getTransactionDataHash2(
-        proposal.proposalSender,
-        proposal.codeHash,
-        proposal.transactionData,
-        proposal.earliestExecutionTime
-      )
-
+      const fullHash = proposal.fullTransactionHash
       const isSchedule = await this.dsPause.scheduledTransactions(fullHash)
 
       if (!isSchedule) {
@@ -77,14 +75,33 @@ export class PauseExecutor {
       if (BigNumber.from(currentTimestamp).gte(earliestExecTime)) {
         // Execute proposal
         const tx = await this.dsPause.executeTransaction(
-          proposal.proposalSender,
+          proposal.proposalTarget,
           proposal.codeHash,
           proposal.transactionData,
           proposal.earliestExecutionTime
         )
 
-        const hash = await this.transactor.ethSend(tx)
+        // Simulate call first
+        let hash: string
+        try {
+          hash = await this.transactor.ethCall(tx)
+        } catch (err) {
+          if ((err as string).startsWith('ds-protest-pause-delegatecall-error')) {
+            // The proposal itself is failing, still send it with a high gas limit
+            console.log(
+              `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: ${proposal.transactionDescription} is a failing at execution`
+            )
+
+            continue
+          }
+        }
+
+        hash = await this.transactor.ethSend(tx)
         console.log(`Executed proposal ${proposal.transactionDescription} Transaction hash ${hash}`)
+      } else {
+        console.log(
+          `Porposal scheduled with Full hash: ${fullHash} target ${proposal.proposalTarget} description: ${proposal.transactionDescription} but not yet ready to be executed.`
+        )
       }
     }
   }

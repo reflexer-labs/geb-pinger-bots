@@ -22,26 +22,28 @@ export class Transactor {
     }
   }
 
-  public async ethSend(tx: TransactionRequest): Promise<string> {
+  public async ethSend(tx: TransactionRequest, gasLimit?: BigNumber): Promise<string> {
     // Take care of gas limit
-    let gasLimit: BigNumber
-    try {
-      gasLimit = (await this.signer.estimateGas(tx)).add(100000)
-    } catch (err) {
-      let message = 'Transaction revert at gas estimation'
-
-      // Try to fetch the error message with a call
+    if (!gasLimit) {
       try {
-        await this.ethCall(tx)
+        gasLimit = (await this.signer.estimateGas(tx)).add(100000)
       } catch (err) {
-        if (typeof err === 'string') {
-          message += ': ' + err
-        }
-      }
+        let message = 'Transaction revert at gas estimation'
 
-      await notifier.sendAllChannels(message)
-      throw Error(message)
+        // Try to fetch the error message with a call
+        try {
+          await this.ethCall(tx)
+        } catch (err) {
+          if (typeof err === 'string') {
+            message += ': ' + err
+          }
+        }
+
+        await notifier.sendAllChannels(message)
+        throw Error(message)
+      }
     }
+
     tx.gasLimit = gasLimit
 
     // Try fetching gas price from gasnow.org or use node default
