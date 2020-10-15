@@ -10,9 +10,8 @@ export class LivenessChecker {
     private provider: ethers.providers.Provider,
     private store: Store,
     private gebSubgraphUrl: string,
-    private dsPauseAddress: string
-  ) // private gnosisSafeAddress: string
-  {}
+    private dsPauseAddress: string // private gnosisSafeAddress: string
+  ) {}
 
   async check() {
     const networkName = (await this.provider.getNetwork()).name
@@ -62,11 +61,11 @@ export class LivenessChecker {
       }
     }
 
-    // Check that the graph node is not 1 hour behind
+    // Check that the graph node is not 2 hours behind
     let lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
     newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
     let now = Math.floor(Date.now() / 1000)
-    if (now - lastPeriodicRefresh > 3600) {
+    if (now - lastPeriodicRefresh > 3600 * 2) {
       await notifier.sendAllChannels(
         `Graph node at ${
           this.gebSubgraphUrl
