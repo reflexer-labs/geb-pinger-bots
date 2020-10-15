@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
-import { Store } from '../utils/store'
+import { STATUS_KEY, Store } from '../utils/store'
 
 type StatusInfo = {
   // Network name
@@ -67,6 +67,6 @@ export class LivenessChecker {
       }
     }
 
-    await this.store.mergedPutJson('status.json', newStatus)
+    await this.store.mergedPutJson(STATUS_KEY, newStatus)
   }
 }

@@ -1,5 +1,7 @@
 import { S3 } from 'aws-sdk'
 
+export const STATUS_KEY = 'status.json'
+
 export class Store {
   private s3: S3
   constructor(private bucket: string, awsId: string, awsSecret: string) {
