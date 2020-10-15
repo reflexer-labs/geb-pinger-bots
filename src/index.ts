@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import { ETH_A } from 'geb.js/lib/utils'
 import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
@@ -9,7 +9,7 @@ import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/me
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
-import { getAddress, getWallet } from './utils/wallet'
+import { getAddress, getProvider, getWallet } from './utils/wallet'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -137,7 +137,7 @@ export const balanceChecker = async () => {
     x[0],
     getAddress(env.ACCOUNTS_PASSPHRASE, x[1]),
   ])
-  const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
+  const provider = getProvider(env.ETH_RPC)
   const checker = new BalanceChecker(bots, BigNumber.from(env.MIN_ETH_BALANCE), provider)
   await checker.check()
 }
@@ -146,7 +146,7 @@ export const livenessChecker = async () => {
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number, string?][] = [
     ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
-    ['pra_medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
+    ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['eth_fsm', env.FSM_ETH_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['prai_FSM', env.FSM_RAI_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
     ['rate_setter', env.RATE_SETTER_ADDRESS, parseInt(env.MAX_LIVENESS_DELAY)],
@@ -158,7 +158,7 @@ export const livenessChecker = async () => {
     ],
   ]
 
-  const provider = new ethers.providers.JsonRpcProvider(env.ETH_RPC)
+  const provider = getProvider(env.ETH_RPC)
   const checker = new LivenessChecker(checks, provider)
   await checker.check()
 }

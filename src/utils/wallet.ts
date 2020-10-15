@@ -14,11 +14,17 @@ export const getAddress = (passphrase: string, account: PingerAccount) => {
 }
 
 export const getWallet = (ethRpc: string, passphrase: string, account: PingerAccount) => {
+  const provider = getProvider(ethRpc)
+  return new ethers.Wallet(getPrivateKeyFromHdWallet(passphrase, account).privateKey, provider)
+}
+
+export const getProvider = (ethRpc: string) => {
   // Setup a redundant provider with a quorum of 1
   const urls = ethRpc.split(',')
   const provider = new ethers.providers.FallbackProvider(
     urls.map((x, i) => ({ provider: new ethers.providers.JsonRpcProvider(x), priority: i + 1 })),
     1
   )
-  return new ethers.Wallet(getPrivateKeyFromHdWallet(passphrase, account).privateKey, provider)
+
+  return provider
 }
