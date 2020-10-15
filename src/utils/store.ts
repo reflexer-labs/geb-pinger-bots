@@ -17,8 +17,9 @@ export class Store {
           ContentType: 'application/json',
         },
         (e, _) => {
-          if (err) {
-            err('Could not write to S3' + e.message)
+          if (e) {
+            console.error(e)
+            err('Could not write to S3')
           } else {
             res()
           }
@@ -36,22 +37,23 @@ export class Store {
           Key: key,
         },
         (e, r) => {
-          if (err) {
-            err('Could not read from S3' + e.message)
+          if (e) {
+            console.error(e)
+            err('Could not read from S3 ')
           } else {
-            res(JSON.parse(r.Body?.toString('utf-8') as string))
+            res(JSON.parse((r.Body as any).toString('utf-8') as string))
           }
         }
       )
     })
   }
 
-  public async mergedPutJson(key: string, data: string) {
+  public async mergedPutJson(key: string, data: Object) {
     function isObject(item) {
       return item && typeof item === 'object' && !Array.isArray(item)
     }
 
-    function mergeDeep(target, ...sources) {
+    function mergeDeep(target, ...sources): Object {
       if (!sources.length) return target
       const source = sources.shift()
 
@@ -71,6 +73,6 @@ export class Store {
 
     const sav = await this.getJson(key)
     const merged = mergeDeep(sav, data)
-    await this.putJson(key, merged)
+    await this.putJson(key, JSON.stringify(merged, null, 4))
   }
 }

@@ -9,6 +9,7 @@ import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/me
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
+import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
 
 type EnvVar =
@@ -38,6 +39,9 @@ type EnvVar =
   | 'DS_PAUSE_ADDRESS'
   | 'RATE_SETTER_ADDRESS'
   | 'STABILITY_FEE_TREASURY_ADDRESS'
+  | 'STATUS_BUCKET'
+  | 'AWS_ID'
+  | 'AWS_SECRET'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -159,6 +163,7 @@ export const livenessChecker = async () => {
   ]
 
   const provider = getProvider(env.ETH_RPC)
-  const checker = new LivenessChecker(checks, provider)
+  const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
+  const checker = new LivenessChecker(checks, provider, store)
   await checker.check()
 }

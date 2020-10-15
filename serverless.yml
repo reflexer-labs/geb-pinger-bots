@@ -61,6 +61,9 @@ custom:
     TWILIO_SID: ${param:TWILIO_SID, ''}
     PHONE_NOTIFICATION_RECEIVER: ${param:PHONE_NOTIFICATION_RECEIVER, '[]'}
     GEB_SUBGRAPH_URL: ${param:GEB_SUBGRAPH_URL}
+    AWS_SECRET: ${param:AWS_SECRET}
+    AWS_ID: ${param:AWS_ID}
+    STATUS_BUCKET: ${param:STATUS_BUCKET}
 
 plugins:
   - serverless-plugin-typescript
