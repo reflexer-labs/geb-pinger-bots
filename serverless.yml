@@ -10,7 +10,7 @@ provider:
   vpc:
     subnetIds:
       # A VPC with a subnet needs to be manually configured on the AWS dashboard
-      # The subnet needs a NAT gateway with internet access.
+      # The subnet needs a NAT gateway with internet access. 
       - ${param:AWS_VPC_SUBNET_ID}
 
 custom:
