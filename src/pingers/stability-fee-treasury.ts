@@ -1,17 +1,16 @@
 import { ethers } from 'ethers'
-import { contracts, GebEthersProvider, TransactionRequest } from 'geb.js'
+import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
 
 export class StabilityFeeTreasuryPinger {
   private stabilityFeeTreasury: contracts.StabilityFeeTreasury
   protected transactor: Transactor
-  constructor(stabilityFeeTreasuryAddress: string, private wallet: ethers.Signer) {
-    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
-    this.transactor = new Transactor(this.wallet)
-    this.stabilityFeeTreasury = new contracts.StabilityFeeTreasury(
-      stabilityFeeTreasuryAddress,
-      gebProvider
+  constructor(stabilityFeeTreasuryAddress: string, wallet: ethers.Signer) {
+    this.transactor = new Transactor(wallet)
+    this.stabilityFeeTreasury = this.transactor.getGebContract(
+      contracts.StabilityFeeTreasury,
+      stabilityFeeTreasuryAddress
     )
   }
 

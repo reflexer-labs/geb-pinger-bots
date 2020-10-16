@@ -1,27 +1,32 @@
 import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
+import { Transactor } from '../chains/transactor'
 import { StatusInfo, STATUS_KEY, Store } from '../utils/store'
 import { fetchLastPeriodicRefresh } from '../utils/subgraph'
 
 export class LivenessChecker {
+  private transactor: Transactor
   constructor(
     // [name, address, maxdelay, solidity function name (Optional)]
     private checks: [string, string, number, string?][],
-    private provider: ethers.providers.Provider,
+    provider: ethers.providers.Provider,
     private store: Store,
     private gebSubgraphUrl: string,
-    private dsPauseAddress: string // private gnosisSafeAddress: string
-  ) {}
+    private dsPauseAddress: string,
+    private gnosisSafeAddress: string
+  ) {
+    this.transactor = new Transactor(provider)
+  }
 
   async check() {
-    const networkName = (await this.provider.getNetwork()).name
+    const networkName = await this.transactor.getNetworkName()
     const currentStatus = await this.store.getJson(STATUS_KEY)
 
     // Prepare the results object
     let newStatus: StatusInfo = {
       [networkName]: {
         timestamp: Math.floor(Date.now() / 1000),
-        lastBlock: await this.provider.getBlockNumber(),
+        lastBlock: await this.transactor.getBlockNumber(),
         status: {},
         lastUpdated: {},
       },
@@ -32,15 +37,13 @@ export class LivenessChecker {
       const contractName = check[0]
       newStatus[networkName].status[contractName] = false
       const functionName = (check.length === 3 ? 'lastUpdateTime' : check[3]) as string
-      const contract = new ethers.Contract(
-        check[1],
-        [`function ${functionName}() view returns (uint256)`],
-        this.provider
-      )
 
       let lastUpdated: BigNumber
       try {
-        lastUpdated = await contract[functionName]()
+        lastUpdated = await this.transactor.callContractFunciton(
+          `function ${functionName}() view returns (uint256)`,
+          check[1]
+        )
       } catch (err) {
         console.log(err)
         await notifier.sendAllChannels(
@@ -75,58 +78,79 @@ export class LivenessChecker {
       )
     }
 
-    // Check if we should notify about new ds pause proposal
+    // --- Event based notification ---
+
+    // Block range for event filter
+    const fromBlock = currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock
+    const toBlock = newStatus[networkName].lastBlock
+
+    // ABIs
     const dsPauseEventAbi = [
       'event ScheduleTransaction(address sender, address usr, bytes32 codeHash, bytes parameters, uint earliestExecutionTime)',
       'event ExecuteTransaction(address sender, address usr, bytes32 codeHash, bytes parameters, uint earliestExecutionTime)',
     ]
+    const gnosisSafeAbi = [
+      'event ExecutionSuccess(bytes32 txHash, uint256 payment)',
+      'event ExecutionFailure(bytes32 txHash, uint256 payment)',
+    ]
 
-    // Look for ScheduleTransaction event
-    const dsPauseContract = new ethers.Contract(this.dsPauseAddress, dsPauseEventAbi, this.provider)
-    let dsPauseFilter = dsPauseContract.filters.ScheduleTransaction()
-    let dsPauseEvents = await dsPauseContract.queryFilter(
-      dsPauseFilter,
-      currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock, // If there is no last block, just don't fetch anything
-      newStatus[networkName].lastBlock
+    // Look for DsPause ScheduleTransaction events
+    let event = await this.transactor.getContractEvents(
+      dsPauseEventAbi[0],
+      this.dsPauseAddress,
+      fromBlock,
+      toBlock
     )
 
-    dsPauseEvents.map((e) => {
+    event.map((e) => {
       const args = e.args as ethers.utils.Result
       return notifier.sendAllChannels(
         `New pending proposal scheduled in ds-pause. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
 
-    // Look for ExecuteTransaction event
-    dsPauseFilter = dsPauseContract.filters.ExecuteTransaction()
-    dsPauseEvents = await dsPauseContract.queryFilter(
-      dsPauseFilter,
-      currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock, // If there is no last block, just don't fetch anything
-      newStatus[networkName].lastBlock
+    // Look for DsPause ExecuteTransaction events
+    event = await this.transactor.getContractEvents(
+      dsPauseEventAbi[1],
+      this.dsPauseAddress,
+      fromBlock,
+      toBlock
     )
 
-    dsPauseEvents.map((e) => {
+    event.map((e) => {
       const args = e.args as ethers.utils.Result
       return notifier.sendAllChannels(
         `Pending proposal executed. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
 
-    // Check if we should notify about Gnosis safe
-    // const safeEventAbi = []
+    // Look for GnosisSafe ExecutionSuccess events
+    event = await this.transactor.getContractEvents(
+      gnosisSafeAbi[0],
+      this.gnosisSafeAddress,
+      fromBlock,
+      toBlock
+    )
 
-    // const safeContract = new ethers.Contract(this.gnosisSafeAddress, safeEventAbi, this.provider)
-    // let safeFilter = safeContract.filters.ScheduleTransaction()
-    // let safeEvents = await safeContract.queryFilter(
-    //   safeFilter,
-    //   currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock, // If there is no last block, just don't fetch anything
-    //   newStatus[networkName].lastBlock
-    // )
+    event.map((e) => {
+      const args = e.args as ethers.utils.Result
+      return notifier.sendAllChannels(
+        `New gnosis safe transaction success, tx hash: ${args.txHash}`
+      )
+    })
 
-    // safeEvents.map((e) => {
-    //   const args = e.args as ethers.utils.Result
-    //   return notifier.sendAllChannels(`New gnosis safe transaction.`)
-    // })
+    // Look for GnosisSafe ExecutionFailure events
+    event = await this.transactor.getContractEvents(
+      gnosisSafeAbi[0],
+      this.gnosisSafeAddress,
+      fromBlock,
+      toBlock
+    )
+
+    event.map((e) => {
+      const args = e.args as ethers.utils.Result
+      return notifier.sendAllChannels(`Gnosis safe transaction failure, tx hash: ${args.txHash}`)
+    })
 
     // Store the results in S3
     await this.store.mergedPutJson(STATUS_KEY, newStatus)

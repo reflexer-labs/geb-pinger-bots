@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { contracts, GebEthersProvider, TransactionRequest } from 'geb.js'
+import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
 
@@ -11,12 +11,11 @@ export class CoinFsmPinger {
     osmAddress: string,
     rateSetterAddress: string,
     protected rewardReceiver: string,
-    protected wallet: ethers.Signer
+    wallet: ethers.Signer
   ) {
-    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
-    this.fsm = new contracts.Osm(osmAddress, gebProvider)
-    this.rateSetter = new contracts.RateSetter(rateSetterAddress, gebProvider)
     this.transactor = new Transactor(wallet)
+    this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
+    this.rateSetter = this.transactor.getGebContract(contracts.RateSetter, rateSetterAddress)
   }
 
   public async ping() {
@@ -24,11 +23,7 @@ export class CoinFsmPinger {
     let didUpdateFsm = false
 
     // Save the current nonce
-    const provider = this.wallet.provider as ethers.providers.Provider
-    const currentNonce = await provider.getTransactionCount(
-      await this.wallet.getAddress(),
-      'latest'
-    )
+    const currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
 
     // Simulate call
     try {
@@ -89,23 +84,21 @@ export class CollateralFsmPinger {
     osmAddress: string,
     oracleRelayerAddress: string,
     private collateralType: string,
-    private wallet: ethers.Signer
+    wallet: ethers.Signer
   ) {
-    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
-    this.fsm = new contracts.Osm(osmAddress, gebProvider)
-    this.oracleRelayer = new contracts.OracleRelayer(oracleRelayerAddress, gebProvider)
     this.transactor = new Transactor(wallet)
+    this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
+    this.oracleRelayer = this.transactor.getGebContract(
+      contracts.OracleRelayer,
+      oracleRelayerAddress
+    )
   }
 
   public async ping() {
     let txFsm: TransactionRequest
 
     // Save the current nonce
-    const provider = this.wallet.provider as ethers.providers.Provider
-    const currentNonce = await provider.getTransactionCount(
-      await this.wallet.getAddress(),
-      'latest'
-    )
+    const currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
 
     // Simulate call
     try {

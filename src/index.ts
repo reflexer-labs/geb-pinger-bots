@@ -42,6 +42,7 @@ type EnvVar =
   | 'STATUS_BUCKET'
   | 'AWS_ID'
   | 'AWS_SECRET'
+  | 'GNOSIS_SAFE'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -171,7 +172,8 @@ export const livenessChecker = async () => {
     provider,
     store,
     env.GEB_SUBGRAPH_URL,
-    env.DS_PAUSE_ADDRESS
+    env.DS_PAUSE_ADDRESS,
+    env.GNOSIS_SAFE
   )
   await checker.check()
 }

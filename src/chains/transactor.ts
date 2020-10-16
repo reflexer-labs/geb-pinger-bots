@@ -1,14 +1,34 @@
 import Axios from 'axios'
 import { BigNumber, ethers } from 'ethers'
-import { TransactionRequest, utils } from 'geb.js'
+import {
+  TransactionRequest,
+  utils,
+  Geb,
+  BaseContractAPI,
+  GebContractAPIConstructorInterface,
+} from 'geb.js'
 import { notifier } from '..'
 
 export class Transactor {
-  constructor(private signer: ethers.Signer) {}
+  private provider: ethers.providers.Provider
+  private signer?: ethers.Signer
+  constructor(signerOrProvider: ethers.Signer | ethers.providers.Provider) {
+    if (ethers.Wallet.isSigner(signerOrProvider)) {
+      this.signer = signerOrProvider
+
+      if (!this.signer.provider) {
+        throw new Error('The signer needs a provider')
+      }
+
+      this.provider = this.signer.provider
+    } else {
+      this.provider = signerOrProvider
+    }
+  }
 
   public async ethCall(tx: TransactionRequest): Promise<string> {
     try {
-      return await this.signer.call(tx)
+      return await this.provider.call(tx)
     } catch (err) {
       // Try decoding the error before throw
       let decodedErr: string | null
@@ -23,6 +43,10 @@ export class Transactor {
   }
 
   public async ethSend(tx: TransactionRequest, gasLimit?: BigNumber): Promise<string> {
+    if (!this.signer) {
+      throw new Error("The transactor can't sign transactions, provide a signer")
+    }
+
     // Take care of gas limit
     if (!gasLimit) {
       try {
@@ -61,6 +85,61 @@ export class Transactor {
       await notifier.sendAllChannels(`Error send transaction: ${errorMessage}`)
       throw errorMessage
     }
+  }
+
+  public async getNonce(address: string) {
+    return this.provider.getTransactionCount(address)
+  }
+
+  public async getBalance(address: string) {
+    return this.provider.getBalance(address)
+  }
+
+  public async getLatestBlockTimestamp() {
+    return (await this.provider.getBlock('latest')).timestamp
+  }
+
+  public async getBlockNumber() {
+    return this.provider.getBlockNumber()
+  }
+
+  public async getNetworkName() {
+    return (await this.provider.getNetwork()).name
+  }
+
+  public async getWalletAddress() {
+    if (!this.signer) {
+      throw new Error("The transactor can't sign transactions, provide a signer")
+    }
+
+    return this.signer.getAddress()
+  }
+
+  public async callContractFunciton(abi: string, address: string, params?: any[]) {
+    const contract = new ethers.Contract(address, [abi], this.provider)
+    const functionName = abi.split(' ')[1].split('(')[0]
+
+    if (params) {
+      return await contract[functionName](params)
+    } else {
+      return await contract[functionName]()
+    }
+  }
+
+  public async getContractEvents(abi: string, address: string, fromBlock: number, toBlock: number) {
+    const contract = new ethers.Contract(address, [abi], this.provider)
+    const filterName = abi.split(' ')[1].split('(')[0]
+    const filter = contract.filters[filterName]()
+    let events = await contract.queryFilter(filter, fromBlock, toBlock)
+
+    return events
+  }
+
+  public getGebContract<T extends BaseContractAPI>(
+    gebContractClass: GebContractAPIConstructorInterface<T>,
+    address: string
+  ): T {
+    return Geb.getGebContract(gebContractClass, address, this.provider)
   }
 
   private async gasNowPriceAPI() {

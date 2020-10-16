@@ -1,5 +1,4 @@
 import { BigNumber, ethers } from 'ethers'
-import { GebEthersProvider } from 'geb.js'
 import { adminContracts } from '@reflexer-finance/geb-admin'
 import { Transactor } from '../chains/transactor'
 import { notifier } from '..'
@@ -9,22 +8,16 @@ export class PauseExecutor {
   private dsPause: adminContracts.DsProtestPause
   private transactor: Transactor
 
-  constructor(
-    dsPauseAddress: string,
-    private wallet: ethers.Signer,
-    private gebSubgraphUrl: string
-  ) {
-    const gebProvider = new GebEthersProvider(wallet.provider as ethers.providers.Provider)
-    this.transactor = new Transactor(this.wallet)
-    this.dsPause = new adminContracts.DsProtestPause(dsPauseAddress, gebProvider)
+  constructor(dsPauseAddress: string, wallet: ethers.Signer, private gebSubgraphUrl: string) {
+    this.transactor = new Transactor(wallet)
+    this.dsPause = this.transactor.getGebContract(adminContracts.DsProtestPause, dsPauseAddress)
   }
 
   public async ping() {
     const proposals = await fetchPendingProposals(this.gebSubgraphUrl)
-    console.log(`${proposals} pending found`)
+    console.log(`${proposals.length} pending found`)
 
-    const provider = this.wallet.provider as ethers.providers.Provider
-    const currentTimestamp = (await provider.getBlock('latest')).timestamp
+    const currentTimestamp = await this.transactor.getLatestBlockTimestamp()
 
     for (let proposal of proposals) {
       const fullHash = proposal.fullTransactionHash
