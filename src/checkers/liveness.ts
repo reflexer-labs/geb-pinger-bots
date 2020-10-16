@@ -32,6 +32,8 @@ export class LivenessChecker {
       },
     }
 
+    // --- Contract call based notifications ---
+
     // Check the lastUpdated status of all contracts
     for (let check of this.checks) {
       const contractName = check[0]
@@ -64,6 +66,8 @@ export class LivenessChecker {
       }
     }
 
+    // --- Graph based notifications ---
+
     // Check that the graph node is not 2 hours behind
     let lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
     newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
@@ -78,7 +82,7 @@ export class LivenessChecker {
       )
     }
 
-    // --- Event based notification ---
+    // --- Event based notifications ---
 
     // Block range for event filter
     const fromBlock = currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock
