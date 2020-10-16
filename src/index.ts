@@ -163,7 +163,7 @@ export const livenessChecker = async () => {
       'latestSurplusTransferTime',
     ],
   ]
-  // orclrelayer
+
   const provider = getProvider(env.ETH_RPC)
   const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
   const checker = new LivenessChecker(
