@@ -48,6 +48,8 @@ custom:
     RATE_SETTER_ADDRESS: ${param:RATE_SETTER_ADDRESS}
     STABILITY_FEE_TREASURY_ADDRESS: ${param:STABILITY_FEE_TREASURY_ADDRESS}
     DS_PAUSE_ADDRESS: ${param:DS_PAUSE_ADDRESS}
+    ACCOUNTING_ENGINE_ADDRESS: ${param:ACCOUNTING_ENGINE_ADDRESS}
+    SAFE_ENGINE_ADDRESS: ${param:SAFE_ENGINE_ADDRESS}
     GNOSIS_SAFE: ${param:GNOSIS_SAFE}
     MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, self:custom.test.MIN_ETH_BALANCE}
     REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
@@ -114,6 +116,12 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_PAUSE_EXECUTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  
+  debtSettler:
+    handler: src/index.debtSettler
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_DEBT_SETTLER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker

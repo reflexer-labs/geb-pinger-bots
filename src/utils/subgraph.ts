@@ -74,3 +74,14 @@ export const fetchLastPeriodicRefresh = async (gebSubgraphUrl: string) => {
 
   return parseInt(await resp.systemState.lastPeriodicUpdate)
 }
+
+export const fetchAuctionsTimestamps = async (gebSubgraphUrl: string, since: number) => {
+  const query = `{
+    fixedDiscountAuctions(where: {createdAt_gte: ${since}}) {
+      createdAt
+    }
+  }`
+
+  const resp = (await graphQlQuery(gebSubgraphUrl, query)).fixedDiscountAuctions as string[]
+  return resp.map((x) => parseInt(x))
+}

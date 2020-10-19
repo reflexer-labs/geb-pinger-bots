@@ -8,4 +8,5 @@ export enum PingerAccount {
   MEDIANIZER_FLX = 6,
   FSM_FLX = 7,
   STABILITY_FEE_TREASURY = 7,
+  ACCOUNTING_ENGINE = 8,
 }

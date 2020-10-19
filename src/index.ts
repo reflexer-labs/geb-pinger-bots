@@ -4,6 +4,7 @@ import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
+import { DebtSettler } from './pingers/debt-pinger'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
 import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
@@ -24,6 +25,8 @@ type EnvVar =
   | 'FSM_FLX_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
   | 'TAX_COLLECTOR_ADDRESS'
+  | 'ACCOUNTING_ENGINE_ADDRESS'
+  | 'SAFE_ENGINE_ADDRESS'
   | 'REWARD_RECEIVER'
   | 'SLACK_HOOK_URL'
   | 'TWILIO_AUTH_TOKEN'
@@ -123,6 +126,17 @@ export const updateStabilityFeeTreasury = async () => {
 export const pauseExecutor = async () => {
   const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.PAUSE_EXECUTOR)
   const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
+  await pinger.ping()
+}
+
+export const debtSettler = async () => {
+  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.ACCOUNTING_ENGINE)
+  const pinger = new DebtSettler(
+    env.ACCOUNTING_ENGINE_ADDRESS,
+    env.SAFE_ENGINE_ADDRESS,
+    wallet,
+    env.GEB_SUBGRAPH_URL
+  )
   await pinger.ping()
 }
 
