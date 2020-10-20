@@ -57,15 +57,20 @@ export class DebtSettler {
       }
     }
 
-    // We now maybe need to call settle debt..
-    // Get the current status of the surplus form the contract
-    const surplus = await this.safeEngine.coinBalance(this.accountingEngineAddress)
-    const unqueuedUnauctionedDebt = await this.accountingEngine.unqueuedUnauctionedDebt()
-    // This is how much currently can be settled
-    const min = surplus.gt(unqueuedUnauctionedDebt) ? unqueuedUnauctionedDebt : surplus
+    // Calculation of the amount to settle
+    let settleAmount: BigNumber
+    if (!unqueuedDebt.isZero()) {
+      // If we just popped something, settle that amount
+      settleAmount = unqueuedDebt
+    } else {
+      // Otherwise just settle the max that can be settled (maybe nothing)
+      const surplus = await this.safeEngine.coinBalance(this.accountingEngineAddress)
+      const unqueuedUnauctionedDebt = await this.accountingEngine.unqueuedUnauctionedDebt()
+      const min = surplus.gt(unqueuedUnauctionedDebt) ? unqueuedUnauctionedDebt : surplus
+      settleAmount = min
+    }
 
-    if (!unqueuedDebt.isZero() || min.gt(0)) {
-      const settleAmount = unqueuedDebt.add(min)
+    if (settleAmount.gt(0)) {
       const tx = this.accountingEngine.settleDebt(settleAmount)
       tx.nonce = currentNonce
       const hash = await this.transactor.ethSend(tx, BigNumber.from('200000'))
