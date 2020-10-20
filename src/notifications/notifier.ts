@@ -12,7 +12,8 @@ type TwilioNotifyee = {
 
 export class Notifier {
   constructor(
-    private slackHookUrl: string,
+    private errorSlackHookUrl: string,
+    private multisigSlackHookUrl: string,
     private twilioAuthToken: string,
     private twilioSid: string,
     private twilioSendNumber: string,
@@ -20,18 +21,32 @@ export class Notifier {
   ) {}
 
   public async sendError(message) {
-    message = this.formatMessage(message)
+    message = this.formatErrorMessage(message)
 
     // Log
     this.logError(message)
 
     // Slack notification
-    // await this.slackError(message)
+    await this.slackError(message)
 
     // Twilio notification
     // await this.twilioError(message)
   }
-  private formatMessage(message: string): string {
+
+  public async sendMultisigMessage(message) {
+    message = this.formatMultisigMessage(message)
+    await this.slackMultisigNotification(message)
+  }
+
+  private formatMultisigMessage(message: string): string {
+    const network = (process.env.AWS_LAMBDA_FUNCTION_NAME as string).split('-')[3]
+    return `Multisig notification
+  Network: ${network}
+  Details: ${message}
+`
+  }
+
+  private formatErrorMessage(message: string): string {
     const botName = (process.env.AWS_LAMBDA_FUNCTION_NAME as string).split('-')[4]
     const network = (process.env.AWS_LAMBDA_FUNCTION_NAME as string).split('-')[3]
     return `Geb pinger bot error
@@ -46,13 +61,19 @@ export class Notifier {
     console.error(message)
   }
 
-  public async slackError(message) {
-    if (this.slackHookUrl) {
-      await Axios.post(this.slackHookUrl, { text: message })
+  private async slackError(message) {
+    if (this.errorSlackHookUrl) {
+      await Axios.post(this.errorSlackHookUrl, { text: message })
     }
   }
 
-  public async twilioError(message) {
+  private async slackMultisigNotification(message) {
+    if (this.multisigSlackHookUrl) {
+      await Axios.post(this.multisigSlackHookUrl, { text: message })
+    }
+  }
+
+  private async twilioError(message) {
     const sendTwilioMessage = async (to, message) => {
       const twilio = Twilio(this.twilioSid, this.twilioAuthToken)
       const sendNumber = this.twilioSendNumber

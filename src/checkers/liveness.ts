@@ -115,7 +115,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendError(
+      return notifier.sendMultisigMessage(
         `New pending proposal scheduled in ds-pause. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
@@ -130,7 +130,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendError(
+      return notifier.sendMultisigMessage(
         `Pending proposal executed. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
@@ -145,7 +145,9 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendError(`New gnosis safe transaction success, tx hash: ${args.txHash}`)
+      return notifier.sendMultisigMessage(
+        `New gnosis safe transaction success, tx hash: ${args.txHash}`
+      )
     })
 
     // Look for GnosisSafe ExecutionFailure events
@@ -158,7 +160,9 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendError(`Gnosis safe transaction failure, tx hash: ${args.txHash}`)
+      return notifier.sendMultisigMessage(
+        `Gnosis safe transaction failure, tx hash: ${args.txHash}`
+      )
     })
 
     // Store the results in S3

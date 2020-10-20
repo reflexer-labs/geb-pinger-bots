@@ -28,7 +28,8 @@ type EnvVar =
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
   | 'REWARD_RECEIVER'
-  | 'SLACK_HOOK_URL'
+  | 'SLACK_HOOK_MULTISIG_URL'
+  | 'SLACK_HOOK_ERROR_URL'
   | 'TWILIO_AUTH_TOKEN'
   | 'TWILIO_SEND_NUMBER'
   | 'TWILIO_SID'
@@ -50,7 +51,8 @@ type EnvVar =
 const env = process.env as { [key in EnvVar]: string }
 
 export const notifier = new Notifier(
-  env.SLACK_HOOK_URL,
+  env.SLACK_HOOK_ERROR_URL,
+  env.SLACK_HOOK_MULTISIG_URL,
   env.TWILIO_AUTH_TOKEN,
   env.TWILIO_SID,
   env.TWILIO_SEND_NUMBER,
