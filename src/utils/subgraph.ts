@@ -72,6 +72,10 @@ export const fetchLastPeriodicRefresh = async (gebSubgraphUrl: string) => {
 
   const resp = await graphQlQuery(gebSubgraphUrl, query)
 
+  if (!resp || !resp.systemState || !resp.systemState.lastPeriodicUpdate) {
+    throw Error('fetchLastPeriodicRefresh, null graph data')
+  }
+
   return parseInt(await resp.systemState.lastPeriodicUpdate)
 }
 

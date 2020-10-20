@@ -69,7 +69,14 @@ export class LivenessChecker {
     // --- Graph based notifications ---
 
     // Check that the graph node is not 2 hours behind
-    let lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
+    let lastPeriodicRefresh: number
+    try {
+      lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
+    } catch (err) {
+      await notifier.sendAllChannels(`Graph node query error: ${err}`)
+      throw err
+    }
+
     newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
     let now = Math.floor(Date.now() / 1000)
     if (now - lastPeriodicRefresh > 3600 * 2) {
