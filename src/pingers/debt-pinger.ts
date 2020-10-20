@@ -40,7 +40,7 @@ export class DebtSettler {
 
     let unqueuedDebt = BigNumber.from(0)
     for (let auctionTimestamp of auctionTimestamps) {
-      if (auctionTimestamp + popDelay.toNumber() > now) {
+      if (now > auctionTimestamp + popDelay.toNumber()) {
         // The pop delay period for the auction has passed. Check if it wasn't already unqueued
         const debt = await this.accountingEngine.debtQueue(auctionTimestamp)
         if (debt.gt(0)) {
@@ -55,22 +55,23 @@ export class DebtSettler {
           )
         }
       }
+    }
 
-      // Get the current status of the surplus form the contract
-      const surplus = await this.safeEngine.coinBalance(this.accountingEngineAddress)
-      const unqueuedUnauctionedDebt = await this.accountingEngine.unqueuedUnauctionedDebt()
-      // This is how much currently can be settled
-      const min = surplus.gt(unqueuedUnauctionedDebt) ? unqueuedUnauctionedDebt : surplus
+    // We now maybe need to call settle debt..
+    // Get the current status of the surplus form the contract
+    const surplus = await this.safeEngine.coinBalance(this.accountingEngineAddress)
+    const unqueuedUnauctionedDebt = await this.accountingEngine.unqueuedUnauctionedDebt()
+    // This is how much currently can be settled
+    const min = surplus.gt(unqueuedUnauctionedDebt) ? unqueuedUnauctionedDebt : surplus
 
-      if (!unqueuedDebt.isZero() || min.gt(0)) {
-        const settleAmount = unqueuedDebt.add(min)
-        const tx = this.accountingEngine.settleDebt(settleAmount)
-        tx.nonce = currentNonce
-        const hash = await this.transactor.ethSend(tx)
-        console.log(
-          `Called settle debt for ${settleAmount.toString()} of debt. Transaction hash ${hash}`
-        )
-      }
+    if (!unqueuedDebt.isZero() || min.gt(0)) {
+      const settleAmount = unqueuedDebt.add(min)
+      const tx = this.accountingEngine.settleDebt(settleAmount)
+      tx.nonce = currentNonce
+      const hash = await this.transactor.ethSend(tx, BigNumber.from('200000'))
+      console.log(
+        `Called settle debt for ${settleAmount.toString()} of debt. Transaction hash ${hash}`
+      )
     }
   }
 }
