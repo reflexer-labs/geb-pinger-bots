@@ -150,7 +150,7 @@ export class LivenessChecker {
 
     // Look for GnosisSafe ExecutionFailure events
     event = await this.transactor.getContractEvents(
-      gnosisSafeAbi[0],
+      gnosisSafeAbi[1],
       this.gnosisSafeAddress,
       fromBlock,
       toBlock
