@@ -25,7 +25,7 @@ export class StabilityFeeTreasuryPinger {
       if (err.startsWith('StabilityFeeTreasury/transfer-cooldown-not-passed')) {
         console.log('Stability Fee treasury not yet ready to be updated')
       } else {
-        await notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+        await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
       return
     }

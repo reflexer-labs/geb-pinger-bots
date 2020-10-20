@@ -9,7 +9,7 @@ const graphQlQuery = async (url: string, query: string) => {
     return resp.data.data
   } catch (err) {
     const message = `Error querying graph node: ${err}`
-    notifier.sendAllChannels(message)
+    notifier.sendError(message)
     throw new Error(message)
   }
 }

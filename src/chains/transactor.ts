@@ -63,7 +63,7 @@ export class Transactor {
           }
         }
 
-        await notifier.sendAllChannels(message)
+        await notifier.sendError(message)
         throw Error(message)
       }
     }
@@ -82,7 +82,7 @@ export class Transactor {
       return response.hash
     } catch (err) {
       const errorMessage = err.reason || JSON.stringify(err)
-      await notifier.sendAllChannels(`Error send transaction: ${errorMessage}`)
+      await notifier.sendError(`Error send transaction: ${errorMessage}`)
       throw errorMessage
     }
   }

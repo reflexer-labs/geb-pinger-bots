@@ -48,7 +48,7 @@ export class LivenessChecker {
         )
       } catch (err) {
         console.log(err)
-        await notifier.sendAllChannels(
+        await notifier.sendError(
           `Could not fetch last update Time for liveness check of ${contractName}`
         )
         continue
@@ -56,7 +56,7 @@ export class LivenessChecker {
       newStatus[networkName].lastUpdated[contractName] = lastUpdated.toNumber()
       const timSinceLastUpdate = BigNumber.from(Math.floor(Date.now() / 1000)).sub(lastUpdated)
       if (timSinceLastUpdate.gt(check[2] * 60)) {
-        await notifier.sendAllChannels(
+        await notifier.sendError(
           `${contractName} at address ${
             check[1]
           } could not be updated for more than ${timSinceLastUpdate.div(60).toString()}min`
@@ -73,14 +73,14 @@ export class LivenessChecker {
     try {
       lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
     } catch (err) {
-      await notifier.sendAllChannels(`Graph node query error: ${err}`)
+      await notifier.sendError(`Graph node query error: ${err}`)
       throw err
     }
 
     newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
     let now = Math.floor(Date.now() / 1000)
     if (now - lastPeriodicRefresh > 3600 * 2) {
-      await notifier.sendAllChannels(
+      await notifier.sendError(
         `Graph node at ${
           this.gebSubgraphUrl
         } might be out of sync, last periodic update on ${new Date(
@@ -115,7 +115,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendAllChannels(
+      return notifier.sendError(
         `New pending proposal scheduled in ds-pause. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
@@ -130,7 +130,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendAllChannels(
+      return notifier.sendError(
         `Pending proposal executed. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
       )
     })
@@ -145,9 +145,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendAllChannels(
-        `New gnosis safe transaction success, tx hash: ${args.txHash}`
-      )
+      return notifier.sendError(`New gnosis safe transaction success, tx hash: ${args.txHash}`)
     })
 
     // Look for GnosisSafe ExecutionFailure events
@@ -160,7 +158,7 @@ export class LivenessChecker {
 
     event.map((e) => {
       const args = e.args as ethers.utils.Result
-      return notifier.sendAllChannels(`Gnosis safe transaction failure, tx hash: ${args.txHash}`)
+      return notifier.sendError(`Gnosis safe transaction failure, tx hash: ${args.txHash}`)
     })
 
     // Store the results in S3

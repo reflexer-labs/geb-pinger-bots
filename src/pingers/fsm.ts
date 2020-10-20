@@ -37,7 +37,7 @@ export class CoinFsmPinger {
       if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
         console.log('FSM not yet ready to be updated')
       } else {
-        await notifier.sendAllChannels(`Unexpected error while simulating call: ${err}`)
+        await notifier.sendError(`Unexpected error while simulating call: ${err}`)
       }
     }
 
@@ -56,7 +56,7 @@ export class CoinFsmPinger {
         if (err.startsWith('RateSetter/wait-more')) {
           console.log('Rate setter not yet ready to be updated')
         } else {
-          await notifier.sendAllChannels(`Unexpected error while simulating call: ${err}`)
+          await notifier.sendError(`Unexpected error while simulating call: ${err}`)
         }
         return
       }
@@ -108,7 +108,7 @@ export class CollateralFsmPinger {
       if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
         console.log('FSM not yet ready to be updated')
       } else {
-        await notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+        await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
       return
     }

@@ -19,14 +19,14 @@ export class Notifier {
     private twilioNotifyees: TwilioNotifyee[]
   ) {}
 
-  public async sendAllChannels(message) {
+  public async sendError(message) {
     message = this.formatMessage(message)
 
     // Log
     this.logError(message)
 
     // Slack notification
-    await this.slackError(message)
+    // await this.slackError(message)
 
     // Twilio notification
     // await this.twilioError(message)

@@ -48,7 +48,7 @@ export class ChainlinkMedianizerPinger {
       if (err.startsWith('ChainlinkPriceFeedMedianizer/invalid-timestamp')) {
         console.log('Chainlink aggregator is stale waiting for an update')
       } else {
-        await notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+        await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
       return
     }
@@ -93,7 +93,7 @@ export class UniswapMedianizerPinger {
       if (err.startsWith('UniswapConsecutiveSlotsPriceFeedMedianizer/not-enough-time-elapsed')) {
         console.log('Uniswap median cannot yet be updated')
       } else {
-        await notifier.sendAllChannels(`Unknown error while simulating call: ${err}`)
+        await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
       return
     }

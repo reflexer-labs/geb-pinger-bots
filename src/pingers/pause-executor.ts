@@ -25,7 +25,7 @@ export class PauseExecutor {
       const isSchedule = await this.dsPause.scheduledTransactions(fullHash)
 
       if (!isSchedule) {
-        notifier.sendAllChannels(
+        notifier.sendError(
           `Transaction found in subgraph not scheduled on chain. Full hash: ${fullHash} target ${proposal.proposalTarget} description: ${proposal.transactionDescription}`
         )
         continue
