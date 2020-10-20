@@ -66,6 +66,8 @@ custom:
     AWS_SECRET: ${param:AWS_SECRET}
     AWS_ID: ${param:AWS_ID}
     STATUS_BUCKET: ${param:STATUS_BUCKET}
+    SLACK_HOOK_ERROR_URL: ${param:SLACK_HOOK_ERROR_URL}
+    SLACK_HOOK_MULTISIG_URL: ${param:SLACK_HOOK_MULTISIG_URL}
 
 plugins:
   - serverless-plugin-typescript
