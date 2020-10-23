@@ -6,6 +6,13 @@ const graphQlQuery = async (url: string, query: string) => {
     const resp = await Axios.post(url, {
       query,
     })
+
+    // The graph node can return empty data which
+    // means that the node is not ok.
+    if (!resp.data || !resp.data.data) {
+      throw 'No data'
+    }
+
     return resp.data.data
   } catch (err) {
     const message = `Error querying graph node: ${err}`
