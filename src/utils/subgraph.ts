@@ -2,8 +2,10 @@ import Axios from 'axios'
 import { notifier } from '..'
 
 const graphQlQuery = async (url: string, query: string) => {
-  try {
-    const resp = await Axios.post(url, {
+  const urls = url.split(',')
+
+  const postQuery = async (host: string) => {
+    const resp = await Axios.post(host, {
       query,
     })
 
@@ -14,8 +16,25 @@ const graphQlQuery = async (url: string, query: string) => {
     }
 
     return resp.data.data
-  } catch (err) {
-    const message = `Error querying graph node: ${err}`
+  }
+
+  try {
+    return await postQuery(urls[0])
+  } catch (errPrimary) {
+    let message = `Error querying graph node, primary node error ${errPrimary}`
+    console.log(errPrimary)
+
+    // If we have a second node, try querying it.
+    if (urls.length >= 2) {
+      try {
+        return await postQuery(urls[1])
+      } catch (errSecondary) {
+        message += ` Secondary node error ${errSecondary}`
+      }
+    } else {
+      message += ' No secondary node provided'
+    }
+
     notifier.sendError(message)
     throw new Error(message)
   }
