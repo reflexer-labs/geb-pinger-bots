@@ -22,7 +22,19 @@ export const getProvider = (ethRpc: string) => {
   // Setup a redundant provider with a quorum of 1
   const urls = ethRpc.split(',')
   const provider = new ethers.providers.FallbackProvider(
-    urls.map((x, i) => ({ provider: new ethers.providers.JsonRpcProvider(x), priority: i + 1 })),
+    urls.map((x) => ({
+      provider: new ethers.providers.JsonRpcProvider({
+        url: x,
+        timeout: 1000,
+        throttleLimit: 4,
+        throttleCallback: async (a, u) => {
+          console.log(`RPC throttled, call attempt ${a} url: ${u}`)
+          return true
+        },
+      }),
+      priority: 1,
+      stallTimeout: 1000,
+    })),
     1
   )
 

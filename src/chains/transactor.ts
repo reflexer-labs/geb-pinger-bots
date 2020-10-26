@@ -52,6 +52,10 @@ export class Transactor {
       try {
         gasLimit = (await this.signer.estimateGas(tx)).add(100000)
       } catch (err) {
+        if (err.code === 'NETWORK_ERROR') {
+          throw err
+        }
+
         let message = 'Transaction revert at gas estimation'
 
         // Try to fetch the error message with a call
@@ -73,12 +77,14 @@ export class Transactor {
     // Try fetching gas price from gasnow.org or use node default
     try {
       tx.gasPrice = await this.gasNowPriceAPI()
+      console.log('D')
     } catch {}
 
     // Send transaction
     let response: ethers.providers.TransactionResponse
     try {
       response = await this.signer.sendTransaction(tx)
+      console.log('E')
       return response.hash
     } catch (err) {
       const errorMessage = err.reason || JSON.stringify(err)
