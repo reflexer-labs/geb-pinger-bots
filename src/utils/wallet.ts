@@ -25,7 +25,7 @@ export const getProvider = (ethRpc: string) => {
     urls.map((x) => ({
       provider: new ethers.providers.JsonRpcProvider({
         url: x,
-        timeout: 1000,
+        timeout: 3000,
         throttleLimit: 4,
         throttleCallback: async (a, u) => {
           console.log(`RPC throttled, call attempt ${a} url: ${u}`)
@@ -33,7 +33,7 @@ export const getProvider = (ethRpc: string) => {
         },
       }),
       priority: 1,
-      stallTimeout: 1000,
+      stallTimeout: 3000,
     })),
     1
   )
