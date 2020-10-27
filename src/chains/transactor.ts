@@ -77,14 +77,12 @@ export class Transactor {
     // Try fetching gas price from gasnow.org or use node default
     try {
       tx.gasPrice = await this.gasNowPriceAPI()
-      console.log('D')
     } catch {}
 
     // Send transaction
     let response: ethers.providers.TransactionResponse
     try {
       response = await this.signer.sendTransaction(tx)
-      console.log('E')
       return response.hash
     } catch (err) {
       const errorMessage = err.reason || JSON.stringify(err)
