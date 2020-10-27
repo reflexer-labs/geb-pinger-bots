@@ -110,7 +110,13 @@ export class Transactor {
   }
 
   public async getNetworkName() {
-    return (await this.provider.getNetwork()).name
+    let networkName = (await this.provider.getNetwork()).name
+
+    if (networkName === 'homestead') {
+      networkName = 'mainnet'
+    }
+
+    return networkName
   }
 
   public async getWalletAddress() {

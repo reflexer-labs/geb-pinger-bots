@@ -92,7 +92,7 @@ export class LivenessChecker {
     // --- Event based notifications ---
 
     // Block range for event filter
-    const fromBlock = currentStatus[networkName].lastBlock || newStatus[networkName].lastBlock
+    const fromBlock = currentStatus[networkName]?.lastBlock || newStatus[networkName].lastBlock
     const toBlock = newStatus[networkName].lastBlock
 
     // ABIs

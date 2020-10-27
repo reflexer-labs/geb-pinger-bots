@@ -9,7 +9,7 @@
     "noUnusedParameters": true,
     "outDir": "lib",
     "sourceMap": true,
-    "target": "esnext",
+    "target": "ES2019",
     "strictNullChecks": true
   },
   "exclude": ["node_modules"]
