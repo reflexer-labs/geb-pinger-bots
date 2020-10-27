@@ -4,11 +4,10 @@
   "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system.",
   "main": "index.js",
   "scripts": {
-    "local-test": "serverless invoke local --function",
     "local-kovan": "serverless invoke local --stage kovan --function",
-    "deploy": "serverless deploy --stage kovan",
-    "test": "NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
-    "coverage": "nyc --reporter lcov npm run test"
+    "local-mainnet": "serverless invoke local --stage mainnet --function",
+    "deploy-kovan": "serverless deploy --stage kovan",
+    "deploy-mainnet": "serverless deploy --stage mainnet"
   },
   "dependencies": {
     "@reflexer-finance/geb-admin": "0.0.22",

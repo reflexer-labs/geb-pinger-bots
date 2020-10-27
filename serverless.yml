@@ -6,7 +6,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: 'us-west-2'
-  environment: ${self:custom.${opt:stage, 'test'}}
+  environment: ${self:custom.${opt:stage}}
   vpc:
     subnetIds:
       # A VPC with a subnet needs to be manually configured on the AWS dashboard
@@ -17,21 +17,6 @@ custom:
   # Redirect to either prod or test conf below
   kovan: ${self:custom.prod}
   mainnet: ${self:custom.prod}
-
-  # Default env var for local testing
-  test:
-    ETH_RPC: http://localhost:8545/
-    ACCOUNTS_PASSPHRASE: age wish praise cinnamon pelican target early popular bitter sadness uncle smoke female scorpion cat sweet soldier robot pepper poet fat recycle crater such
-    MEDIANIZER_ETH_ADDRESS: '0x0'
-    MEDIANIZER_RAI_ADDRESS: '0x0'
-    MEDIANIZER_FLX_ADDRESS: '0x0'
-    FSM_ETH_ADDRESS: '0x0'
-    FSM_RAI_ADDRESS: '0x0'
-    FSM_FLX_ADDRESS: '0x0'
-    ORACLE_RELAYER_ADDRESS: '0x0'
-    TAX_COLLECTOR_ADDRESS: '0x0'
-    MIN_ETH_BALANCE: '500000000000000000'
-    REWARD_RECEIVER: '0x0'
 
   # Fetch env vars from severless dashboard (depends on stage, either kovan or mainnet)
   prod:
