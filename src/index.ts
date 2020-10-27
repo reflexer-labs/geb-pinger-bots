@@ -153,6 +153,7 @@ export const balanceChecker = async () => {
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
+    ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [
