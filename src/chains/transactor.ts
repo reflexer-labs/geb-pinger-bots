@@ -155,6 +155,6 @@ export class Transactor {
   private async gasNowPriceAPI() {
     const url = 'https://www.gasnow.org/api/v3/gas/price?utm_source=:RFX'
     const resp = await Axios.get(url)
-    return resp.data.data.standard
+    return resp.data.data.fast
   }
 }
