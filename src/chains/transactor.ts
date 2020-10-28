@@ -47,7 +47,7 @@ export class Transactor {
         throw err
       }
 
-      throw decodedErr
+      throw decodedErr ? decodedErr : err
     }
   }
 
