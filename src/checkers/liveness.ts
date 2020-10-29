@@ -68,25 +68,26 @@ export class LivenessChecker {
 
     // --- Graph based notifications ---
 
-    // Check that the graph node is not 2 hours behind
-    let lastPeriodicRefresh: number
-    try {
-      lastPeriodicRefresh = await fetchLastPeriodicRefresh(this.gebSubgraphUrl)
-    } catch (err) {
-      await notifier.sendError(`Graph node query error: ${err}`)
-      throw err
-    }
+    // Check that the graph nodes are responding and less 2 hours behind
+    const urls = this.gebSubgraphUrl.split(',')
+    for (let url of urls) {
+      let lastPeriodicRefresh: number
+      try {
+        lastPeriodicRefresh = await fetchLastPeriodicRefresh(url)
+      } catch (err) {
+        await notifier.sendError(`Graph node at ${urls} query error: ${err}`)
+        continue
+      }
 
-    newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
-    let now = Math.floor(Date.now() / 1000)
-    if (now - lastPeriodicRefresh > 3600 * 2) {
-      await notifier.sendError(
-        `Graph node at ${
-          this.gebSubgraphUrl
-        } might be out of sync, last periodic update on ${new Date(
-          lastPeriodicRefresh
-        ).toUTCString()}`
-      )
+      newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
+      let now = Math.floor(Date.now() / 1000)
+      if (now - lastPeriodicRefresh > 3600 * 2) {
+        await notifier.sendError(
+          `Graph node at ${url} might be out of sync, last periodic update on ${new Date(
+            lastPeriodicRefresh * 1000
+          ).toUTCString()}`
+        )
+      }
     }
 
     // --- Event based notifications ---
