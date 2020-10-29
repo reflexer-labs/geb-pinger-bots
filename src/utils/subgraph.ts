@@ -1,25 +1,25 @@
 import Axios from 'axios'
 import { notifier } from '..'
 
-const graphQlQuery = async (url: string, query: string) => {
-  const urls = url.split(',')
+export const postQuery = async (host: string, query: string) => {
+  const resp = await Axios.post(host, {
+    query,
+  })
 
-  const postQuery = async (host: string) => {
-    const resp = await Axios.post(host, {
-      query,
-    })
-
-    // The graph node can return empty data which
-    // means that the node is not ok.
-    if (!resp.data || !resp.data.data) {
-      throw 'No data'
-    }
-
-    return resp.data.data
+  // The graph node can return empty data which
+  // means that the node is not ok.
+  if (!resp.data || !resp.data.data) {
+    throw 'No data'
   }
 
+  return resp.data.data
+}
+
+const graphQlQueryWithFallback = async (url: string, query: string) => {
+  const urls = url.split(',')
+
   try {
-    return await postQuery(urls[0])
+    return await postQuery(urls[0], query)
   } catch (errPrimary) {
     let message = `Error querying graph node, primary node error ${errPrimary}`
     console.log(errPrimary)
@@ -27,7 +27,7 @@ const graphQlQuery = async (url: string, query: string) => {
     // If we have a second node, try querying it.
     if (urls.length >= 2) {
       try {
-        return await postQuery(urls[1])
+        return await postQuery(urls[1], query)
       } catch (errSecondary) {
         message += ` Secondary node error ${errSecondary}`
       }
@@ -65,7 +65,7 @@ export const fetchRecentProposals = async (gebSubgraphUrl: string, since: number
     }
   }`
 
-  const resp = await graphQlQuery(gebSubgraphUrl, query)
+  const resp = await graphQlQueryWithFallback(gebSubgraphUrl, query)
 
   return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
 }
@@ -84,7 +84,7 @@ export const fetchPendingProposals = async (gebSubgraphUrl: string) => {
     }
   }`
 
-  const resp = await graphQlQuery(gebSubgraphUrl, query)
+  const resp = await graphQlQueryWithFallback(gebSubgraphUrl, query)
 
   return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
 }
@@ -96,7 +96,7 @@ export const fetchLastPeriodicRefresh = async (gebSubgraphUrl: string) => {
     }
   }`
 
-  const resp = await graphQlQuery(gebSubgraphUrl, query)
+  const resp = await postQuery(gebSubgraphUrl, query)
 
   if (!resp || !resp.systemState || !resp.systemState.lastPeriodicUpdate) {
     throw Error('fetchLastPeriodicRefresh, null graph data')
@@ -112,7 +112,7 @@ export const fetchAuctionsTimestamps = async (gebSubgraphUrl: string, since: num
     }
   }`
 
-  const resp = (await graphQlQuery(gebSubgraphUrl, query)).fixedDiscountAuctions as {
+  const resp = (await graphQlQueryWithFallback(gebSubgraphUrl, query)).fixedDiscountAuctions as {
     createdAt: string
   }[]
   return resp.map((x) => parseInt(x.createdAt))
