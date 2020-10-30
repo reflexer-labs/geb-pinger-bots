@@ -75,7 +75,7 @@ export class LivenessChecker {
       try {
         lastPeriodicRefresh = await fetchLastPeriodicRefresh(url)
       } catch (err) {
-        await notifier.sendError(`Graph node at ${urls} query error: ${err}`)
+        await notifier.sendError(`Graph node at ${url} query error: ${err}`)
         continue
       }
 
