@@ -102,10 +102,6 @@ export class CollateralFsmPinger {
       return
     }
 
-    // Set the current nonce to be sure to overwrite the transaction from the previous run if
-    // it's still pending
-    txFsm.nonce = currentNonce
-
     // Send OSM transaction
     let hash = await this.transactor.ethSend(txFsm, true)
     console.log(`FSM update sent, transaction hash: ${hash}`)
