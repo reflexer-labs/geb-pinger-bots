@@ -18,7 +18,6 @@ export class PauseExecutor {
     console.log(`${proposals.length} pending found`)
 
     const currentTimestamp = await this.transactor.getLatestBlockTimestamp()
-    let currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
 
     for (let proposal of proposals) {
       const fullHash = proposal.fullTransactionHash
@@ -47,9 +46,6 @@ export class PauseExecutor {
           proposal.earliestExecutionTime
         )
 
-        // Assign correct nonce
-        tx.nonce = currentNonce
-
         // Simulate call first
         let hash: string
         try {
@@ -72,11 +68,8 @@ export class PauseExecutor {
           }
         }
 
-        hash = await this.transactor.ethSend(tx)
+        hash = await this.transactor.ethSend(tx, false)
         console.log(`Executed proposal ${proposal.transactionDescription} Transaction hash ${hash}`)
-
-        // Increment nonce for followup transactions
-        currentNonce += 1
       } else {
         console.log(
           `Porposal scheduled with Full hash: ${fullHash} target ${proposal.proposalTarget} description: ${proposal.transactionDescription} but not yet ready to be executed.`

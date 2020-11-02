@@ -22,15 +22,12 @@ export class CoinFsmPinger {
     let tx: TransactionRequest
     let didUpdateFsm = false
 
-    // Save the current nonce
-    const currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
-
     // Simulate call
     try {
       tx = this.fsm.updateResult()
       await this.transactor.ethCall(tx)
       // Send transaction
-      const hash = await this.transactor.ethSend(tx)
+      const hash = await this.transactor.ethSend(tx, false)
       didUpdateFsm = true
       console.log(`Update sent, transaction hash: ${hash}`)
     } catch (err) {
@@ -61,13 +58,8 @@ export class CoinFsmPinger {
         return
       }
 
-      if (didUpdateFsm) {
-        // Manually increment the nonce since the previous tx is still pending
-        tx.nonce = currentNonce + 1
-      }
-
       // Send oracle relayer transaction
-      const hash = await await this.transactor.ethSend(tx)
+      const hash = await await this.transactor.ethSend(tx, !didUpdateFsm)
       console.log(`Rate setter update sent, transaction hash: ${hash}`)
     } else {
       console.log(`Rate setter does not need to be updated`)
@@ -97,9 +89,6 @@ export class CollateralFsmPinger {
   public async ping() {
     let txFsm: TransactionRequest
 
-    // Save the current nonce
-    const currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
-
     // Simulate call
     try {
       txFsm = this.fsm.updateResult()
@@ -118,17 +107,14 @@ export class CollateralFsmPinger {
     txFsm.nonce = currentNonce
 
     // Send OSM transaction
-    let hash = await this.transactor.ethSend(txFsm)
+    let hash = await this.transactor.ethSend(txFsm, true)
     console.log(`FSM update sent, transaction hash: ${hash}`)
 
     // Directly update the relayer after updating the OSM
     let txRelayer = this.oracleRelayer.updateCollateralPrice(this.collateralType)
 
-    // Manually increment the nonce since the previous tx is still pending
-    txRelayer.nonce = currentNonce + 1
-
     // Send oracle relayer transaction
-    hash = await await this.transactor.ethSend(txRelayer)
+    hash = await await this.transactor.ethSend(txRelayer, false)
     console.log(`Oracle relayer update sent, transaction hash: ${hash}`)
   }
 }

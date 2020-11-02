@@ -12,6 +12,7 @@ import { notifier } from '..'
 export class Transactor {
   private provider: ethers.providers.Provider
   private signer?: ethers.Signer
+  private nonce: number | null = null
   constructor(signerOrProvider: ethers.Signer | ethers.providers.Provider) {
     if (ethers.Wallet.isSigner(signerOrProvider)) {
       this.signer = signerOrProvider
@@ -51,12 +52,22 @@ export class Transactor {
     }
   }
 
-  public async ethSend(tx: TransactionRequest, gasLimit?: BigNumber): Promise<string> {
+  public async ethSend(
+    tx: TransactionRequest,
+    // If set to true, the current confirmed nonce will be used and potentially overridePending transactions
+    forceOverride: boolean,
+    gasLimit?: BigNumber
+  ): Promise<string> {
+    // Sanity checks
     if (!this.signer) {
       throw new Error("The transactor can't sign transactions, provide a signer")
     }
 
-    // Take care of gas limit
+    if (!tx.to) {
+      throw 'Incomplete transaction'
+    }
+
+    // == Gas limit ==
     if (!gasLimit) {
       try {
         gasLimit = (await this.signer.estimateGas(tx)).add(100000)
@@ -83,12 +94,71 @@ export class Transactor {
 
     tx.gasLimit = gasLimit
 
-    // Try fetching gas price from gasnow.org or use node default
-    try {
-      tx.gasPrice = await this.gasNowPriceAPI()
-    } catch {}
+    // == Gas Price ==
 
-    // Send transaction
+    //Try fetching gas price from gasnow.org or use node default
+    try {
+      tx.gasPrice = BigNumber.from(await this.gasNowPriceAPI())
+    } catch {
+      tx.gasPrice = await this.provider.getGasPrice()
+    } finally {
+      if (!BigNumber.isBigNumber(tx.gasPrice)) {
+        const err = 'Could not determine  gas price'
+        await notifier.sendError(err)
+        throw err
+      }
+      // tx.gasPrice
+    }
+
+    // == Nonce ==
+
+    // Set proper nonce, detect pending transactions
+    const fromAddress = await this.signer.getAddress()
+    const currentNonce = await this.provider.getTransactionCount(fromAddress, 'latest')
+    const pendingNonce = await this.provider.getTransactionCount(fromAddress, 'pending')
+
+    if (pendingNonce < currentNonce) {
+      // This should never be the case unless we have some serious bugs on the ETH node
+      await notifier.sendError(
+        `Bad Ethereum node: pending nonce: ${pendingNonce}, current nonce: ${currentNonce}`
+      )
+    }
+
+    if (forceOverride) {
+      if (pendingNonce > currentNonce) {
+        // There is a pending transaction in the mempool!
+        await notifier.sendError(
+          `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + 30%`
+        )
+
+        // Add 30% gas price
+        tx.gasPrice = tx.gasPrice.mul(13).div(10)
+      }
+
+      // This will enforce overriding any pending transaction
+      tx.nonce = currentNonce
+      this.nonce = currentNonce
+    } else {
+      // The transaction should be executed after a previous one
+      if (this.nonce) {
+        this.nonce += 1
+        tx.nonce = this.nonce
+      } else {
+        // The transaction should be queued however the current run did not make any prior transaction.
+
+        if (pendingNonce > currentNonce) {
+          // There is a pending transaction in the mempool!
+          await notifier.sendError(
+            `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). NOT OVERRIDING WITH HIGHER GAS PRICE!!`
+          )
+        }
+
+        tx.nonce = pendingNonce
+        this.nonce = pendingNonce
+      }
+    }
+
+    // == Send transaction ==
     let response: ethers.providers.TransactionResponse
     try {
       response = await this.signer.sendTransaction(tx)
@@ -98,10 +168,6 @@ export class Transactor {
       await notifier.sendError(`Error send transaction: ${errorMessage}`)
       throw errorMessage
     }
-  }
-
-  public async getNonce(address: string) {
-    return this.provider.getTransactionCount(address)
   }
 
   public async getBalance(address: string) {
@@ -164,6 +230,6 @@ export class Transactor {
   private async gasNowPriceAPI() {
     const url = 'https://www.gasnow.org/api/v3/gas/price?utm_source=:RFX'
     const resp = await Axios.get(url)
-    return resp.data.data.fast
+    return resp.data.data.fast as string
   }
 }
