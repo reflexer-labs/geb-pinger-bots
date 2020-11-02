@@ -25,9 +25,7 @@ export class DebtSettler {
   public async ping() {
     const popDelay = await this.accountingEngine.popDebtDelay()
     const now = await this.transactor.getLatestBlockTimestamp()
-
-    // Save the current nonce
-    let currentNonce = await this.transactor.getNonce(await this.transactor.getWalletAddress())
+    let didSendAPopDebt = false
 
     // Fetch auctions from 2 last days + popDelay
     let auctionTimestamps = await fetchAuctionsTimestamps(
@@ -46,10 +44,9 @@ export class DebtSettler {
         if (debt.gt(0)) {
           // There is debt ready to be unqueued, send the transaction
           const tx = this.accountingEngine.popDebtFromQueue(auctionTimestamp)
-          tx.nonce = currentNonce
-          const hash = await this.transactor.ethSend(tx)
+          const hash = await this.transactor.ethSend(tx, false)
+          didSendAPopDebt = true
           unqueuedDebt = unqueuedDebt.add(debt)
-          currentNonce += 1
           console.log(
             `Call popDebtFromQueue for timestamp ${auctionTimestamp} transaction hash ${hash}`
           )
@@ -72,8 +69,7 @@ export class DebtSettler {
 
     if (settleAmount.gt(0)) {
       const tx = this.accountingEngine.settleDebt(settleAmount)
-      tx.nonce = currentNonce
-      const hash = await this.transactor.ethSend(tx, BigNumber.from('200000'))
+      const hash = await this.transactor.ethSend(tx, !didSendAPopDebt, BigNumber.from('200000'))
       console.log(
         `Called settle debt for ${settleAmount.toString()} of debt. Transaction hash ${hash}`
       )

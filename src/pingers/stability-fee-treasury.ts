@@ -30,7 +30,7 @@ export class StabilityFeeTreasuryPinger {
       return
     }
 
-    const hash = await this.transactor.ethSend(tx)
+    const hash = await this.transactor.ethSend(tx, true)
     console.log(`Surplus funds transferred, transaction hash: ${hash}`)
   }
 }

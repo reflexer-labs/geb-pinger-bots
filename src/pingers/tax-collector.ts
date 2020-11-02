@@ -12,7 +12,7 @@ export class TaxCollectorPinger {
 
   public async ping() {
     const tx = this.taxCollector.taxSingle(this.collateralType)
-    const hash = await this.transactor.ethSend(tx)
+    const hash = await this.transactor.ethSend(tx, true)
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
