@@ -27,9 +27,18 @@ export class Transactor {
     }
   }
 
-  public async ethCall(tx: TransactionRequest): Promise<string> {
+  public async ethCall(tx: TransactionRequest): Promise<any> {
     try {
-      return await this.provider.call(tx)
+      const res = await this.provider.call(tx)
+
+      // Some backend returns the require string when doing an eth call
+      // The function below detects if there it's a require error.
+      // If it is, we throw a pass the processing below
+      if (utils.getRequireString(res)) {
+        throw res
+      }
+
+      return res
     } catch (err) {
       // Try decoding the error before throw
       let decodedErr: string | null
