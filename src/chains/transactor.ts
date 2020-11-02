@@ -140,7 +140,7 @@ export class Transactor {
       this.nonce = currentNonce
     } else {
       // The transaction should be executed after a previous one
-      if (this.nonce) {
+      if (this.nonce !== null) {
         this.nonce += 1
         tx.nonce = this.nonce
       } else {
