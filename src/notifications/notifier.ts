@@ -30,7 +30,7 @@ export class Notifier {
     await this.slackError(message)
 
     // Twilio notification
-    // await this.twilioError(message)
+    await this.twilioError(message)
   }
 
   public async sendMultisigMessage(message) {
