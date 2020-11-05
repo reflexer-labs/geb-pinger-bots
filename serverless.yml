@@ -82,11 +82,11 @@ functions:
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
-  # updateRAIFsm:
-  #   handler: src/index.updateRAIFsm
-  #   timeout: 240
-  #   events:
-  #     - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  updateRAIFsm:
+    handler: src/index.updateRAIFsm
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   updateTaxCollector:
     handler: src/index.updateTaxCollector
