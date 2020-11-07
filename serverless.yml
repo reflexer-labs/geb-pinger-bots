@@ -70,11 +70,11 @@ functions:
   #   events:
   #     - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
-  # updateUniswapRAIMedianizer:
-  #   handler: src/index.updateUniswapRAIMedianizer
-  #   timeout: 240
-  #   events:
-  #     - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  updateUniswapRAIMedianizer:
+    handler: src/index.updateUniswapRAIMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   updateETHFsm:
     handler: src/index.updateETHFsm
