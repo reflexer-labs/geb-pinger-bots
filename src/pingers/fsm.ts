@@ -27,7 +27,7 @@ export class CoinFsmPinger {
       tx = this.fsm.updateResult()
       await this.transactor.ethCall(tx)
       // Send transaction
-      const hash = await this.transactor.ethSend(tx, false)
+      const hash = await this.transactor.ethSend(tx, true)
       didUpdateFsm = true
       console.log(`Update sent, transaction hash: ${hash}`)
     } catch (err) {
@@ -39,31 +39,25 @@ export class CoinFsmPinger {
     }
 
     // Update rate setter
-    if (
-      didUpdateFsm ||
-      (await this.fsm.lastUpdateTime()).gt(await this.rateSetter.lastUpdateTime())
-    ) {
-      // Only update rate setter if: We just updated the FSM OR the FSM update more recently than the rate setter.
-      try {
-        // Pick a random seed, its value does not matter
-        const seed = Math.floor(Math.random() * 4200) + 42
-        tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
-        await this.transactor.ethCall(tx)
-      } catch (err) {
-        if (err.startsWith('RateSetter/wait-more')) {
-          console.log('Rate setter not yet ready to be updated')
-        } else {
-          await notifier.sendError(`Unexpected error while simulating call: ${err}`)
-        }
-        return
+    try {
+      // Pick a random seed, its value does not matter
+      const seed = Math.floor(Math.random() * 4200) + 42
+      tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
+      await this.transactor.ethCall(tx)
+    } catch (err) {
+      if (err.startsWith('RateSetter/wait-more')) {
+        // DSM was updated too recently, wait more.
+        console.log('Rate setter not yet ready to be updated')
+      } else {
+        await notifier.sendError(`Unexpected error while simulating call: ${err}`)
       }
-
-      // Send oracle relayer transaction
-      const hash = await await this.transactor.ethSend(tx, !didUpdateFsm)
-      console.log(`Rate setter update sent, transaction hash: ${hash}`)
-    } else {
-      console.log(`Rate setter does not need to be updated`)
+      return
     }
+
+    // Send oracle relayer transaction
+    // We force overwrite unless we just updated the FSM.
+    const hash = await await this.transactor.ethSend(tx, !didUpdateFsm)
+    console.log(`Rate setter update sent, transaction hash: ${hash}`)
   }
 }
 
