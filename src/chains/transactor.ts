@@ -232,4 +232,43 @@ export class Transactor {
     const resp = await Axios.get(url)
     return resp.data.data.fast as string
   }
+
+  public async checkNodes() {
+    const fallbackProvider = this.provider as ethers.providers.FallbackProvider
+    const currentTime = Date.now() / 1000
+
+    // Use a timeout for the node to respond
+    const promiseTimeout = (ms) =>
+      new Promise<any>((_, reject) => {
+        let id = setTimeout(() => {
+          clearTimeout(id)
+          reject('Timed out after ' + ms / 1000 + 's.')
+        }, ms)
+      })
+
+    for (let p of fallbackProvider.providerConfigs) {
+      const provider = p.provider as ethers.providers.StaticJsonRpcProvider
+      let latestBlock: ethers.providers.Block
+      try {
+        // Get the latest block with 10 second timeout
+        latestBlock = await Promise.race([provider.getBlock('latest'), promiseTimeout(10000)])
+      } catch (err) {
+        console.log(err)
+        notifier.sendError(
+          `Ethereum node at ${provider.connection.url} responded with an error: ${JSON.stringify(
+            err.message || err
+          )}`
+        )
+        continue
+      }
+
+      if (currentTime - latestBlock.timestamp > 120) {
+        notifier.sendError(
+          `Ethereum node at ${provider.connection.url} is out sync. Latest block more than 2min old.`
+        )
+      }
+    }
+
+    return true
+  }
 }
