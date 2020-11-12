@@ -13,42 +13,39 @@ export const getAddress = (passphrase: string, account: PingerAccount) => {
   return ethers.utils.computeAddress(hdNode.privateKey)
 }
 
-export const getWallet = (ethRpc: string, passphrase: string, account: PingerAccount) => {
-  const provider = getProvider(ethRpc)
+export const getWallet = async (
+  ethRpc: string,
+  passphrase: string,
+  account: PingerAccount,
+  network: string
+) => {
+  const provider = await getProvider(ethRpc, network)
   return new ethers.Wallet(getPrivateKeyFromHdWallet(passphrase, account).privateKey, provider)
 }
 
-export const getProvider = (ethRpc: string) => {
-  // Setup a redundant provider with a quorum of 1
+export const getProvider = async (ethRpc: string, network: string) => {
+  // Get the list of urls into an array
   const urls = ethRpc.split(',')
-  const provider = new ethers.providers.FallbackProvider(
-    urls.map((x) => {
-      let provider: ethers.providers.Provider
-      if (x.search('infura.io') > -1) {
-        // Extract the network and the key from the URL
-        let net = (x.match(/\w*(?=\.infura\.io)/g) as string[])[0]
-        let key = (x.match(/(?<=\.infura\.io\/.*\/)\w*/g) as string[])[0]
-        provider = new ethers.providers.InfuraProvider(net, key)
-      } else {
-        provider = new ethers.providers.JsonRpcProvider({
-          url: x,
-          timeout: 5000,
-          throttleLimit: 4,
-          throttleCallback: async (a, u) => {
-            console.log(`RPC throttled, call attempt ${a} url: ${u}`)
-            return true
-          },
-        })
-      }
 
-      return {
-        provider: provider,
-        priority: 1,
-        stallTimeout: 5000,
-      }
-    }),
-    1
-  )
+  // Create the individual providers
+  let providers = urls.map((x) => {
+    let provider: ethers.providers.StaticJsonRpcProvider
+    provider = new ethers.providers.StaticJsonRpcProvider(x, network)
 
-  return provider
+    // To debug do:
+    // provider.on('debug', (x) =>
+    //   console.log(`${x.action} - ${x.request.method} - ${x.provider.connection.url}`)
+    // )
+
+    return provider
+  })
+
+  const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
+  const providerConfigs = providers.map((p) => ({
+    provider: p,
+    priority: 1,
+  }))
+  const fallBackProvider = new ethers.providers.FallbackProvider(providerConfigs, quorum)
+
+  return fallBackProvider
 }

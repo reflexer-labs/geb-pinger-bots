@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import { BigNumber } from 'ethers'
 import { ETH_A } from 'geb.js/lib/utils'
 import { PingerAccount } from './chains/accounts'
@@ -47,6 +48,7 @@ type EnvVar =
   | 'AWS_ID'
   | 'AWS_SECRET'
   | 'GNOSIS_SAFE'
+  | 'NETWORK'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -61,7 +63,12 @@ export const notifier = new Notifier(
 
 // Chainlink ETH medianizer
 export const updateChainlinkETHMedianizer = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.MEDIANIZER_ETH)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MEDIANIZER_ETH,
+    env.NETWORK
+  )
   const pinger = new ChainlinkMedianizerPinger(
     env.MEDIANIZER_ETH_ADDRESS,
     wallet,
@@ -73,7 +80,12 @@ export const updateChainlinkETHMedianizer = async () => {
 
 // Uniswap RAI medianizer
 export const updateUniswapRAIMedianizer = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.MEDIANIZER_RAI)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MEDIANIZER_RAI,
+    env.NETWORK
+  )
   const pinger = new UniswapMedianizerPinger(
     env.MEDIANIZER_RAI_ADDRESS,
     wallet,
@@ -85,7 +97,12 @@ export const updateUniswapRAIMedianizer = async () => {
 
 // ETH OSM
 export const updateETHFsm = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.FSM_ETH)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.FSM_ETH,
+    env.NETWORK
+  )
   const pinger = new CollateralFsmPinger(
     env.FSM_ETH_ADDRESS,
     env.ORACLE_RELAYER_ADDRESS,
@@ -97,7 +114,12 @@ export const updateETHFsm = async () => {
 
 // RAI FSM
 export const updateRAIFsm = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.FSM_RAI)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.FSM_RAI,
+    env.NETWORK
+  )
   const pinger = new CoinFsmPinger(
     env.FSM_RAI_ADDRESS,
     env.RATE_SETTER_ADDRESS,
@@ -109,16 +131,22 @@ export const updateRAIFsm = async () => {
 
 // Tax collector
 export const updateTaxCollector = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.TAX_COLLECTOR)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.TAX_COLLECTOR,
+    env.NETWORK
+  )
   const pinger = new TaxCollectorPinger(env.TAX_COLLECTOR_ADDRESS, wallet, ETH_A)
   await pinger.ping()
 }
 
 export const updateStabilityFeeTreasury = async () => {
-  const wallet = getWallet(
+  const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.STABILITY_FEE_TREASURY
+    PingerAccount.STABILITY_FEE_TREASURY,
+    env.NETWORK
   )
   const pinger = new StabilityFeeTreasuryPinger(env.STABILITY_FEE_TREASURY_ADDRESS, wallet)
   await pinger.ping()
@@ -126,13 +154,23 @@ export const updateStabilityFeeTreasury = async () => {
 
 // DS pause executor
 export const pauseExecutor = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.PAUSE_EXECUTOR)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.PAUSE_EXECUTOR,
+    env.NETWORK
+  )
   const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
   await pinger.ping()
 }
 
 export const debtSettler = async () => {
-  const wallet = getWallet(env.ETH_RPC, env.ACCOUNTS_PASSPHRASE, PingerAccount.ACCOUNTING_ENGINE)
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.ACCOUNTING_ENGINE,
+    env.NETWORK
+  )
   const pinger = new DebtSettler(
     env.ACCOUNTING_ENGINE_ADDRESS,
     env.SAFE_ENGINE_ADDRESS,
@@ -160,12 +198,13 @@ export const balanceChecker = async () => {
     x[0],
     getAddress(env.ACCOUNTS_PASSPHRASE, x[1]),
   ])
-  const provider = getProvider(env.ETH_RPC)
+  const provider = await getProvider(env.ETH_RPC, env.NETWORK)
   const checker = new BalanceChecker(bots, BigNumber.from(env.MIN_ETH_BALANCE), provider)
   await checker.check()
 }
 
 export const livenessChecker = async () => {
+  const time = Date.now()
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number, string?][] = [
     ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 90],
@@ -182,7 +221,7 @@ export const livenessChecker = async () => {
     ],
   ]
 
-  const provider = getProvider(env.ETH_RPC)
+  const provider = await getProvider(env.ETH_RPC, env.NETWORK)
   const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
   const checker = new LivenessChecker(
     checks,
@@ -193,4 +232,5 @@ export const livenessChecker = async () => {
     env.GNOSIS_SAFE
   )
   await checker.check()
+  console.log(`Execution time: ${(Date.now() - time) / 1000}s`)
 }

@@ -23,6 +23,7 @@ custom:
 
   # Fetch env vars from severless dashboard (depends on stage, either kovan or mainnet)
   prod:
+    NETWORK: ${opt:stage}
     ETH_RPC: ${param:ETH_RPC}
     ACCOUNTS_PASSPHRASE: ${param:ACCOUNTS_PASSPHRASE}
     MEDIANIZER_ETH_ADDRESS: ${param:MEDIANIZER_ETH_ADDRESS}
