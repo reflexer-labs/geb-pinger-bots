@@ -1,0 +1,12 @@
+diff --git a/node_modules/@ethersproject/providers/lib/fallback-provider.js b/node_modules/@ethersproject/providers/lib/fallback-provider.js
+index 3ca25b0..f9b1f8e 100644
+--- a/node_modules/@ethersproject/providers/lib/fallback-provider.js
++++ b/node_modules/@ethersproject/providers/lib/fallback-provider.js
+@@ -163,6 +163,7 @@ var ForwardErrors = [
+     logger_1.Logger.errors.UNPREDICTABLE_GAS_LIMIT
+ ];
+ var ForwardProperties = [
++    "error",
+     "address",
+     "args",
+     "errorArgs",
