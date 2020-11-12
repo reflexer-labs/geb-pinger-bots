@@ -262,9 +262,9 @@ export class Transactor {
         continue
       }
 
-      if (currentTime - latestBlock.timestamp > 120) {
+      if (currentTime - latestBlock.timestamp > 300) {
         notifier.sendError(
-          `Ethereum node at ${provider.connection.url} is out sync. Latest block more than 2min old.`
+          `Ethereum node at ${provider.connection.url} is out sync. Latest block more than 5min old.`
         )
       }
     }
