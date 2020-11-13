@@ -44,9 +44,7 @@ export const getProvider = async (ethRpc: string, network: string) => {
     return provider
   })
 
-  // Use this for a 2 out of 5 quorum
-  //const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
-  const quorum = 2
+  const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
 
   const providerConfigs = providers.map((p, i) => ({
     provider: p,
@@ -56,7 +54,7 @@ export const getProvider = async (ethRpc: string, network: string) => {
     // If a node did not reply within 3s, go to the next node
     stallTimeout: 3000,
   }))
-  console.log(providerConfigs.map((x) => console.log(x.priority, x.provider.connection.url)))
+
   const fallBackProvider = new ethers.providers.FallbackProvider(providerConfigs, quorum)
 
   return fallBackProvider

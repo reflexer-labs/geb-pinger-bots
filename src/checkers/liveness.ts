@@ -1,4 +1,3 @@
-import Axios from 'axios'
 import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
@@ -20,8 +19,6 @@ export class LivenessChecker {
   }
 
   async check() {
-    console.log(`Pinger public IP: ${(await Axios.get('https://ipecho.net/plain')).data}`)
-
     const networkName = await this.transactor.getNetworkName()
     const currentStatus = await this.store.getJson(STATUS_KEY)
 
