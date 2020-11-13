@@ -44,7 +44,7 @@ export class DebtSettler {
         if (debt.gt(0)) {
           // There is debt ready to be unqueued, send the transaction
           const tx = this.accountingEngine.popDebtFromQueue(auctionTimestamp)
-          const hash = await this.transactor.ethSend(tx, false)
+          const hash = await this.transactor.ethSend(tx, false, BigNumber.from('200000'))
           didSendAPopDebt = true
           unqueuedDebt = unqueuedDebt.add(debt)
           console.log(

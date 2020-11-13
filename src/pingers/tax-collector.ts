@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { contracts } from 'geb.js'
 import { Transactor } from '../chains/transactor'
 
@@ -12,7 +12,7 @@ export class TaxCollectorPinger {
 
   public async ping() {
     const tx = this.taxCollector.taxSingle(this.collateralType)
-    const hash = await this.transactor.ethSend(tx, true)
+    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('200000'))
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
