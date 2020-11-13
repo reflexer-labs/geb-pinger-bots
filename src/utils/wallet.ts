@@ -44,7 +44,10 @@ export const getProvider = async (ethRpc: string, network: string) => {
     return provider
   })
 
-  const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
+  // Use this for a 2 out of 5 quorum
+  //const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
+  const quorum = 1
+
   const providerConfigs = providers.map((p) => ({
     provider: p,
     priority: 1,
