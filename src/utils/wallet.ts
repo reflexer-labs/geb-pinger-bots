@@ -33,14 +33,21 @@ export const getProvider = async (ethRpc: string, network: string) => {
     provider = new ethers.providers.StaticJsonRpcProvider(x, network)
 
     // To debug do:
-    // provider.on('debug', (x) =>
-    //   console.log(`${x.action} - ${x.request.method} - ${x.provider.connection.url}`)
-    // )
+    provider.on('debug', (x) =>
+      console.log(
+        `${x.action} - ${x.request.method} - ${x.provider.connection.url} - ${
+          x.error ? 'ERROR' + JSON.stringify(x.error) : 'OK ' + x.response
+        }`
+      )
+    )
 
     return provider
   })
 
-  const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
+  // Use this for a 2 out of 5 quorum
+  //const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
+  const quorum = 1
+
   const providerConfigs = providers.map((p) => ({
     provider: p,
     priority: 1,
