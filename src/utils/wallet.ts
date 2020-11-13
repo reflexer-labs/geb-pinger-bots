@@ -30,7 +30,7 @@ export const getProvider = async (ethRpc: string, network: string) => {
   // Create the individual providers
   let providers = urls.map((x) => {
     let provider: ethers.providers.StaticJsonRpcProvider
-    provider = new ethers.providers.StaticJsonRpcProvider(x, network)
+    provider = new ethers.providers.StaticJsonRpcProvider({ url: x, timeout: 6000 }, network)
 
     // To debug do:
     provider.on('debug', (x) =>
@@ -46,12 +46,17 @@ export const getProvider = async (ethRpc: string, network: string) => {
 
   // Use this for a 2 out of 5 quorum
   //const quorum = Math.max(Math.floor((urls.length - 1) / 2), 1)
-  const quorum = 1
+  const quorum = 2
 
-  const providerConfigs = providers.map((p) => ({
+  const providerConfigs = providers.map((p, i) => ({
     provider: p,
-    priority: 1,
+    // Assign a priority based on the order in the list.
+    // We need a priority to use the same node as much possible and avoid nodes in different sync stages
+    priority: i + 1,
+    // If a node did not reply within 3s, go to the next node
+    stallTimeout: 3000,
   }))
+  console.log(providerConfigs.map((x) => console.log(x.priority, x.provider.connection.url)))
   const fallBackProvider = new ethers.providers.FallbackProvider(providerConfigs, quorum)
 
   return fallBackProvider
