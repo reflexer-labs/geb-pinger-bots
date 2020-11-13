@@ -35,9 +35,9 @@ export const getProvider = async (ethRpc: string, network: string) => {
     // To debug do:
     provider.on('debug', (x) =>
       console.log(
-        `${x.action} - ${x.request.method} - ${x.provider.connection.url} - ${JSON.stringify(
-          x.error
-        )}`
+        `${x.action} - ${x.request.method} - ${x.provider.connection.url} - ${
+          x.error ? 'ERROR' + JSON.stringify(x.error) : 'OK ' + x.response
+        }`
       )
     )
 
