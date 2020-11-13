@@ -54,7 +54,7 @@ export class ChainlinkMedianizerPinger {
     }
 
     // Send transaction
-    const hash = await this.transactor.ethSend(tx, true)
+    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('400000'))
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
@@ -99,7 +99,7 @@ export class UniswapMedianizerPinger {
     }
 
     // Send transaction
-    const hash = await this.transactor.ethSend(tx, true)
+    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('400000'))
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }

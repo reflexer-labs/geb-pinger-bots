@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
@@ -30,7 +30,7 @@ export class StabilityFeeTreasuryPinger {
       return
     }
 
-    const hash = await this.transactor.ethSend(tx, true)
+    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('400000'))
     console.log(`Surplus funds transferred, transaction hash: ${hash}`)
   }
 }

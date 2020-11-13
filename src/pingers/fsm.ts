@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
@@ -27,7 +27,7 @@ export class CoinFsmPinger {
       tx = this.fsm.updateResult()
       await this.transactor.ethCall(tx)
       // Send transaction
-      const hash = await this.transactor.ethSend(tx, true)
+      const hash = await this.transactor.ethSend(tx, true, BigNumber.from('200000'))
       didUpdateFsm = true
       console.log(`Update sent, transaction hash: ${hash}`)
     } catch (err) {
@@ -56,7 +56,7 @@ export class CoinFsmPinger {
 
     // Send oracle relayer transaction
     // We force overwrite unless we just updated the FSM.
-    const hash = await await this.transactor.ethSend(tx, !didUpdateFsm)
+    const hash = await await this.transactor.ethSend(tx, !didUpdateFsm, BigNumber.from('400000'))
     console.log(`Rate setter update sent, transaction hash: ${hash}`)
   }
 }
@@ -97,14 +97,14 @@ export class CollateralFsmPinger {
     }
 
     // Send OSM transaction
-    let hash = await this.transactor.ethSend(txFsm, true)
+    let hash = await this.transactor.ethSend(txFsm, true, BigNumber.from('200000'))
     console.log(`FSM update sent, transaction hash: ${hash}`)
 
     // Directly update the relayer after updating the OSM
     let txRelayer = this.oracleRelayer.updateCollateralPrice(this.collateralType)
 
     // Send oracle relayer transaction
-    hash = await await this.transactor.ethSend(txRelayer, false)
+    hash = await await this.transactor.ethSend(txRelayer, false, BigNumber.from('200000'))
     console.log(`Oracle relayer update sent, transaction hash: ${hash}`)
   }
 }
