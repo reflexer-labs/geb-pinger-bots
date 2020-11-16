@@ -30,7 +30,7 @@ export const getProvider = async (ethRpc: string, network: string) => {
   // Create the individual providers
   let providers = urls.map((x) => {
     let provider: ethers.providers.StaticJsonRpcProvider
-    provider = new ethers.providers.StaticJsonRpcProvider({ url: x, timeout: 6000 }, network)
+    provider = new ethers.providers.StaticJsonRpcProvider({ url: x, timeout: 10000 }, network)
 
     // To debug do:
     provider.on('debug', (x) =>
