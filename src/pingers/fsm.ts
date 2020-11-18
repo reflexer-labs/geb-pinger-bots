@@ -31,7 +31,10 @@ export class CoinFsmPinger {
       didUpdateFsm = true
       console.log(`Update sent, transaction hash: ${hash}`)
     } catch (err) {
-      if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
+      if (
+        typeof err == 'string' &&
+        (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed'))
+      ) {
         console.log('FSM not yet ready to be updated')
       } else {
         await notifier.sendError(`Unexpected error while simulating call: ${err}`)
@@ -43,9 +46,9 @@ export class CoinFsmPinger {
       // Pick a random seed, its value does not matter
       const seed = Math.floor(Math.random() * 4200) + 42
       tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
-      await this.transactor.ethCall(tx)
+      // await this.transactor.ethCall(tx)
     } catch (err) {
-      if (err.startsWith('RateSetter/wait-more')) {
+      if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
         // DSM was updated too recently, wait more.
         console.log('Rate setter not yet ready to be updated')
       } else {
@@ -88,7 +91,10 @@ export class CollateralFsmPinger {
       txFsm = this.fsm.updateResult()
       await this.transactor.ethCall(txFsm)
     } catch (err) {
-      if (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed')) {
+      if (
+        typeof err == 'string' &&
+        (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed'))
+      ) {
         console.log('FSM not yet ready to be updated')
       } else {
         await notifier.sendError(`Unknown error while simulating call: ${err}`)
