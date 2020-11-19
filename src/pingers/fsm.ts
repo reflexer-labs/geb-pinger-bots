@@ -43,9 +43,8 @@ export class CoinFsmPinger {
 
     // Update rate setter
     try {
-      // Pick a random seed, its value does not matter
-      const seed = Math.floor(Math.random() * 4200) + 42
-      tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
+      tx = this.rateSetter.updateRate(this.rewardReceiver)
+
       // await this.transactor.ethCall(tx)
     } catch (err) {
       if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
