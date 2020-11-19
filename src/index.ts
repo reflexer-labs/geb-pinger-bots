@@ -215,19 +215,19 @@ export const livenessChecker = async () => {
   const time = Date.now()
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number, string?][] = [
-    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 90],
-    ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 90],
-    ['eth_fsm', env.FSM_ETH_ADDRESS, 90],
-    ['prai_FSM', env.FSM_RAI_ADDRESS, 75],
-    ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 90, 'redemptionPriceUpdateTime'],
-    ['rate_setter', env.RATE_SETTER_ADDRESS, 75],
+    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 150],
+    ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 150],
+    ['eth_fsm', env.FSM_ETH_ADDRESS, 150],
+    ['prai_FSM', env.FSM_RAI_ADDRESS, 150],
+    ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 150, 'redemptionPriceUpdateTime'],
+    ['rate_setter', env.RATE_SETTER_ADDRESS, 150],
     [
       'stability_fee_treasury_transfer_surplus',
       env.STABILITY_FEE_TREASURY_ADDRESS,
       347040, // 241 Days
       'latestSurplusTransferTime',
     ],
-    ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 90, ETH_A],
+    ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 150, ETH_A],
   ]
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
