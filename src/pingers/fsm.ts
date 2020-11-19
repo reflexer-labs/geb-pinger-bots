@@ -23,57 +23,73 @@ export class CoinFsmPinger {
   public async ping() {
     let tx: TransactionRequest
     let didUpdateFsm = false
+    let isAnyTransactionPending = await this.transactor.isAnyTransactionPending()
 
-    // Check if it's too early to update
-    const lastUpdatedTime = await this.fsm.lastUpdateTime()
-    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
-      // To early to update but still check if there a pending transaction.
-      // If yes continue the execution that will bump the gas price.
-      if (!(await this.transactor.isAnyTransactionPending())) {
-        console.log('To early to update')
-        return
+    // === Update RAI FSM ===
+
+    // Check if it's too early to update or if there is pending transaction (Which means
+    // that we need to re-execute the logic to submit a new transaction with an updated
+    // gas price)
+    const lastUpdatedTimeFsm = await this.fsm.lastUpdateTime()
+    if (now().sub(lastUpdatedTimeFsm).gte(this.minUpdateInterval) || isAnyTransactionPending) {
+      try {
+        tx = this.fsm.updateResult()
+
+        // Simulate call first to check if there are any expected errors
+        await this.transactor.ethCall(tx)
+
+        // Send transaction
+        const hash = await this.transactor.ethSend(tx, true, BigNumber.from('200000'))
+        didUpdateFsm = true
+        console.log(`Update sent, transaction hash: ${hash}`)
+      } catch (err) {
+        if (
+          typeof err == 'string' &&
+          (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed'))
+        ) {
+          console.log('FSM not yet ready to be updated')
+        } else {
+          await notifier.sendError(`Unexpected error while simulating call: ${err}`)
+        }
       }
+    } else {
+      console.log('To early to update fsm')
     }
 
-    // Simulate call
-    try {
-      tx = this.fsm.updateResult()
-      await this.transactor.ethCall(tx)
-      // Send transaction
-      const hash = await this.transactor.ethSend(tx, true, BigNumber.from('200000'))
-      didUpdateFsm = true
-      console.log(`Update sent, transaction hash: ${hash}`)
-    } catch (err) {
-      if (
-        typeof err == 'string' &&
-        (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed'))
-      ) {
-        console.log('FSM not yet ready to be updated')
-      } else {
-        await notifier.sendError(`Unexpected error while simulating call: ${err}`)
-      }
-    }
+    // === Update rate setter ===
 
-    // Update rate setter
-    try {
-      // Pick a random seed, its value does not matter
-      const seed = Math.floor(Math.random() * 4200) + 42
-      tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
-      // await this.transactor.ethCall(tx)
-    } catch (err) {
-      if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
-        // DSM was updated too recently, wait more.
-        console.log('Rate setter not yet ready to be updated')
-      } else {
-        await notifier.sendError(`Unexpected error while simulating call: ${err}`)
-      }
-      return
-    }
+    const lastUpdatedTimeRateSetter = await this.rateSetter.lastUpdateTime()
+    if (
+      now().sub(lastUpdatedTimeRateSetter).gte(this.minUpdateInterval) ||
+      isAnyTransactionPending
+    ) {
+      try {
+        // Pick a random seed, its value does not matter
+        const seed = Math.floor(Math.random() * 4200) + 42
+        tx = this.rateSetter.updateRate(seed, this.rewardReceiver)
 
-    // Send oracle relayer transaction
-    // We force overwrite unless we just updated the FSM.
-    const hash = await await this.transactor.ethSend(tx, !didUpdateFsm, BigNumber.from('400000'))
-    console.log(`Rate setter update sent, transaction hash: ${hash}`)
+        // Simulate transaction to check if there are any expected errors
+        await this.transactor.ethCall(tx)
+
+        // Send oracle relayer transaction
+        // We force overwrite unless we just updated the FSM.
+        const hash = await await this.transactor.ethSend(
+          tx,
+          !didUpdateFsm,
+          BigNumber.from('400000')
+        )
+        console.log(`Rate setter update sent, transaction hash: ${hash}`)
+      } catch (err) {
+        if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
+          // DSM was updated too recently, wait more.
+          console.log('Rate setter not yet ready to be updated')
+        } else {
+          await notifier.sendError(`Unexpected error while simulating call: ${err}`)
+        }
+      }
+    } else {
+      console.log('To early to update rateSetter')
+    }
   }
 }
 
