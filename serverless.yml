@@ -57,6 +57,7 @@ custom:
     STATUS_BUCKET: ${param:STATUS_BUCKET}
     SLACK_HOOK_ERROR_URL: ${param:SLACK_HOOK_ERROR_URL}
     SLACK_HOOK_MULTISIG_URL: ${param:SLACK_HOOK_MULTISIG_URL}
+    MIN_UPDATE_INTERVAL: ${param:MIN_UPDATE_INTERVAL}
 
 plugins:
   - serverless-plugin-typescript
@@ -65,11 +66,11 @@ plugins:
 functions:
 
   # Chainlink pinger not needed since Uni median updates chainlink
-  # updateChainlinkETHMedianizer:
-  #   handler: src/index.updateChainlinkETHMedianizer
-  #   timeout: 240
-  #   events:
-  #     - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  updateChainlinkETHMedianizer:
+    handler: src/index.updateChainlinkETHMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   updateUniswapRAIMedianizer:
     handler: src/index.updateUniswapRAIMedianizer

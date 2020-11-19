@@ -2,6 +2,7 @@ import { ethers, BigNumber } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { now } from '../utils/time'
 
 export class ChainlinkMedianizerPinger {
   // We use an UniswapMedian contract but it can be a Chainlink Median as well
@@ -11,7 +12,7 @@ export class ChainlinkMedianizerPinger {
   constructor(
     medianizerAddress: string,
     wallet: ethers.Signer,
-    protected minMedianizerUpdateInterval: number,
+    protected minUpdateInterval: number,
     protected rewardReceiver: string
   ) {
     this.transactor = new Transactor(wallet)
@@ -24,14 +25,15 @@ export class ChainlinkMedianizerPinger {
   public async ping() {
     let tx: TransactionRequest
 
-    // Since Chainlink median can be updated by the uniswap median, check that it wasn't updated too recently
-    const lastUpdate = await this.medianizer.lastUpdateTime()
-    const currentBlockTime = await this.transactor.getLatestBlockTimestamp()
-    if (BigNumber.from(currentBlockTime).sub(lastUpdate).lte(this.minMedianizerUpdateInterval)) {
-      console.log(
-        `Medianizer recently updated, not updating at the moment (minMedianizerUpdateInterval).`
-      )
-      return
+    // // Check if it's too early to update
+    const lastUpdatedTime = await this.medianizer.lastUpdateTime()
+    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
+      // To early to update but still check if there a pending transaction.
+      // If yes continue the execution that will bump the gas price.
+      if (!(await this.transactor.isAnyTransactionPending())) {
+        console.log('To early to update')
+        return
+      }
     }
 
     // Send the caller reward to specified address or send the reward to the pinger bot
@@ -66,7 +68,7 @@ export class UniswapMedianizerPinger {
   constructor(
     medianizerAddress: string,
     wallet: ethers.Signer,
-    protected minMedianizerUpdateInterval: number,
+    protected minUpdateInterval: number,
     protected rewardReceiver: string
   ) {
     this.transactor = new Transactor(wallet)
@@ -78,6 +80,17 @@ export class UniswapMedianizerPinger {
 
   public async ping() {
     let tx: TransactionRequest
+
+    // Check if it's too early to update
+    const lastUpdatedTime = await this.medianizer.lastUpdateTime()
+    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
+      // To early to update but still check if there a pending transaction.
+      // If yes continue the execution that will bump the gas price.
+      if (!(await this.transactor.isAnyTransactionPending())) {
+        console.log('To early to update')
+        return
+      }
+    }
 
     // Send the caller reward to specified address or send the reward to the pinger bot
     let rewardReceiver =
