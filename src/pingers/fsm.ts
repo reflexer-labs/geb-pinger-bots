@@ -2,6 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { now } from '../utils/time'
 
 export class CoinFsmPinger {
   private fsm: contracts.Osm
@@ -11,7 +12,8 @@ export class CoinFsmPinger {
     osmAddress: string,
     rateSetterAddress: string,
     protected rewardReceiver: string,
-    wallet: ethers.Signer
+    wallet: ethers.Signer,
+    protected minUpdateInterval
   ) {
     this.transactor = new Transactor(wallet)
     this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
@@ -21,6 +23,17 @@ export class CoinFsmPinger {
   public async ping() {
     let tx: TransactionRequest
     let didUpdateFsm = false
+
+    // Check if it's too early to update
+    const lastUpdatedTime = await this.fsm.lastUpdateTime()
+    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
+      // To early to update but still check if there a pending transaction.
+      // If yes continue the execution that will bump the gas price.
+      if (!(await this.transactor.isAnyTransactionPending())) {
+        console.log('To early to update')
+        return
+      }
+    }
 
     // Simulate call
     try {
@@ -73,7 +86,8 @@ export class CollateralFsmPinger {
     osmAddress: string,
     oracleRelayerAddress: string,
     private collateralType: string,
-    wallet: ethers.Signer
+    wallet: ethers.Signer,
+    protected minUpdateInterval
   ) {
     this.transactor = new Transactor(wallet)
     this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
@@ -85,6 +99,17 @@ export class CollateralFsmPinger {
 
   public async ping() {
     let txFsm: TransactionRequest
+
+    // Check if it's too early to update
+    const lastUpdatedTime = await this.fsm.lastUpdateTime()
+    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
+      // To early to update but still check if there a pending transaction.
+      // If yes continue the execution that will bump the gas price.
+      if (!(await this.transactor.isAnyTransactionPending())) {
+        console.log('To early to update')
+        return
+      }
+    }
 
     // Simulate call
     try {

@@ -49,6 +49,7 @@ type EnvVar =
   | 'AWS_SECRET'
   | 'GNOSIS_SAFE'
   | 'NETWORK'
+  | 'MIN_UPDATE_INTERVAL'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -72,7 +73,7 @@ export const updateChainlinkETHMedianizer = async () => {
   const pinger = new ChainlinkMedianizerPinger(
     env.MEDIANIZER_ETH_ADDRESS,
     wallet,
-    600,
+    parseInt(env.MIN_UPDATE_INTERVAL),
     env.REWARD_RECEIVER
   )
   await pinger.ping()
@@ -89,7 +90,7 @@ export const updateUniswapRAIMedianizer = async () => {
   const pinger = new UniswapMedianizerPinger(
     env.MEDIANIZER_RAI_ADDRESS,
     wallet,
-    0,
+    parseInt(env.MIN_UPDATE_INTERVAL),
     env.REWARD_RECEIVER
   )
   await pinger.ping()
@@ -107,7 +108,8 @@ export const updateETHFsm = async () => {
     env.FSM_ETH_ADDRESS,
     env.ORACLE_RELAYER_ADDRESS,
     ETH_A,
-    wallet
+    wallet,
+    parseInt(env.MIN_UPDATE_INTERVAL)
   )
   await pinger.ping()
 }
@@ -124,7 +126,8 @@ export const updateRAIFsm = async () => {
     env.FSM_RAI_ADDRESS,
     env.RATE_SETTER_ADDRESS,
     env.REWARD_RECEIVER,
-    wallet
+    wallet,
+    parseInt(env.MIN_UPDATE_INTERVAL)
   )
   await pinger.ping()
 }
@@ -137,7 +140,12 @@ export const updateTaxCollector = async () => {
     PingerAccount.TAX_COLLECTOR,
     env.NETWORK
   )
-  const pinger = new TaxCollectorPinger(env.TAX_COLLECTOR_ADDRESS, wallet, ETH_A)
+  const pinger = new TaxCollectorPinger(
+    env.TAX_COLLECTOR_ADDRESS,
+    wallet,
+    ETH_A,
+    parseInt(env.MIN_UPDATE_INTERVAL)
+  )
   await pinger.ping()
 }
 

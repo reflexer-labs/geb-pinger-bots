@@ -170,6 +170,33 @@ export class Transactor {
     }
   }
 
+  // Tell whether there is a transaction pending in the mempool
+  public async isAnyTransactionPending(): Promise<boolean> {
+    // Sanity checks
+    if (!this.signer) {
+      throw new Error("The transactor can't sign transactions, provide a signer")
+    }
+
+    const fromAddress = await this.signer.getAddress()
+    const currentNonce = await this.provider.getTransactionCount(fromAddress, 'latest')
+    const pendingNonce = await this.provider.getTransactionCount(fromAddress, 'pending')
+
+    if (pendingNonce < currentNonce) {
+      // This should never be the case unless we have some serious bugs on the ETH node
+      await notifier.sendError(
+        `Bad Ethereum node: pending nonce: ${pendingNonce}, current nonce: ${currentNonce}`
+      )
+
+      return false
+    } else if (pendingNonce > currentNonce) {
+      // There is a pending transaction in the mempool!
+      return true
+    } else {
+      // currentNonce = pendingNonce
+      return false
+    }
+  }
+
   public async getBalance(address: string) {
     return this.provider.getBalance(address)
   }
