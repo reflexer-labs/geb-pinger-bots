@@ -3,6 +3,7 @@ import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
 import { StatusInfo, STATUS_KEY, Store } from '../utils/store'
 import { fetchLastPeriodicRefresh } from '../utils/subgraph'
+import { now } from '../utils/time'
 
 export class LivenessChecker {
   private transactor: Transactor
@@ -42,19 +43,29 @@ export class LivenessChecker {
 
       let lastUpdated: BigNumber
       try {
-        lastUpdated = await this.transactor.callContractFunciton(
-          `function ${functionName}() view returns (uint256)`,
-          check[1]
-        )
+        if (contractName === 'tax_collector') {
+          // Tax collector has a different way to check the updated time
+          lastUpdated = (
+            await this.transactor.callContractFunciton(
+              `function collateralTypes(bytes32) view returns (uint256,uint256)`,
+              check[1], // Contract address
+              [check[3]] // Pass the collateral type
+            )
+          )[1] // Get the second element which the updateTime
+        } else {
+          lastUpdated = await this.transactor.callContractFunciton(
+            `function ${functionName}() view returns (uint256)`,
+            check[1] // Contract address
+          )
+        }
       } catch (err) {
-        console.log(err)
         await notifier.sendError(
           `Could not fetch last update Time for liveness check of ${contractName}`
         )
         continue
       }
       newStatus[networkName].lastUpdated[contractName] = lastUpdated.toNumber()
-      const timSinceLastUpdate = BigNumber.from(Math.floor(Date.now() / 1000)).sub(lastUpdated)
+      const timSinceLastUpdate = now().sub(lastUpdated)
       if (timSinceLastUpdate.gt(check[2] * 60)) {
         await notifier.sendError(
           `${contractName} at address ${

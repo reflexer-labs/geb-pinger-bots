@@ -232,7 +232,7 @@ export class Transactor {
     const functionName = abi.split(' ')[1].split('(')[0]
 
     if (params) {
-      return await contract[functionName](params)
+      return await contract[functionName](...params)
     } else {
       return await contract[functionName]()
     }

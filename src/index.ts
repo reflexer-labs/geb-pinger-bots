@@ -227,6 +227,7 @@ export const livenessChecker = async () => {
       347040, // 241 Days
       'latestSurplusTransferTime',
     ],
+    ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 90, ETH_A],
   ]
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
