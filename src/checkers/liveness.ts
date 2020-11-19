@@ -79,7 +79,7 @@ export class LivenessChecker {
 
     // --- Graph based notifications ---
 
-    // Check that the graph nodes are responding and less 2 hours behind
+    // Check that the graph nodes are responding and less 2h30 hours behind
     const urls = this.gebSubgraphUrl.split(',')
     for (let url of urls) {
       let lastPeriodicRefresh: number
@@ -92,7 +92,7 @@ export class LivenessChecker {
 
       newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
       let now = Math.floor(Date.now() / 1000)
-      if (now - lastPeriodicRefresh > 3600 * 2) {
+      if (now - lastPeriodicRefresh > 3600 * 2.5) {
         await notifier.sendError(
           `Graph node at ${url} might be out of sync, last periodic update on ${new Date(
             lastPeriodicRefresh * 1000
