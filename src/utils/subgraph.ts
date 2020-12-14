@@ -4,6 +4,7 @@ import { notifier } from '..'
 export const postQuery = async (host: string, query: string) => {
   const resp = await Axios.post(host, {
     query,
+    timeout: 6000,
   })
 
   // The graph node can return empty data which
@@ -89,20 +90,20 @@ export const fetchPendingProposals = async (gebSubgraphUrl: string) => {
   return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
 }
 
-export const fetchLastPeriodicRefresh = async (gebSubgraphUrl: string) => {
+export const fetchGlobalDebt = async (gebSubgraphUrl: string) => {
   const query = `{
     systemState(id: "current") {
-      lastPeriodicUpdate
+      globalDebt
     }
   }`
 
   const resp = await postQuery(gebSubgraphUrl, query)
 
-  if (!resp || !resp.systemState || !resp.systemState.lastPeriodicUpdate) {
-    throw Error('fetchLastPeriodicRefresh, null graph data')
+  if (!resp || !resp.systemState || !resp.systemState.globalDebt) {
+    throw Error('globalDebt, null graph data')
   }
 
-  return parseInt(await resp.systemState.lastPeriodicUpdate)
+  return parseInt(await resp.systemState.globalDebt)
 }
 
 export const fetchAuctionsTimestamps = async (gebSubgraphUrl: string, since: number) => {
@@ -116,4 +117,33 @@ export const fetchAuctionsTimestamps = async (gebSubgraphUrl: string, since: num
     createdAt: string
   }[]
   return resp.map((x) => parseInt(x.createdAt))
+}
+
+export const fetchAdminSyncedBlockNumber = async (gebSubgraphUrl: string) => {
+  // We need to calculate the admin endpoint, which is different from the subgraph query endpoint
+  // !! To use this we need whitelisted access to the admin endpoint (port 8030 of the node)
+
+  // Get the base domain
+  const domain = gebSubgraphUrl.match(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/)
+  if (!domain) {
+    throw 'Invalid subgraph url'
+  }
+
+  let adminUrl: string
+  if (domain[0] == 'https://api.thegraph.com') {
+    // This is graph protocol hosted service
+    adminUrl = `https://api.thegraph.com/index-node/graphql`
+  } else {
+    // This a self hosted subgraph
+    adminUrl = domain[0] + ':8030/graphql'
+  }
+
+  // Select the part of the URL corresponding the subgraph name e.g: reflexer-labs/rai
+  let subgraphPath = gebSubgraphUrl.split('/').slice(-2).join('/')
+  let query = `{indexingStatusForCurrentVersion(subgraphName: "${subgraphPath}") { chains { latestBlock { number }}}}`
+  const block = parseInt(
+    (await postQuery(adminUrl, query)).indexingStatusForCurrentVersion.chains[0].latestBlock.number
+  )
+
+  return block
 }

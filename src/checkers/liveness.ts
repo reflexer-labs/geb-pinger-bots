@@ -2,7 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
 import { StatusInfo, STATUS_KEY, Store } from '../utils/store'
-import { fetchLastPeriodicRefresh } from '../utils/subgraph'
+import { fetchAdminSyncedBlockNumber, fetchGlobalDebt } from '../utils/subgraph'
 import { now } from '../utils/time'
 
 export class LivenessChecker {
@@ -79,26 +79,40 @@ export class LivenessChecker {
 
     // --- Graph based notifications ---
 
-    // Check that the graph nodes are responding and less 3h hours behind
     const urls = this.gebSubgraphUrl.split(',')
+    // For each subgraph URL check to things, (i) That server respond, (ii) That the sync block is not too far in the past
     for (let url of urls) {
-      let lastPeriodicRefresh: number
+      // (i)
       try {
-        lastPeriodicRefresh = await fetchLastPeriodicRefresh(url)
+        let globalDebt = await fetchGlobalDebt(url)
+
+        if (!globalDebt) {
+          throw 'Null global debt'
+        }
       } catch (err) {
         await notifier.sendError(`Graph node at ${url} query error: ${err}`)
         continue
       }
 
-      newStatus[networkName].lastUpdated['graph_node_last_periodic_refresh'] = lastPeriodicRefresh
-      let now = Math.floor(Date.now() / 1000)
-      if (now - lastPeriodicRefresh > 3600 * 3) {
-        await notifier.sendError(
-          `Graph node at ${url} might be out of sync, last periodic update on ${new Date(
-            lastPeriodicRefresh * 1000
-          ).toUTCString()}`
+      // (ii)
+      let graphNodeSyncedBlock: number
+      try {
+        // !! To call this function you need to have access to the port 8030 of the graph if self hosted, to be configured on the cloud provider.
+        graphNodeSyncedBlock = await fetchAdminSyncedBlockNumber(url)
+      } catch (err) {
+        notifier.sendError(`Graph node at ${url} could not fetch synced block: ${err}`)
+        continue
+      }
+
+      const ethNodeBlock = await this.transactor.getBlockNumber()
+
+      if (graphNodeSyncedBlock + 7 < ethNodeBlock) {
+        notifier.sendError(
+          `Graph node at ${url} is behind the chain, last subgraph synced block: ${graphNodeSyncedBlock} ETH node synced block: ${ethNodeBlock}`
         )
       }
+
+      newStatus[networkName].lastUpdated['graph_node_synced_block'] = graphNodeSyncedBlock
     }
 
     // --- Event based notifications ---
