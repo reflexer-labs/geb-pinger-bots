@@ -104,7 +104,7 @@ Currently, the following variables are available:
 - `TWILIO_AUTH_TOKEN`: Twilio secret for SMS alerts
 - `TWILIO_SEND_NUMBER`: Twilio alert sending number
 - `TWILIO_SID`: Twilio API key ID for SMS alerts
-- `PHONE_NOTIFICATION_RECEIVER`: list of phone numbers with specified timezones and available hours for SMS alerts. Example: `[{"phone":"+33642967302","timeZone":"Europe/Zurich","available":"8-20"},{"phone":"+447775456404","timeZone":"Europe/London","available":"10-2"}]`
+- `PHONE_NOTIFICATION_RECEIVER`: list of phone numbers with specified timezones and available hours for SMS alerts. Example: `[{"phone":"+33376233981","timeZone":"Europe/Zurich","available":"8-20"},{"phone":"+448885859181","timeZone":"Europe/London","available":"10-2"}]`
 - `GEB_SUBGRAPH_URL`: comma separated list of subgraph nodes
 - `AWS_SECRET`: AWS deploy key
 - `AWS_ID`: AWS deploy ID
