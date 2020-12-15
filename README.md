@@ -80,36 +80,41 @@ All environment variables are exclusively read from the `src/index.ts` file.
 
 Currently, the following variables are available:
 
-- `ETH_RPC` Comma separated list of Ethereum RPC nodes.
-- `ACCOUNTS_PASSPHRASE` Secret passphrase used to derive the Ethereum addresses of the Pingers. Each bot uses it own address. The derivation method used is the standard derivation method. Each bot have a derivation path `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc.. Use a tool like https://iancoleman.io/bip39/ for managinf the keys,
-- `MEDIANIZER_ETH_ADDRESS` Address of the ETH medianizer contract.
-- `MEDIANIZER_RAI_ADDRESS` Address of the RAI medianizer contract.
-- `FSM_ETH_ADDRESS` Address of the ETH FSM contract.
-- `FSM_RAI_ADDRESS` Address of the ETH FSM contract.
-- `ORACLE_RELAYER_ADDRESS` Address of the Oracle relayer contract.
-- `TAX_COLLECTOR_ADDRESS` Address of the tax collector contract.
-- `RATE_SETTER_ADDRESS` Address of the rate setter contract (PI)
-- `STABILITY_FEE_TREASURY_ADDRESS`Address of the stability fee treasury contract.
-- `DS_PAUSE_ADDRESS` Address of the DS pause contract.
-- `ACCOUNTING_ENGINE_ADDRESS` Address of the accounting engine contract.
-- `SAFE_ENGINE_ADDRESS` Address of the safe engine contract.
-- `GNOSIS_SAFE` Address of the gnosis safe administration multisig.
-- `MIN_ETH_BALANCE` Minimum amount of ETH balance needed in the pinger bot before it sends an alert.
-- `REWARD_RECEIVER` Receiving address of the caller's rewards
-- `SCHEDULER_INTERVAL_ETH_MEDIAN` Interval period at which the pinger is called.
-- `SCHEDULER_INTERVAL_RAI_MEDIAN` Interval period at which the pinger is called.
-- `SCHEDULER_INTERVAL_ETH_FSM` Interval period at which the pinger is called.
-- `SCHEDULER_INTERVAL_RAI_FSM` Interval period at which the pinger is called.
-- `TWILIO_AUTH_TOKEN` Twilio secret for SMS alerts.
-- `TWILIO_SEND_NUMBER` Twilio alert sending number.
-- `TWILIO_SID` Twilio API key ID for SMS alert.
-- `PHONE_NOTIFICATION_RECEIVER` List of phone number with timezone available and available hours for SMS alerts. Example: `[{"phone":"+33642967302","timeZone":"Europe/Zurich","available":"8-20"},{"phone":"+447775456404","timeZone":"Europe/London","available":"10-2"}]`
-- `GEB_SUBGRAPH_URL` Comma separated list of subgraph nodes.
-- `AWS_SECRET` AWS deploy key.
-- `AWS_ID` AWS deploy ID.
-- `STATUS_BUCKET` AWS bucket name for the status page.
-- `SLACK_HOOK_ERROR_URL` Slack hook to send error notification.
-- `SLACK_HOOK_MULTISIG_URL` Slack hook to send multisig notification.
-- `MIN_UPDATE_INTERVAL` Minimum time interval for which the pinger will send a transaction. Note that the interval above (`SCHEDULER_INTERVAL_*`) are the frequency of the Lambda function calls but this minimum interval of time that the pinger can make send a new transaction. Usually `SCHEDULER_INTERVAL_*` will be set at a lesser value than this variable.
+- `ETH_RPC`: comma separated list of Ethereum RPC nodes
+- `ACCOUNTS_PASSPHRASE`: secret passphrase used to derive Ethereum addresses for the pingers. Each bot uses its own address. The derivation method used is the standard. Each bot has a derivation path such as `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc. _Tip_: use a tool like https://iancoleman.io/bip39/ to manage the pinger keys
+- `MEDIANIZER_ETH_ADDRESS`: address of the ETH medianizer contract
+- `MEDIANIZER_RAI_ADDRESS`: address of the RAI medianizer contract
+- `FSM_ETH_ADDRESS`: address of the ETH FSM contract
+- `FSM_RAI_ADDRESS`: address of the ETH FSM contract
+- `ORACLE_RELAYER_ADDRESS`: address of the OracleRelayer contract
+- `TAX_COLLECTOR_ADDRESS`: address of the TaxCollector contract
+- `RATE_SETTER_ADDRESS`: address of the rate setter contract (PID)
+- `STABILITY_FEE_TREASURY_ADDRESS`: address of the stability fee treasury contract
+- `DS_PAUSE_ADDRESS`: address of the DSPause contract
+- `ACCOUNTING_ENGINE_ADDRESS`: address of the AccountingEngine contract
+- `SAFE_ENGINE_ADDRESS`: address of the SafeEngine contract
+- `GNOSIS_SAFE`: address of the Gnosis Safe administration multisig
+- `MIN_ETH_BALANCE`: minimum amount of ETH balance needed in a single pinger bot
+- `REWARD_RECEIVER`: receiving address for caller rewards (surplus from the stability fee treasury)
+- `SCHEDULER_INTERVAL_ETH_MEDIAN`: interval period at which the ETH median pinger is called
+- `SCHEDULER_INTERVAL_RAI_MEDIAN`: interval period at which the RAI median pinger is called
+- `SCHEDULER_INTERVAL_ETH_FSM`: interval period at which the ETH FSM pinger is called
+- `SCHEDULER_INTERVAL_RAI_FSM` : interval period at which the RAI FSM pinger is called
+- `TWILIO_AUTH_TOKEN`: Twilio secret for SMS alerts
+- `TWILIO_SEND_NUMBER`: Twilio alert sending number
+- `TWILIO_SID`: Twilio API key ID for SMS alerts
+- `PHONE_NOTIFICATION_RECEIVER`: list of phone numbers with specified timezones and available hours for SMS alerts. Example: `[{"phone":"+33376233981","timeZone":"Europe/Zurich","available":"8-20"},{"phone":"+448885859181","timeZone":"Europe/London","available":"10-2"}]`
+- `GEB_SUBGRAPH_URL`: comma separated list of subgraph nodes
+- `AWS_SECRET`: AWS deploy key
+- `AWS_ID`: AWS deploy ID
+- `STATUS_BUCKET`: AWS bucket name for the status page
+- `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
+- `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
+- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Default minimum time interval in minutes at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
+- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Same as above for the ETH median pinger
+- `MIN_UPDATE_INTERVAL_RAI_MEDIAN`: Same as above for the RAI median pinger
+- `MIN_UPDATE_INTERVAL_ETH_FSM`: Same as above for the ETH FSM pinger
+- ` `: Same as above for the RAI FSM pinger
+- `MIN_UPDATE_INTERVAL_TAX_COLLECTOR`: Same as above for the Tax collector pinger
 
-The above variables cover the most important parameter of the pinger bots configuration. Some additional useful configuration is located in `src/index.ts` for example include/exclude a bot from the balance checker, the alert threshold of the liveness checker, etc..
+The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold of the liveness checker, etc.

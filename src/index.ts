@@ -45,7 +45,11 @@ type EnvVar =
   | 'AWS_SECRET'
   | 'GNOSIS_SAFE'
   | 'NETWORK'
-  | 'MIN_UPDATE_INTERVAL'
+  | 'MIN_UPDATE_INTERVAL_ETH_MEDIAN'
+  | 'MIN_UPDATE_INTERVAL_RAI_MEDIAN'
+  | 'MIN_UPDATE_INTERVAL_ETH_FSM'
+  | 'MIN_UPDATE_INTERVAL_RAI_FSM'
+  | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -69,7 +73,7 @@ export const updateChainlinkETHMedianizer = async () => {
   const pinger = new ChainlinkMedianizerPinger(
     env.MEDIANIZER_ETH_ADDRESS,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL),
+    parseInt(env.MIN_UPDATE_INTERVAL_ETH_MEDIAN) * 60,
     env.REWARD_RECEIVER
   )
   await pinger.ping()
@@ -86,7 +90,7 @@ export const updateUniswapRAIMedianizer = async () => {
   const pinger = new UniswapMedianizerPinger(
     env.MEDIANIZER_RAI_ADDRESS,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL),
+    parseInt(env.MIN_UPDATE_INTERVAL_RAI_MEDIAN) * 60,
     env.REWARD_RECEIVER
   )
   await pinger.ping()
@@ -105,7 +109,7 @@ export const updateETHFsm = async () => {
     env.ORACLE_RELAYER_ADDRESS,
     ETH_A,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL)
+    parseInt(env.MIN_UPDATE_INTERVAL_ETH_FSM) * 60
   )
   await pinger.ping()
 }
@@ -123,7 +127,7 @@ export const updateRAIFsm = async () => {
     env.RATE_SETTER_ADDRESS,
     env.REWARD_RECEIVER,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL)
+    parseInt(env.MIN_UPDATE_INTERVAL_RAI_FSM) * 60
   )
   await pinger.ping()
 }
@@ -140,7 +144,7 @@ export const updateTaxCollector = async () => {
     env.TAX_COLLECTOR_ADDRESS,
     wallet,
     ETH_A,
-    parseInt(env.MIN_UPDATE_INTERVAL)
+    parseInt(env.MIN_UPDATE_INTERVAL_TAX_COLLECTOR) * 60
   )
   await pinger.ping()
 }
