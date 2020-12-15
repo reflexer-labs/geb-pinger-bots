@@ -192,10 +192,10 @@ export const debtSettler = async () => {
 export const balanceChecker = async () => {
   // List of pinger accounts to check
   const pingerList: [string, number, string?][] = [
-    // ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
-    ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
+    ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
+    // ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
-    ['RAI FSM', PingerAccount.FSM_RAI],
+    // ['RAI FSM', PingerAccount.FSM_RAI],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
