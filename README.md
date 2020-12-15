@@ -82,7 +82,7 @@ All environment variables are exclusively read from the `src/index.ts` file.
 Currently, the following variables are available:
 
 - `ETH_RPC`: comma separated list of Ethereum RPC nodes
-- `ACCOUNTS_PASSPHRASE`: secret passphrase used to derive Ethereum addresses for the pingers. Each bot uses its own address. The derivation method used is the standard. Each bot has a derivation path such as `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc. *Tip*: use a tool like https://iancoleman.io/bip39/ to manage the pinger keys
+- `ACCOUNTS_PASSPHRASE`: secret passphrase used to derive Ethereum addresses for the pingers. Each bot uses its own address. The derivation method used is the standard. Each bot has a derivation path such as `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc. _Tip_: use a tool like https://iancoleman.io/bip39/ to manage the pinger keys
 - `MEDIANIZER_ETH_ADDRESS`: address of the ETH medianizer contract
 - `MEDIANIZER_RAI_ADDRESS`: address of the RAI medianizer contract
 - `FSM_ETH_ADDRESS`: address of the ETH FSM contract
@@ -111,6 +111,11 @@ Currently, the following variables are available:
 - `STATUS_BUCKET`: AWS bucket name for the status page
 - `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
 - `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
-- `MIN_UPDATE_INTERVAL`: minimum time interval at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
+- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Default minimum time interval in minutes at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
+- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Same as above for the ETH median pinger
+- `MIN_UPDATE_INTERVAL_RAI_MEDIAN`: Same as above for the RAI median pinger
+- `MIN_UPDATE_INTERVAL_ETH_FSM`: Same as above for the ETH FSM pinger
+- ` `: Same as above for the RAI FSM pinger
+- `MIN_UPDATE_INTERVAL_TAX_COLLECTOR`: Same as above for the Tax collector pinger
 
 The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold of the liveness checker, etc.
