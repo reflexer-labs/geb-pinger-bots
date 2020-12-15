@@ -219,7 +219,7 @@ export const livenessChecker = async () => {
     // ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 150],
     ['eth_fsm', env.FSM_ETH_ADDRESS, 270],
     // ['prai_FSM', env.FSM_RAI_ADDRESS, 150],
-    ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 150, 'redemptionPriceUpdateTime'],
+    ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 270, 'redemptionPriceUpdateTime'],
     // ['rate_setter', env.RATE_SETTER_ADDRESS, 150],
     [
       'stability_fee_treasury_transfer_surplus',
