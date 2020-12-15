@@ -111,10 +111,9 @@ Currently, the following variables are available:
 - `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
 - `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
 - `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Default minimum time interval in minutes at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
-- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Same as above for the ETH median pinger
 - `MIN_UPDATE_INTERVAL_RAI_MEDIAN`: Same as above for the RAI median pinger
 - `MIN_UPDATE_INTERVAL_ETH_FSM`: Same as above for the ETH FSM pinger
-- ` `: Same as above for the RAI FSM pinger
+- `MIN_UPDATE_INTERVAL_RAI_FSM`: Same as above for the RAI FSM pinger
 - `MIN_UPDATE_INTERVAL_TAX_COLLECTOR`: Same as above for the Tax collector pinger
 
 The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold of the liveness checker, etc.
