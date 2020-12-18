@@ -62,8 +62,8 @@ export class PauseExecutor {
 
         continue
       }
-
-      hash = await this.transactor.ethSend(tx, false)
+      // !! Overriding here is a bit risky since we might override a different transaction.
+      hash = await this.transactor.ethSend(tx, true)
       console.log(`Executed proposal ${proposal.transactionDescription} Transaction hash ${hash}`)
     }
   }
