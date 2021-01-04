@@ -68,18 +68,17 @@ plugins:
 functions:
 
   # Chainlink pinger is not needed when Uni median updates chainlink
-  updateChainlinkETHMedianizer:
-    handler: src/index.updateChainlinkETHMedianizer
-    timeout: 240
-    events:
-      - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
-
-  # Turned off for holiday period
-  # updateUniswapRAIMedianizer:
-  #   handler: src/index.updateUniswapRAIMedianizer
+  # updateChainlinkETHMedianizer:
+  #   handler: src/index.updateChainlinkETHMedianizer
   #   timeout: 240
   #   events:
-  #     - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  #     - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+
+  updateUniswapRAIMedianizer:
+    handler: src/index.updateUniswapRAIMedianizer
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   updateETHFsm:
     handler: src/index.updateETHFsm
@@ -87,12 +86,11 @@ functions:
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_ETH_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
-  # Turned off for holiday period
-  # updateRAIFsm:
-  #   handler: src/index.updateRAIFsm
-  #   timeout: 240
-  #   events:
-  #     - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  updateRAIFsm:
+    handler: src/index.updateRAIFsm
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_FSM, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   updateTaxCollector:
     handler: src/index.updateTaxCollector

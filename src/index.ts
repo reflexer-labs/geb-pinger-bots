@@ -192,10 +192,10 @@ export const debtSettler = async () => {
 export const balanceChecker = async () => {
   // List of pinger accounts to check
   const pingerList: [string, number, string?][] = [
-    ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
-    // ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
+    // ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
+    ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
-    // ['RAI FSM', PingerAccount.FSM_RAI],
+    ['RAI FSM', PingerAccount.FSM_RAI],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
@@ -216,11 +216,11 @@ export const livenessChecker = async () => {
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number, string?][] = [
     ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 150],
-    // ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 150],
+    ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 150],
     ['eth_fsm', env.FSM_ETH_ADDRESS, 270],
-    // ['prai_FSM', env.FSM_RAI_ADDRESS, 150],
+    ['prai_FSM', env.FSM_RAI_ADDRESS, 270],
     ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 270, 'redemptionPriceUpdateTime'],
-    // ['rate_setter', env.RATE_SETTER_ADDRESS, 150],
+    ['rate_setter', env.RATE_SETTER_ADDRESS, 270],
     [
       'stability_fee_treasury_transfer_surplus',
       env.STABILITY_FEE_TREASURY_ADDRESS,
