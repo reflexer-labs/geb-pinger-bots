@@ -124,7 +124,6 @@ export class LivenessChecker {
     // ABIs
     const dsPauseEventAbi = [
       'event ScheduleTransaction(address sender, address usr, bytes32 codeHash, bytes parameters, uint earliestExecutionTime)',
-      'event ExecuteTransaction(address sender, address usr, bytes32 codeHash, bytes parameters, uint earliestExecutionTime)',
     ]
     const gnosisSafeAbi = [
       'event ExecutionSuccess(bytes32 txHash, uint256 payment)',
@@ -132,62 +131,45 @@ export class LivenessChecker {
     ]
 
     // Look for DsPause ScheduleTransaction events
-    let event = await this.transactor.getContractEvents(
+    let events = await this.transactor.getContractEvents(
       dsPauseEventAbi[0],
       this.dsPauseAddress,
       fromBlock,
       toBlock
     )
 
-    event.map((e) => {
+    events.map((e) => {
       const args = e.args as ethers.utils.Result
       return notifier.sendMultisigMessage(
-        `New pending proposal scheduled in ds-pause. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
-      )
-    })
-
-    // Look for DsPause ExecuteTransaction events
-    event = await this.transactor.getContractEvents(
-      dsPauseEventAbi[1],
-      this.dsPauseAddress,
-      fromBlock,
-      toBlock
-    )
-
-    event.map((e) => {
-      const args = e.args as ethers.utils.Result
-      return notifier.sendMultisigMessage(
-        `Pending proposal executed. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime} codeHash: ${args.codeHash}`
+        `New pending proposal scheduled in ds-pause. Target ${args.usr} parameters: ${args.parameters} earliest execution time ${args.earliestExecutionTime}`
       )
     })
 
     // Look for GnosisSafe ExecutionSuccess events
-    event = await this.transactor.getContractEvents(
+    events = await this.transactor.getContractEvents(
       gnosisSafeAbi[0],
       this.gnosisSafeAddress,
       fromBlock,
       toBlock
     )
 
-    event.map((e) => {
-      const args = e.args as ethers.utils.Result
+    events.map((e) => {
       return notifier.sendMultisigMessage(
-        `New gnosis safe transaction success, tx hash: ${args.txHash}`
+        `New gnosis safe transaction success, tx hash: ${e.transactionHash}`
       )
     })
 
     // Look for GnosisSafe ExecutionFailure events
-    event = await this.transactor.getContractEvents(
+    events = await this.transactor.getContractEvents(
       gnosisSafeAbi[1],
       this.gnosisSafeAddress,
       fromBlock,
       toBlock
     )
 
-    event.map((e) => {
-      const args = e.args as ethers.utils.Result
+    events.map((e) => {
       return notifier.sendMultisigMessage(
-        `Gnosis safe transaction failure, tx hash: ${args.txHash}`
+        `Gnosis safe transaction failure, tx hash: ${e.transactionHash}`
       )
     })
 
