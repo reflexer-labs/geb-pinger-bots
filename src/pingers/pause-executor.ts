@@ -17,13 +17,16 @@ export class PauseExecutor {
     const proposals = await fetchPendingProposals(this.gebSubgraphUrl)
     console.log(`${proposals.length} pending found`)
 
+    // We will force override only the first pending proposals in case some transaction are pending from the previous run
+    let override = true
+
     for (let proposal of proposals) {
       const fullHash = proposal.fullTransactionHash
       const isSchedule = await this.dsPause.scheduledTransactions(fullHash)
 
       if (!isSchedule) {
         notifier.sendError(
-          `Transaction found in subgraph not scheduled on chain. Full hash: ${fullHash} target ${proposal.proposalTarget} description: ${proposal.transactionDescription}`
+          `Transaction found in subgraph not scheduled on chain. Full hash: ${fullHash} target ${proposal.proposalTarget} description: "${proposal.transactionDescription}"`
         )
         continue
       }
@@ -44,17 +47,17 @@ export class PauseExecutor {
         if ((err as string).startsWith('ds-protest-pause-delegatecall-error')) {
           // The proposal itself is failing
           notifier.sendError(
-            `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: ${proposal.transactionDescription} is a failing at execution.`
+            `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: "${proposal.transactionDescription}" is a failing at execution.`
           )
         } else if ((err as string).startsWith('ds-protest-pause-expired-tx')) {
           // The proposal has expired
           console.log(
-            `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: ${proposal.transactionDescription} has expired and can't be executed.`
+            `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: "${proposal.transactionDescription}" has expired and can't be executed.`
           )
         } else if ((err as string).startsWith('ds-protest-pause-premature-exec')) {
           // We need to wait more to execute the transaction
           console.log(
-            `Porposal scheduled with Full hash: ${fullHash} target ${proposal.proposalTarget} description: ${proposal.transactionDescription} but not yet ready to be executed.`
+            `Proposal scheduled with Full hash: ${fullHash} target ${proposal.proposalTarget} description: "${proposal.transactionDescription}" but not yet ready to be executed.`
           )
         } else {
           notifier.sendError(`Unexpected transaction execution error: ${err}`)
@@ -63,8 +66,11 @@ export class PauseExecutor {
         continue
       }
       // !! Overriding here is a bit risky since we might override a different transaction.
-      hash = await this.transactor.ethSend(tx, true)
-      console.log(`Executed proposal ${proposal.transactionDescription} Transaction hash ${hash}`)
+      hash = await this.transactor.ethSend(tx, override)
+      override = false
+      notifier.sendMultisigMessage(
+        `Executed proposal in DsPause with description: "${proposal.transactionDescription}" \n Transaction hash ${hash}`
+      )
     }
   }
 }
