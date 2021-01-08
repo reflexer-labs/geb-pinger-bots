@@ -193,7 +193,7 @@ export const debtSettler = async () => {
 export const balanceChecker = async () => {
   // List of pinger accounts to check
   const pingerList: [string, number, string?][] = [
-    // ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
+    ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
     ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['RAI FSM', PingerAccount.FSM_RAI],
@@ -216,7 +216,7 @@ export const livenessChecker = async () => {
   const time = Date.now()
   // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
   const checks: [string, string, number, string?][] = [
-    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 270],
+    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 80],
     ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 270],
     ['eth_fsm', env.FSM_ETH_ADDRESS, 270],
     ['prai_FSM', env.FSM_RAI_ADDRESS, 270],
