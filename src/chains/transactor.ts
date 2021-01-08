@@ -171,13 +171,20 @@ export class Transactor {
   }
 
   // Tell whether there is a transaction pending in the mempool
-  public async isAnyTransactionPending(): Promise<boolean> {
-    // Sanity checks
-    if (!this.signer) {
-      throw new Error("The transactor can't sign transactions, provide a signer")
+  public async isAnyTransactionPending(address?: string): Promise<boolean> {
+    let fromAddress: string
+
+    // Use the optional address passed or the address from the signer if we have a signer
+    if (address) {
+      fromAddress = address
+    } else {
+      // Sanity checks
+      if (!this.signer) {
+        throw new Error("The transactor can't sign transactions, provide a signer")
+      }
+      fromAddress = await this.signer.getAddress()
     }
 
-    const fromAddress = await this.signer.getAddress()
     const currentNonce = await this.provider.getTransactionCount(fromAddress, 'latest')
     const pendingNonce = await this.provider.getTransactionCount(fromAddress, 'pending')
 
