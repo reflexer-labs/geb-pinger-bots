@@ -72,6 +72,7 @@ export const updateChainlinkETHMedianizer = async () => {
   )
   const pinger = new ChainlinkMedianizerPinger(
     env.MEDIANIZER_ETH_ADDRESS,
+    env.MEDIANIZER_RAI_ADDRESS,
     wallet,
     parseInt(env.MIN_UPDATE_INTERVAL_ETH_MEDIAN) * 60,
     env.REWARD_RECEIVER

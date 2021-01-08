@@ -10,7 +10,8 @@ export class ChainlinkMedianizerPinger {
   protected transactor: Transactor
 
   constructor(
-    medianizerAddress: string,
+    chainlinkMedianizerAddress: string,
+    protected uniswapMedianizerAddress: string,
     wallet: ethers.Signer,
     protected minUpdateInterval: number,
     protected rewardReceiver: string
@@ -18,7 +19,7 @@ export class ChainlinkMedianizerPinger {
     this.transactor = new Transactor(wallet)
     this.medianizer = this.transactor.getGebContract(
       contracts.ChainlinkMedianEthusd,
-      medianizerAddress
+      chainlinkMedianizerAddress
     )
   }
 
@@ -52,6 +53,16 @@ export class ChainlinkMedianizerPinger {
       } else {
         await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
+      return
+    }
+
+    // Since UniswapMedianizerPinger is also updating the Chainlink ETH pinger, do
+    // not update the Chainlink ETH pinger if the UniswapMedianizerPinger has a
+    // pending transaction (meaning that it's updating it).
+    if (await this.transactor.isAnyTransactionPending(this.uniswapMedianizerAddress)) {
+      console.log(
+        'UniswapMedianizerPinger has pending transaction. Do not send a median update since UniswapMedianizerPinger will update Chainlink median if possible.'
+      )
       return
     }
 
