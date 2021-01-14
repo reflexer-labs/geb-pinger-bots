@@ -28,6 +28,7 @@ type EnvVar =
   | 'ORACLE_RELAYER_ADDRESS'
   | 'TAX_COLLECTOR_ADDRESS'
   | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
+  | 'MEDIANIZER_RAI_SPOT_ADDRESS'
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
   | 'REWARD_RECEIVER'
@@ -206,7 +207,7 @@ export const uniswapSpotMedianizerPinger = async () => {
     env.NETWORK
   )
   const pinger = new UniswapSpotMedianizerPinger(
-    env.MEDIANIZER_RAI_ADDRESS,
+    env.MEDIANIZER_RAI_SPOT_ADDRESS,
     env.ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS,
     env.ORACLE_RELAYER_ADDRESS,
     wallet,
