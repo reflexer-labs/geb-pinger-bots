@@ -9,15 +9,15 @@ This repo is a collection of AWS Lambda functions built with the serverless fram
 
 This repo includes the following bots:
 
-- `updateUniswapRAIMedianizer`: call the RAI medianizer, pull the latest RAI price from Uniswap v2 and update the oracle price
-- `updateETHFsm`: update the ETH FSM (OSM) and subsequently call the oracle relayer to push the new ETH price inside the core system
-- `updateRAIFsm`: update the RAI FSM (DSM) and subsequently call the PID to set a new redemption rate
-- `updateTaxCollector`: collect stability fees from open Safes
-- `updateStabilityFeeTreasury`: transfer any unused stability fees outside the treasury and to the AccountingEngine
-- `pauseExecutor`: execute pending proposals
-- `debtSettler`: call the settle debt function from AccountingEngine
-- `balanceChecker`: check that the ETH balance of a pinger is high enough as to continue paying for its tasks
-- `livenessChecker`: check if the RAI & collateral FSMs and medianizers as well as the tax collector have been updated recently. Check that the Ethereum nodes used by the pinger are responsive and up to date. Check the the subgraph nodes are responding and up to date. Sends notifications for new multisig transactions. Updates the status files at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
+- `updateUniswapRAIMedianizer` Call the update function of the RAI medianizer pulling the price from the Uniswap TWAP
+- `updateETHFsm` Update the ETH FSM (OSM) and subsequently call the oracle relayer to push the new price
+- `updateRateSetter` Call the PI update to set a new redemption rate
+- `updateTaxCollector` Tax the stability fee for open safes
+- `updateStabilityFeeTreasury` Transfer any potential stability fee surplus
+- `pauseExecutor` Execute pending proposals that are ready
+- `debtSettler` Call the settle debt function on the liquidation engine
+- `balanceChecker` Check that the ETH balance of the pinger is sufficient to pay for gas
+- `livenessChecker` Check that the the FSMs, medianizers and the tax collector were updated recently enough. Check that the Ethereum nodes used by the pinger are responding and up to date. Check the the subgraph node are responding and up to date. Send notification for new multisig transactions. Update the status file at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
 
 ## Setup
 
@@ -86,7 +86,6 @@ Currently, the following variables are available:
 - `MEDIANIZER_ETH_ADDRESS`: address of the ETH medianizer contract
 - `MEDIANIZER_RAI_ADDRESS`: address of the RAI medianizer contract
 - `FSM_ETH_ADDRESS`: address of the ETH FSM contract
-- `FSM_RAI_ADDRESS`: address of the ETH FSM contract
 - `ORACLE_RELAYER_ADDRESS`: address of the OracleRelayer contract
 - `TAX_COLLECTOR_ADDRESS`: address of the TaxCollector contract
 - `RATE_SETTER_ADDRESS`: address of the rate setter contract (PID)
@@ -100,7 +99,7 @@ Currently, the following variables are available:
 - `SCHEDULER_INTERVAL_ETH_MEDIAN`: interval period at which the ETH median pinger is called
 - `SCHEDULER_INTERVAL_RAI_MEDIAN`: interval period at which the RAI median pinger is called
 - `SCHEDULER_INTERVAL_ETH_FSM`: interval period at which the ETH FSM pinger is called
-- `SCHEDULER_INTERVAL_RAI_FSM` : interval period at which the RAI FSM pinger is called
+- `SCHEDULER_INTERVAL_RATE_SETTER` : interval period at which the rate setter pinger is called
 - `TWILIO_AUTH_TOKEN`: Twilio secret for SMS alerts
 - `TWILIO_SEND_NUMBER`: Twilio alert sending number
 - `TWILIO_SID`: Twilio API key ID for SMS alerts
@@ -114,7 +113,7 @@ Currently, the following variables are available:
 - `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Default minimum time interval in minutes at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
 - `MIN_UPDATE_INTERVAL_RAI_MEDIAN`: Same as above for the RAI median pinger
 - `MIN_UPDATE_INTERVAL_ETH_FSM`: Same as above for the ETH FSM pinger
-- `MIN_UPDATE_INTERVAL_RAI_FSM`: Same as above for the RAI FSM pinger
+- `MIN_UPDATE_INTERVAL_RATE_SETTER`: Same as above for the rate setter pinger
 - `MIN_UPDATE_INTERVAL_TAX_COLLECTOR`: Same as above for the Tax collector pinger
 
 The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold of the liveness checker, etc.

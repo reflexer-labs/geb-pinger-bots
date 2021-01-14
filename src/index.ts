@@ -5,13 +5,14 @@ import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
 import { DebtSettler } from './pingers/debt-pinger'
-import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
+import { CollateralFsmPinger } from './pingers/fsm'
 import {
   ChainlinkMedianizerPinger,
   UniswapMedianizerPinger,
   UniswapSpotMedianizerPinger,
 } from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
+import { RateSetterPinger } from './pingers/rate-setter-pinger'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { Store } from './utils/store'
@@ -24,7 +25,6 @@ type EnvVar =
   | 'MEDIANIZER_RAI_ADDRESS'
   | 'MIN_ETH_BALANCE'
   | 'FSM_ETH_ADDRESS'
-  | 'FSM_RAI_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
   | 'TAX_COLLECTOR_ADDRESS'
   | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
@@ -40,7 +40,7 @@ type EnvVar =
   | 'SCHEDULER_INTERVAL_ETH_MEDIAN'
   | 'SCHEDULER_INTERVAL_RAI_MEDIAN'
   | 'SCHEDULER_INTERVAL_ETH_FSM'
-  | 'SCHEDULER_INTERVAL_RAI_FSM'
+  | 'SCHEDULER_INTERVAL_RATE_SETTER'
   | 'PHONE_NOTIFICATION_RECEIVER'
   | 'GEB_SUBGRAPH_URL'
   | 'DS_PAUSE_ADDRESS'
@@ -54,7 +54,7 @@ type EnvVar =
   | 'MIN_UPDATE_INTERVAL_ETH_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_RAI_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
-  | 'MIN_UPDATE_INTERVAL_RAI_FSM'
+  | 'MIN_UPDATE_INTERVAL_RATE_SETTER'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
   | 'MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN'
 
@@ -122,20 +122,19 @@ export const updateETHFsm = async () => {
   await pinger.ping()
 }
 
-// RAI FSM
-export const updateRAIFsm = async () => {
+// Rate setter
+export const updateRateSetter = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.FSM_RAI,
+    PingerAccount.RATE_SETTER,
     env.NETWORK
   )
-  const pinger = new CoinFsmPinger(
-    env.FSM_RAI_ADDRESS,
+  const pinger = new RateSetterPinger(
     env.RATE_SETTER_ADDRESS,
     env.REWARD_RECEIVER,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_RAI_FSM) * 60
+    parseInt(env.MIN_UPDATE_INTERVAL_RATE_SETTER) * 60
   )
   await pinger.ping()
 }
@@ -224,7 +223,7 @@ export const balanceChecker = async () => {
     ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
     ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
     ['ETH FSM', PingerAccount.FSM_ETH],
-    ['RAI FSM', PingerAccount.FSM_RAI],
+    ['Rate setter', PingerAccount.RATE_SETTER],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
@@ -248,7 +247,6 @@ export const livenessChecker = async () => {
     ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 80],
     ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 270],
     ['eth_fsm', env.FSM_ETH_ADDRESS, 270],
-    ['prai_FSM', env.FSM_RAI_ADDRESS, 270],
     ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 270, 'redemptionPriceUpdateTime'],
     ['rate_setter', env.RATE_SETTER_ADDRESS, 270],
     [
