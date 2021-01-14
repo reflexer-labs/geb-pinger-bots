@@ -6,7 +6,11 @@ import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
 import { DebtSettler } from './pingers/debt-pinger'
 import { CoinFsmPinger, CollateralFsmPinger } from './pingers/fsm'
-import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
+import {
+  ChainlinkMedianizerPinger,
+  UniswapMedianizerPinger,
+  UniswapSpotMedianizerPinger,
+} from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
@@ -23,6 +27,7 @@ type EnvVar =
   | 'FSM_RAI_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
   | 'TAX_COLLECTOR_ADDRESS'
+  | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
   | 'REWARD_RECEIVER'
@@ -50,6 +55,7 @@ type EnvVar =
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
   | 'MIN_UPDATE_INTERVAL_RAI_FSM'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
+  | 'MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -189,6 +195,27 @@ export const debtSettler = async () => {
   await pinger.ping()
 }
 
+// Similar to updateUniswapRAIMedianizer but points to different medianizer
+// contract with a shorter TWAP window. This send an update only in when price
+// deviation between Market price and redemption price.
+export const uniswapSpotMedianizerPinger = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MEDIANIZER_RAI_SPOT,
+    env.NETWORK
+  )
+  const pinger = new UniswapSpotMedianizerPinger(
+    env.MEDIANIZER_RAI_ADDRESS,
+    env.ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS,
+    env.ORACLE_RELAYER_ADDRESS,
+    wallet,
+    parseInt(env.MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN) * 60,
+    env.REWARD_RECEIVER
+  )
+  await pinger.ping()
+}
+
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
@@ -201,6 +228,7 @@ export const balanceChecker = async () => {
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
     ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
+    ['RAI spot medianizer', PingerAccount.MEDIANIZER_RAI_SPOT],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [

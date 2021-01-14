@@ -37,6 +37,7 @@ custom:
     DS_PAUSE_ADDRESS: ${param:DS_PAUSE_ADDRESS}
     ACCOUNTING_ENGINE_ADDRESS: ${param:ACCOUNTING_ENGINE_ADDRESS}
     SAFE_ENGINE_ADDRESS: ${param:SAFE_ENGINE_ADDRESS}
+    ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS: ${param:ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS}
     GNOSIS_SAFE: ${param:GNOSIS_SAFE}
     MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, 500000000000000000} # Default 0.5 ETH 
     REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
@@ -59,6 +60,7 @@ custom:
     MIN_UPDATE_INTERVAL_ETH_FSM: ${param:MIN_UPDATE_INTERVAL_ETH_FSM, 0}
     MIN_UPDATE_INTERVAL_RAI_FSM: ${param:MIN_UPDATE_INTERVAL_RAI_FSM, 0}
     MIN_UPDATE_INTERVAL_TAX_COLLECTOR: ${param:MIN_UPDATE_INTERVAL_TAX_COLLECTOR, 0}
+    MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN: ${param:MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN}
 
 
 plugins:
@@ -115,6 +117,12 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_DEBT_SETTLER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  
+  updateUniswapSpotMedianizerPinger:
+    handler: src/index.uniswapSpotMedianizerPinger
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN_SPOT, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker

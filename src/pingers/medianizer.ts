@@ -127,3 +127,47 @@ export class UniswapMedianizerPinger {
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
+
+// This pinger is similar the the standard UniswapMedianizerPinger with one additional check.
+// We check that the deviation between market price  and redemption price is < minSystemCoinMedianDeviation
+export class UniswapSpotMedianizerPinger extends UniswapMedianizerPinger {
+  protected collateralAuctionHouse: contracts.FixedDiscountCollateralAuctionHouse
+  protected oracleRelayer: contracts.OracleRelayer
+
+  constructor(
+    medianizerAddress: string,
+    // If several collateral auction house address, pass the one with the smallest deviation parameter.
+    collateralAuctionHouseAddress: string,
+    oracleRelayerAddress: string,
+    wallet: ethers.Signer,
+    minUpdateInterval: number,
+    rewardReceiver: string
+  ) {
+    super(medianizerAddress, wallet, minUpdateInterval, rewardReceiver)
+    this.collateralAuctionHouse = this.transactor.getGebContract(
+      contracts.FixedDiscountCollateralAuctionHouse,
+      collateralAuctionHouseAddress
+    )
+    this.oracleRelayer = this.transactor.getGebContract(
+      contracts.OracleRelayer,
+      oracleRelayerAddress
+    )
+  }
+
+  public async ping() {
+    const redemptionPrice = await this.oracleRelayer.redemptionPrice_readOnly()
+    // Fetch the RAI price that the auction house would use in case au auction
+    const auctionRaiPrice = (
+      await this.collateralAuctionHouse.getFinalTokenPrices(redemptionPrice)
+    )[1]
+    if (redemptionPrice.eq(auctionRaiPrice)) {
+      // We do not meet the price deviation requirement, therefore there is no need to update
+      // this pinger.
+      console.log('Not updating, price deviation requirement not met.')
+      return
+    }
+
+    // Call the standard median pinger from here
+    super.ping()
+  }
+}
