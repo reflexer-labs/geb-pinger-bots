@@ -131,43 +131,84 @@ export class UniswapMedianizerPinger {
 // This pinger is similar the the standard UniswapMedianizerPinger with one additional check.
 // We check that the deviation between market price  and redemption price is < minSystemCoinMedianDeviation
 export class UniswapSpotMedianizerPinger extends UniswapMedianizerPinger {
-  protected collateralAuctionHouse: contracts.FixedDiscountCollateralAuctionHouse
   protected oracleRelayer: contracts.OracleRelayer
+  protected medianizerEth: contracts.UniswapConsecutiveSlotsMedianRaiusd
+  protected collateralAuctionHouse: contracts.FixedDiscountCollateralAuctionHouse
+  protected uniPair: contracts.UniswapV2Pair
 
   constructor(
-    medianizerAddress: string,
+    medianizerRaiSpotAddress: string,
     // If several collateral auction house address, pass the one with the smallest deviation parameter.
-    collateralAuctionHouseAddress: string,
+    medianizerEthAddress: string,
+    uniPairAddress: string,
     oracleRelayerAddress: string,
+    collateralAuctionHouseAddress: string,
     wallet: ethers.Signer,
     minUpdateInterval: number,
     rewardReceiver: string
   ) {
-    super(medianizerAddress, wallet, minUpdateInterval, rewardReceiver)
-    this.collateralAuctionHouse = this.transactor.getGebContract(
-      contracts.FixedDiscountCollateralAuctionHouse,
-      collateralAuctionHouseAddress
-    )
+    super(medianizerRaiSpotAddress, wallet, minUpdateInterval, rewardReceiver)
+
     this.oracleRelayer = this.transactor.getGebContract(
       contracts.OracleRelayer,
       oracleRelayerAddress
     )
+
+    this.medianizerEth = this.transactor.getGebContract(
+      contracts.UniswapConsecutiveSlotsMedianRaiusd,
+      medianizerEthAddress
+    )
+
+    this.collateralAuctionHouse = this.transactor.getGebContract(
+      contracts.FixedDiscountCollateralAuctionHouse,
+      collateralAuctionHouseAddress
+    )
+
+    this.uniPair = this.transactor.getGebContract(contracts.UniswapV2Pair, uniPairAddress)
   }
 
   public async ping() {
-    const redemptionPrice = await this.oracleRelayer.redemptionPrice_readOnly()
-    // Fetch the RAI price that the auction house would use in case au auction
-    const auctionRaiPrice = (
-      await this.collateralAuctionHouse.getFinalTokenPrices(redemptionPrice)
-    )[1]
-    if (redemptionPrice.eq(auctionRaiPrice)) {
-      // We do not meet the price deviation requirement, therefore there is no need to update
-      // this pinger.
-      console.log('Not updating, price deviation requirement not met.')
-      return
+    // Horrible calculation of the current RAI/USD price with precision loss...
+    const redemptionPrice =
+      Number((await this.oracleRelayer.redemptionPrice_readOnly()).toString()) / 1e27
+
+    const ethPrice = Number((await this.medianizerEth.read()).toString()) / 1e18
+
+    const token0Address = await this.uniPair.token0()
+    const token1Address = await this.uniPair.token1()
+
+    const reserves = await this.uniPair.getReserves()
+    const reserve0 = Number(reserves[0].toString()) / 1e18
+    const reserve1 = Number(reserves[1].toString()) / 1e18
+
+    // RAI/ETH price from Uniswap
+    let raiEthUniSpotPrice: number
+
+    // Uniswap labels ETH and RAI tokens0 or token1 depending on the order of their
+    // token addresses. Note, we have precision loss with the conversion But it should
+    // not matter.
+    if (BigNumber.from(token0Address).lt(BigNumber.from(token1Address))) {
+      raiEthUniSpotPrice = reserve1 / reserve0
+    } else {
+      raiEthUniSpotPrice = reserve0 / reserve1
     }
 
-    // Call the standard median pinger from here
-    super.ping()
+    const usdRaiPrice = ethPrice / raiEthUniSpotPrice
+
+    const minDeviation =
+      Number((await this.collateralAuctionHouse.minSystemCoinMedianDeviation()).toString()) / 1e18
+
+    if (
+      usdRaiPrice < redemptionPrice * minDeviation ||
+      usdRaiPrice > redemptionPrice * (2 - minDeviation)
+    ) {
+      console.log('Deviation larger than threshold, update the pinger')
+      // Call the standard median pinger from here
+      super.ping()
+    } else {
+      console.log(
+        'Do not update the spot pinger, small deviation between spot and redemption price'
+      )
+    }
   }
 }
