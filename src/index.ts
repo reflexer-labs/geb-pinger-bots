@@ -4,6 +4,7 @@ import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
+import { CeilingSetter } from './pingers/ceiling-setter'
 import { DebtSettler } from './pingers/debt-pinger'
 import { CollateralFsmPinger } from './pingers/fsm'
 import {
@@ -32,6 +33,7 @@ type EnvVar =
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
   | 'UNI_ETH_RAI_PAIR_ADDRESS'
+  | 'CEILING_SETTER_ADDRESS'
   | 'REWARD_RECEIVER'
   | 'SLACK_HOOK_MULTISIG_URL'
   | 'SLACK_HOOK_ERROR_URL'
@@ -219,6 +221,18 @@ export const uniswapSpotMedianizerPinger = async () => {
   await pinger.ping()
 }
 
+// Auto bump the debt ceiling by a percent
+export const ceilingSetter = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.CEILING_SETTER_ADDRESS,
+    env.NETWORK
+  )
+  const pinger = new CeilingSetter(env.CEILING_SETTER_ADDRESS, wallet, env.REWARD_RECEIVER)
+  await pinger.ping()
+}
+
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
   // List of pinger accounts to check
@@ -232,6 +246,7 @@ export const balanceChecker = async () => {
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
     ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
     ['RAI spot medianizer', PingerAccount.MEDIANIZER_RAI_SPOT],
+    ['Ceiling setter', PingerAccount.CEILING_SETTER_ADDRESS],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [
