@@ -73,7 +73,7 @@ export const fetchRecentProposals = async (gebSubgraphUrl: string, since: number
 
 export const fetchPendingProposals = async (gebSubgraphUrl: string) => {
   const query = `{
-    dsPauseScheduledTransactions(where: {executed: false}){
+    dsPauseScheduledTransactions(where: {executed: false, abandoned: false}){
     proposalSender
     proposalTarget
     codeHash
