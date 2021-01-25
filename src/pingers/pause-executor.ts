@@ -46,7 +46,7 @@ export class PauseExecutor {
       } catch (err) {
         if ((err as string).startsWith('ds-protest-pause-delegatecall-error')) {
           // The proposal itself is failing
-          notifier.sendError(
+          console.log(
             `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: "${proposal.transactionDescription}" is a failing at execution.`
           )
         } else if ((err as string).startsWith('ds-protest-pause-expired-tx')) {
