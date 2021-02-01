@@ -32,8 +32,12 @@ export class ChainlinkMedianizerPinger {
       // To early to update but still check if there a pending transaction.
       // If yes continue the execution that will bump the gas price.
       if (!(await this.transactor.isAnyTransactionPending())) {
-        console.log('To early to update')
+        console.log('Too early to update')
         return
+      } else {
+        console.log(
+          'Too early to update but there is tx pending so continue execution to bump gas price'
+        )
       }
     }
 
@@ -75,11 +79,13 @@ export class ChainlinkMedianizerPinger {
 export class UniswapMedianizerPinger {
   protected medianizer: contracts.UniswapConsecutiveSlotsMedianRaiusd
   protected transactor: Transactor
+  protected rateSetter: contracts.RateSetter
 
   constructor(
     medianizerAddress: string,
+    rateSetterAddress: string,
     wallet: ethers.Signer,
-    protected minUpdateInterval: number,
+    protected minUpdateIntervalMedian: number,
     protected rewardReceiver: string
   ) {
     this.transactor = new Transactor(wallet)
@@ -87,31 +93,37 @@ export class UniswapMedianizerPinger {
       contracts.UniswapConsecutiveSlotsMedianRaiusd,
       medianizerAddress
     )
+    this.rateSetter = this.transactor.getGebContract(contracts.RateSetter, rateSetterAddress)
   }
 
   public async ping() {
+    // First update the TWAP median
+    const didUpdateMedian = await this.updateMedian()
+    // Then directly update the rate setter
+    await this.updateRateSetter(didUpdateMedian)
+  }
+
+  async updateMedian(): Promise<boolean> {
     let tx: TransactionRequest
 
     // Check if it's too early to update
     const lastUpdatedTime = await this.medianizer.lastUpdateTime()
-    if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
+    if (now().sub(lastUpdatedTime).lt(this.minUpdateIntervalMedian)) {
       // To early to update but still check if there a pending transaction.
       // If yes continue the execution that will bump the gas price.
       if (!(await this.transactor.isAnyTransactionPending())) {
-        console.log('To early to update')
-        return
+        console.log('Too early to update')
+        return false
+      } else {
+        console.log(
+          'Too early to update but there is tx pending so continue execution to bump gas price'
+        )
       }
     }
 
-    // Send the caller reward to specified address or send the reward to the pinger bot
-    let rewardReceiver =
-      !this.rewardReceiver || this.rewardReceiver === ''
-        ? await this.transactor.getWalletAddress()
-        : this.rewardReceiver
-
     // Simulate call
     try {
-      tx = this.medianizer.updateResult(rewardReceiver)
+      tx = this.medianizer.updateResult(this.rewardReceiver)
       await this.transactor.ethCall(tx)
     } catch (err) {
       if (err.startsWith('UniswapConsecutiveSlotsPriceFeedMedianizer/not-enough-time-elapsed')) {
@@ -119,12 +131,44 @@ export class UniswapMedianizerPinger {
       } else {
         await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
-      return
+      return false
     }
 
     // Send transaction
     const hash = await this.transactor.ethSend(tx, true, BigNumber.from('500000'))
-    console.log(`Update sent, transaction hash: ${hash}`)
+    console.log(`Median update sent, transaction hash: ${hash}`)
+
+    return true
+  }
+
+  async updateRateSetter(didUpdateMedian: boolean): Promise<void> {
+    let tx: TransactionRequest
+
+    if (!didUpdateMedian) {
+      // If the median was not updated, there is no point updating the rate setter
+      return
+    }
+
+    try {
+      tx = this.rateSetter.updateRate(this.rewardReceiver)
+
+      // Simulate transaction to check if there are any expected errors
+      await this.transactor.ethCall(tx)
+
+      // We don't force overwrite since the transaction of the medianizer must be pending
+      const hash = await await this.transactor.ethSend(tx, false, BigNumber.from('400000'))
+      console.log(`Rate setter update sent, transaction hash: ${hash}`)
+    } catch (err) {
+      if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
+        // Rate setter was updated too recently. This should not be the case unless someone else
+        // is updating the rate setter pinger.
+        await notifier.sendError(
+          `RateSetter/wait-more after median update, will only retry after next median update`
+        )
+      } else {
+        await notifier.sendError(`Unexpected error while simulating call: ${err}`)
+      }
+    }
   }
 }
 

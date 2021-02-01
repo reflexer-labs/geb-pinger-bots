@@ -13,7 +13,6 @@ import {
   UniswapSpotMedianizerPinger,
 } from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
-import { RateSetterPinger } from './pingers/rate-setter-pinger'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { Store } from './utils/store'
@@ -57,7 +56,6 @@ type EnvVar =
   | 'MIN_UPDATE_INTERVAL_ETH_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_RAI_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
-  | 'MIN_UPDATE_INTERVAL_RATE_SETTER'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
   | 'MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN'
 
@@ -100,6 +98,7 @@ export const updateUniswapRAIMedianizer = async () => {
   )
   const pinger = new UniswapMedianizerPinger(
     env.MEDIANIZER_RAI_ADDRESS,
+    env.RATE_SETTER_ADDRESS,
     wallet,
     parseInt(env.MIN_UPDATE_INTERVAL_RAI_MEDIAN) * 60,
     env.REWARD_RECEIVER
@@ -121,23 +120,6 @@ export const updateETHFsm = async () => {
     ETH_A,
     wallet,
     parseInt(env.MIN_UPDATE_INTERVAL_ETH_FSM) * 60
-  )
-  await pinger.ping()
-}
-
-// Rate setter
-export const updateRateSetter = async () => {
-  const wallet = await getWallet(
-    env.ETH_RPC,
-    env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.RATE_SETTER,
-    env.NETWORK
-  )
-  const pinger = new RateSetterPinger(
-    env.RATE_SETTER_ADDRESS,
-    env.REWARD_RECEIVER,
-    wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_RATE_SETTER) * 60
   )
   await pinger.ping()
 }
