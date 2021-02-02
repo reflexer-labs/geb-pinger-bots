@@ -188,10 +188,16 @@ export class UniswapSpotMedianizerPinger extends UniswapMedianizerPinger {
     oracleRelayerAddress: string,
     collateralAuctionHouseAddress: string,
     wallet: ethers.Signer,
-    minUpdateInterval: number,
+    minUpdateIntervalMedian: number,
     rewardReceiver: string
   ) {
-    super(medianizerRaiSpotAddress, wallet, minUpdateInterval, rewardReceiver)
+    super(
+      medianizerRaiSpotAddress,
+      '0x0000000000000000000000000000000000000000',
+      wallet,
+      minUpdateIntervalMedian,
+      rewardReceiver
+    )
 
     this.oracleRelayer = this.transactor.getGebContract(
       contracts.OracleRelayer,
@@ -247,8 +253,9 @@ export class UniswapSpotMedianizerPinger extends UniswapMedianizerPinger {
       usdRaiPrice > redemptionPrice * (2 - minDeviation)
     ) {
       console.log('Deviation larger than threshold, update the pinger')
+
       // Call the standard median pinger from here
-      super.ping()
+      await super.updateMedian()
     } else {
       console.log(
         'Do not update the spot pinger, small deviation between spot and redemption price'
