@@ -118,11 +118,11 @@ functions:
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_RAI_MEDIAN_SPOT, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
-  ceilingSetter:
-    handler: src/index.ceilingSetter
-    timeout: 240
-    events:
-      - schedule: rate(${param:SCHEDULER_INTERVAL_CEILING_SETTER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+  # ceilingSetter:
+  #   handler: src/index.ceilingSetter
+  #   timeout: 240
+  #   events:
+  #     - schedule: rate(${param:SCHEDULER_INTERVAL_CEILING_SETTER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker
