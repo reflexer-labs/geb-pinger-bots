@@ -107,7 +107,18 @@ export class Transactor {
         await notifier.sendError(err)
         throw err
       }
-      // tx.gasPrice
+    }
+
+    const bumpGasPrice = async (tx: TransactionRequest) => {
+      if (!tx.gasPrice) {
+        throw Error('Undefined gas price to bump')
+      }
+
+      await notifier.sendError(
+        `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + 30%`
+      )
+      // Add 30% gas price
+      tx.gasPrice = tx.gasPrice.mul(13).div(10)
     }
 
     // == Nonce ==
@@ -125,14 +136,9 @@ export class Transactor {
     }
 
     if (forceOverride) {
+      // If we overriding a transaction bump the gas price
       if (pendingNonce > currentNonce) {
-        // There is a pending transaction in the mempool!
-        await notifier.sendError(
-          `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + 30%`
-        )
-
-        // Add 30% gas price
-        tx.gasPrice = tx.gasPrice.mul(13).div(10)
+        await bumpGasPrice(tx)
       }
 
       // This will enforce overriding any pending transaction
@@ -141,8 +147,15 @@ export class Transactor {
     } else {
       // The transaction should be executed after a previous one
       if (this.nonce !== null) {
+        // We already submitted a transaction within the same execution (piped txs like FSM + Oracle relayer)
         this.nonce += 1
         tx.nonce = this.nonce
+
+        // If for the transaction we are about to submit, there is is already a transaction pending
+        // with the same nonce, we need to bump the gas price
+        if (pendingNonce > this.nonce) {
+          await bumpGasPrice(tx)
+        }
       } else {
         // The transaction should be queued however the current run did not make any prior transaction.
 
