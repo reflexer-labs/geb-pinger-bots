@@ -70,7 +70,7 @@ export class CollateralFsmPinger {
       // Send oracle relayer transaction
       let relayerHash = await await this.transactor.ethSend(
         txRelayer,
-        false,
+        !didUpdateFsm,
         BigNumber.from('200000')
       )
       console.log(`Oracle relayer update sent, transaction hash: ${relayerHash}`)

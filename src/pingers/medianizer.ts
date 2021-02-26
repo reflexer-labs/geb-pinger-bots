@@ -144,8 +144,11 @@ export class UniswapMedianizerPinger {
   async updateRateSetter(didUpdateMedian: boolean): Promise<void> {
     let tx: TransactionRequest
 
-    if (!didUpdateMedian) {
-      // If the median was not updated, there is no point updating the rate setter
+    const lastUpdatedTime = await this.rateSetter.lastUpdateTime()
+    const needsUpdate = now().sub(lastUpdatedTime).gte(this.minUpdateIntervalMedian)
+
+    if (!didUpdateMedian && !needsUpdate) {
+      // If the median was not just updated and was updated too recently, skip
       return
     }
 
@@ -160,11 +163,8 @@ export class UniswapMedianizerPinger {
       console.log(`Rate setter update sent, transaction hash: ${hash}`)
     } catch (err) {
       if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
-        // Rate setter was updated too recently. This should not be the case unless someone else
-        // is updating the rate setter pinger.
-        await notifier.sendError(
-          `RateSetter/wait-more after median update, will only retry after next median update`
-        )
+        // Rate setter was updated too recently. This should not be the case because we checked for it above
+        await notifier.sendError(`RateSetter/wait-more`)
       } else {
         await notifier.sendError(`Unexpected error while simulating call: ${err}`)
       }
