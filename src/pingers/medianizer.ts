@@ -164,7 +164,8 @@ export class UniswapMedianizerPinger {
     } catch (err) {
       if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
         // Rate setter was updated too recently. This should not be the case because we checked for it above
-        await notifier.sendError(`RateSetter/wait-more`)
+        //await notifier.sendError(`RateSetter/wait-more`)
+        console.log('Too early to update Rate Setter')
       } else {
         await notifier.sendError(`Unexpected error while simulating call: ${err}`)
       }
