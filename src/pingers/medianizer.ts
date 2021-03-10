@@ -158,13 +158,18 @@ export class UniswapMedianizerPinger {
       // Simulate transaction to check if there are any expected errors
       await this.transactor.ethCall(tx)
 
-      // We don't force overwrite since the transaction of the medianizer must be pending
-      const hash = await await this.transactor.ethSend(tx, false, BigNumber.from('400000'))
+      // We don't force overwrite if we just submitted the median update
+      const hash = await await this.transactor.ethSend(
+        tx,
+        !didUpdateMedian,
+        BigNumber.from('400000')
+      )
       console.log(`Rate setter update sent, transaction hash: ${hash}`)
     } catch (err) {
       if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
         // Rate setter was updated too recently. This should not be the case because we checked for it above
-        await notifier.sendError(`RateSetter/wait-more`)
+        //await notifier.sendError(`RateSetter/wait-more`)
+        console.log('Too early to update Rate Setter')
       } else {
         await notifier.sendError(`Unexpected error while simulating call: ${err}`)
       }
