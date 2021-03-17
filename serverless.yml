@@ -40,6 +40,7 @@ custom:
     MEDIANIZER_RAI_SPOT_ADDRESS: ${param:MEDIANIZER_RAI_SPOT_ADDRESS}
     UNI_ETH_RAI_PAIR_ADDRESS: ${param:UNI_ETH_RAI_PAIR_ADDRESS}
     CEILING_SETTER_ADDRESS: ${param:CEILING_SETTER_ADDRESS}
+    COLLATERAL_AUCTION_THROTTLER_ADDRESS: ${param:COLLATERAL_AUCTION_THROTTLER_ADDRESS}
     GNOSIS_SAFE: ${param:GNOSIS_SAFE}
     MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, 500000000000000000} # Default 0.5 ETH 
     REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
@@ -61,7 +62,7 @@ custom:
     MIN_UPDATE_INTERVAL_ETH_FSM: ${param:MIN_UPDATE_INTERVAL_ETH_FSM, 0}
     MIN_UPDATE_INTERVAL_TAX_COLLECTOR: ${param:MIN_UPDATE_INTERVAL_TAX_COLLECTOR, 0}
     MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN: ${param:MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN}
-
+    MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER: ${param:MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER}
 
 plugins:
   - serverless-plugin-typescript
@@ -124,6 +125,12 @@ functions:
   #   timeout: 240
   #   events:
   #     - schedule: rate(${param:SCHEDULER_INTERVAL_CEILING_SETTER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
+
+  collateralAuctionThrottler:
+    handler: src/index.collateralAuctionThrottler
+    timeout: 240
+    events:
+      - schedule: rate(${param:SCHEDULER_INTERVAL_COLLATERAL_AUCTION_THROTTLER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker

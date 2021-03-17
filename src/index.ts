@@ -5,6 +5,7 @@ import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
 import { Notifier } from './notifications/notifier'
 import { CeilingSetter } from './pingers/ceiling-setter'
+import { CollateralAuctionThrottler } from './pingers/collateral-auction-throttler'
 import { DebtSettler } from './pingers/debt-pinger'
 import { CollateralFsmPinger } from './pingers/fsm'
 import {
@@ -33,6 +34,7 @@ type EnvVar =
   | 'SAFE_ENGINE_ADDRESS'
   | 'UNI_ETH_RAI_PAIR_ADDRESS'
   | 'CEILING_SETTER_ADDRESS'
+  | 'COLLATERAL_AUCTION_THROTTLER_ADDRESS'
   | 'REWARD_RECEIVER'
   | 'SLACK_HOOK_MULTISIG_URL'
   | 'SLACK_HOOK_ERROR_URL'
@@ -58,6 +60,7 @@ type EnvVar =
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
   | 'MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN'
+  | 'MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER'
 
 const env = process.env as { [key in EnvVar]: string }
 
@@ -208,10 +211,27 @@ export const ceilingSetter = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.CEILING_SETTER_ADDRESS,
+    PingerAccount.MISCELLANEOUS,
     env.NETWORK
   )
   const pinger = new CeilingSetter(env.CEILING_SETTER_ADDRESS, wallet, env.REWARD_RECEIVER)
+  await pinger.ping()
+}
+
+// Auto bump the debt ceiling by a percent
+export const collateralAuctionThrottler = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new CollateralAuctionThrottler(
+    env.COLLATERAL_AUCTION_THROTTLER_ADDRESS,
+    wallet,
+    env.REWARD_RECEIVER,
+    env.MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER
+  )
   await pinger.ping()
 }
 
@@ -227,7 +247,7 @@ export const balanceChecker = async () => {
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
     ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
     // ['RAI spot medianizer', PingerAccount.MEDIANIZER_RAI_SPOT],
-    // ['Ceiling setter', PingerAccount.CEILING_SETTER_ADDRESS],
+    ['Miscellaneous', PingerAccount.MISCELLANEOUS],
   ]
 
   const bots: [string, string][] = pingerList.map((x) => [
@@ -255,6 +275,7 @@ export const livenessChecker = async () => {
       'latestSurplusTransferTime',
     ],
     ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 200, ETH_A],
+    ['collateral_auction_throttler', env.COLLATERAL_AUCTION_THROTTLER_ADDRESS, 420], // 7h
   ]
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
