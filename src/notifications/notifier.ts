@@ -4,9 +4,9 @@ import Twilio from 'twilio'
 type TwilioNotifyee = {
   // Phone number with country code
   phone: string
-  // One of these string: http://worldtimeapi.org/api/timezone/
+  // One of the strings at: http://worldtimeapi.org/api/timezone/
   timeZone: string
-  // Time span available in 24h format separated by a dash, hour only. For example: "8-19" for 8am to 19pm or "10-2" for 10am to 2am.
+  // Time span available in 24h format separated by a dash. Only specify hours. For example: "8-19" for 8am to 19pm or "10-2" for 10am to 2am.
   available: string
 }
 
@@ -90,7 +90,7 @@ export class Notifier {
     }
 
     for (let notifyee of this.twilioNotifyees) {
-      // Check if we can send the notification to this number
+      // Check if we can send a notification to this number
       const hourInTimezone = parseInt(
         new Date()
           .toLocaleTimeString('en-US', { hour12: false, timeZone: notifyee.timeZone })
@@ -102,9 +102,9 @@ export class Notifier {
         startWork === endWork ||
         (startWork <= endWork
           ? hourInTimezone >= startWork && hourInTimezone <= endWork
-          : hourInTimezone >= startWork || hourInTimezone <= endWork) // Covers the case where the time span is across midnight
+          : hourInTimezone >= startWork || hourInTimezone <= endWork) // Covers the case where the time span covers midnight
       ) {
-        // We can send
+        // Send the notification
         try {
           await sendTwilioMessage(notifyee.phone, message)
         } catch (err) {

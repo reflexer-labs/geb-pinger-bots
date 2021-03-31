@@ -17,7 +17,7 @@ export class StabilityFeeTreasuryPinger {
   public async ping() {
     let tx: TransactionRequest
 
-    // Simulate call
+    // Simulate the call
     try {
       tx = this.stabilityFeeTreasury.transferSurplusFunds()
       await this.transactor.ethCall(tx)

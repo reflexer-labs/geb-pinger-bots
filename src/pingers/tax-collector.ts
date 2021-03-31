@@ -21,10 +21,10 @@ export class TaxCollectorPinger {
     const lastUpdatedTime = (await this.taxCollector.collateralTypes(this.collateralType))
       .updateTime
     if (now().sub(lastUpdatedTime).lt(this.minUpdateInterval)) {
-      // To early to update but still check if there a pending transaction.
-      // If yes continue the execution that will bump the gas price.
+      // Too early to update but still checking if there's a pending transaction
+      // If there is a pending tx, continue the execution in order to bump the gas price
       if (!(await this.transactor.isAnyTransactionPending())) {
-        console.log('To early to update')
+        console.log('Too early to update')
         return
       }
     }
