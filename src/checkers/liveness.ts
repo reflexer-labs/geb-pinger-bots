@@ -51,7 +51,7 @@ export class LivenessChecker {
               check[1], // Contract address
               [check[3]] // Pass the collateral type
             )
-          )[1] // Get the second element which the updateTime
+          )[1] // Get the second element with the updateTime
         } else {
           lastUpdated = await this.transactor.callContractFunciton(
             `function ${functionName}() view returns (uint256)`,
@@ -80,7 +80,7 @@ export class LivenessChecker {
     // --- Graph based notifications ---
 
     const urls = this.gebSubgraphUrl.split(',')
-    // For each subgraph URL check to things, (i) That server respond, (ii) That the sync block is not too far in the past
+    // For each subgraph URL check two things: (i) the server responds, (ii) the sync block is not too far in the past
     for (let url of urls) {
       // (i)
       try {
@@ -97,7 +97,7 @@ export class LivenessChecker {
       // (ii)
       let graphNodeSyncedBlock: number
       try {
-        // !! To call this function you need to have access to the port 8030 of the graph if self hosted, to be configured on the cloud provider.
+        // !! To call this function you need to have access to the port 8030 of the graph if self hosted (to be configured on the cloud provider)
         graphNodeSyncedBlock = await fetchAdminSyncedBlockNumber(url)
       } catch (err) {
         notifier.sendError(`Graph node at ${url} could not fetch synced block: ${err}`)
@@ -108,7 +108,7 @@ export class LivenessChecker {
 
       if (graphNodeSyncedBlock + 7 < ethNodeBlock) {
         notifier.sendError(
-          `Graph node at ${url} is behind the chain, last subgraph synced block: ${graphNodeSyncedBlock} ETH node synced block: ${ethNodeBlock}`
+          `The Graph node at ${url} is behind the chain. Last subgraph synced block: ${graphNodeSyncedBlock}. ETH node synced block: ${ethNodeBlock}`
         )
       }
 
@@ -117,7 +117,7 @@ export class LivenessChecker {
 
     // --- Event based notifications ---
 
-    // Block range for event filter
+    // Block range for the event filter
     const fromBlock = currentStatus[networkName]?.lastBlock || newStatus[networkName].lastBlock
     const toBlock = newStatus[networkName].lastBlock
 

@@ -21,7 +21,7 @@ custom:
   kovan: ${self:custom.prod}
   mainnet: ${self:custom.prod}
 
-  # Fetch env vars from severless dashboard (depends on stage, either kovan or mainnet)
+  # Fetch env vars from the severless dashboard (depends on the stage which can be either kovan or mainnet)
   prod:
     NETWORK: ${opt:stage}
     ETH_RPC: ${param:ETH_RPC}
@@ -42,7 +42,7 @@ custom:
     CEILING_SETTER_ADDRESS: ${param:CEILING_SETTER_ADDRESS}
     COLLATERAL_AUCTION_THROTTLER_ADDRESS: ${param:COLLATERAL_AUCTION_THROTTLER_ADDRESS}
     GNOSIS_SAFE: ${param:GNOSIS_SAFE}
-    MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, 500000000000000000} # Default 0.5 ETH 
+    MIN_ETH_BALANCE: ${param:MIN_ETH_BALANCE, 500000000000000000} # Default 0.5 ETH
     REWARD_RECEIVER: ${param:REWARD_RECEIVER, ''}
     SCHEDULER_INTERVAL_ETH_MEDIAN: ${param:SCHEDULER_INTERVAL_ETH_MEDIAN, 20}
     SCHEDULER_INTERVAL_RAI_MEDIAN: ${param:SCHEDULER_INTERVAL_RAI_MEDIAN, 20}
@@ -70,7 +70,7 @@ plugins:
 
 functions:
 
-  # Chainlink pinger not needed since Uni median updates chainlink
+  # Chainlink pinger not needed since Uni median updates Chainlink
   updateChainlinkETHMedianizer:
     handler: src/index.updateChainlinkETHMedianizer
     timeout: 240
@@ -94,7 +94,7 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_INTERVAL_TAX_COLLECTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
-  
+
   updateStabilityFeeTreasury:
     handler: src/index.updateStabilityFeeTreasury
     timeout: 240
@@ -106,14 +106,14 @@ functions:
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_PAUSE_EXECUTOR, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
-  
+
   debtSettler:
     handler: src/index.debtSettler
     timeout: 240
     events:
       - schedule: rate(${param:SCHEDULER_DEBT_SETTLER, param:SCHEDULER_INTERVAL_DEFAULT, 20} minutes)
-  
-  # TODO: When turning on, add balance checker!
+
+  # TODO: When turned on, add balance checker!
   # updateUniswapSpotMedianizerPinger:
   #   handler: src/index.uniswapSpotMedianizerPinger
   #   timeout: 240

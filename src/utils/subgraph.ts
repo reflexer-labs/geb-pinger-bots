@@ -8,7 +8,7 @@ export const postQuery = async (host: string, query: string) => {
   })
 
   // The graph node can return empty data which
-  // means that the node is not ok.
+  // means that the node is not ok
   if (!resp.data || !resp.data.data) {
     throw 'No data'
   }
@@ -131,7 +131,7 @@ export const fetchAdminSyncedBlockNumber = async (gebSubgraphUrl: string) => {
 
   let adminUrl: string
   if (domain[0] == 'https://api.thegraph.com') {
-    // This is graph protocol hosted service
+    // This is a Graph protocol hosted service
     adminUrl = `https://api.thegraph.com/index-node/graphql`
   } else {
     // This a self hosted subgraph

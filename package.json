@@ -1,7 +1,7 @@
 {
   "name": "geb-pinger-bots",
   "version": "1.0.0",
-  "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system.",
+  "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex index system.",
   "main": "index.js",
   "scripts": {
     "local-kovan": "serverless invoke local --stage kovan --function",

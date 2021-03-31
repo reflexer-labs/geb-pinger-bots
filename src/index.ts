@@ -183,7 +183,7 @@ export const debtSettler = async () => {
   await pinger.ping()
 }
 
-// Similar to updateUniswapRAIMedianizer but points to different medianizer
+// Similar to updateUniswapRAIMedianizer but points to a different medianizer
 // contract with a shorter TWAP window. This send an update only in when price
 // deviation between Market price and redemption price.
 export const uniswapSpotMedianizerPinger = async () => {
@@ -206,7 +206,7 @@ export const uniswapSpotMedianizerPinger = async () => {
   await pinger.ping()
 }
 
-// Auto bump the debt ceiling by a percent
+// Update the debt ceiling
 export const ceilingSetter = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
@@ -261,7 +261,7 @@ export const balanceChecker = async () => {
 
 export const livenessChecker = async () => {
   const time = Date.now()
-  // List of contract to check their lastUpdateTime value and their max time tolerance in minutes
+  // List of contracts for which we check lastUpdateTime values and their max delay tolerance (in minutes)
   const checks: [string, string, number, string?][] = [
     ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 320], // Different from mainnet because Chainlink is update their oracle less often
     ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 320], // Different from mainnet because the median on Kovan works with longer interval

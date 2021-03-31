@@ -32,15 +32,15 @@ export class Transactor {
       const res = await this.provider.call(tx)
 
       // Some backend returns the require string when doing an eth call
-      // The function below detects if there it's a require error.
-      // If it is, we throw a pass the processing below
+      // The function below detects if there is any require error.
+      // If there is, we throw an error
       if (utils.getRequireString(res)) {
         throw res
       }
 
       return res
     } catch (err) {
-      // Try decoding the error before throw
+      // Try to decode the error before throwing
       let decodedErr: string | null
       try {
         decodedErr = utils.getRequireString(err)
@@ -54,13 +54,13 @@ export class Transactor {
 
   public async ethSend(
     tx: TransactionRequest,
-    // If set to true, the current confirmed nonce will be used and potentially overridePending transactions
+    // If set to true, the current confirmed nonce will be used and potentially override pending transactions
     forceOverride: boolean,
     gasLimit?: BigNumber
   ): Promise<string> {
     // Sanity checks
     if (!this.signer) {
-      throw new Error("The transactor can't sign transactions, provide a signer")
+      throw new Error("The transactor can't sign transactions, need to provide a signer")
     }
 
     if (!tx.to) {
@@ -96,14 +96,14 @@ export class Transactor {
 
     // == Gas Price ==
 
-    //Try fetching gas price from gasnow.org or use node default
+    // Try to fetch the gas price from gasnow.org or use a default node
     try {
       tx.gasPrice = BigNumber.from(await this.gasNowPriceAPI())
     } catch {
       tx.gasPrice = await this.provider.getGasPrice()
     } finally {
       if (!BigNumber.isBigNumber(tx.gasPrice)) {
-        const err = 'Could not determine  gas price'
+        const err = 'Could not determine the gas price'
         await notifier.sendError(err)
         throw err
       }
@@ -123,7 +123,7 @@ export class Transactor {
 
     // == Nonce ==
 
-    // Set proper nonce, detect pending transactions
+    // Set the proper nonce, detect pending transactions
     const fromAddress = await this.signer.getAddress()
     const currentNonce = await this.provider.getTransactionCount(fromAddress, 'latest')
     const pendingNonce = await this.provider.getTransactionCount(fromAddress, 'pending')
@@ -136,29 +136,27 @@ export class Transactor {
     }
 
     if (forceOverride) {
-      // If we overriding a transaction bump the gas price
+      // If we override a transaction, bump the gas price
       if (pendingNonce > currentNonce) {
         await bumpGasPrice(tx)
       }
 
-      // This will enforce overriding any pending transaction
+      // This will make sure to override any pending transaction
       tx.nonce = currentNonce
       this.nonce = currentNonce
     } else {
-      // The transaction should be executed after a previous one
+      // The transaction should be executed after the previous one
       if (this.nonce !== null) {
-        // We already submitted a transaction within the same execution (piped txs like FSM + Oracle relayer)
+        // We already submitted a transaction within the same execution window (piped txs like FSM + Oracle relayer)
         this.nonce += 1
         tx.nonce = this.nonce
 
-        // If for the transaction we are about to submit, there is is already a transaction pending
-        // with the same nonce, we need to bump the gas price
+        // If there's already a pending tx with the same nonce for the action we want to do, we need to bump the gas price
         if (pendingNonce > this.nonce) {
           await bumpGasPrice(tx)
         }
       } else {
-        // The transaction should be queued however the current run did not make any prior transaction.
-
+        // The transaction should be queued even if the current run did not override any prior transaction
         if (pendingNonce > currentNonce) {
           // There is a pending transaction in the mempool!
           await notifier.sendError(
@@ -171,7 +169,7 @@ export class Transactor {
       }
     }
 
-    // == Send transaction ==
+    // == Send a transaction ==
     let response: ethers.providers.TransactionResponse
     try {
       response = await this.signer.sendTransaction(tx)
@@ -183,17 +181,17 @@ export class Transactor {
     }
   }
 
-  // Tell whether there is a transaction pending in the mempool
+  // Return whether there is a transaction pending in the mempool
   public async isAnyTransactionPending(address?: string): Promise<boolean> {
     let fromAddress: string
 
-    // Use the optional address passed or the address from the signer if we have a signer
+    // Use the optional address passed or the address from the signer (if we have one)
     if (address) {
       fromAddress = address
     } else {
       // Sanity checks
       if (!this.signer) {
-        throw new Error("The transactor can't sign transactions, provide a signer")
+        throw new Error("The transactor can't sign transactions, must provide a signer")
       }
       fromAddress = await this.signer.getAddress()
     }
@@ -204,7 +202,7 @@ export class Transactor {
     if (pendingNonce < currentNonce) {
       // This should never be the case unless we have some serious bugs on the ETH node
       await notifier.sendError(
-        `Bad Ethereum node: pending nonce: ${pendingNonce}, current nonce: ${currentNonce}`
+        `Bad Ethereum node. Pending nonce: ${pendingNonce}, current nonce: ${currentNonce}`
       )
 
       return false
@@ -241,7 +239,7 @@ export class Transactor {
 
   public async getWalletAddress() {
     if (!this.signer) {
-      throw new Error("The transactor can't sign transactions, provide a signer")
+      throw new Error("The transactor can't sign transactions, must provide a signer")
     }
 
     return this.signer.getAddress()
@@ -284,7 +282,7 @@ export class Transactor {
     const fallbackProvider = this.provider as ethers.providers.FallbackProvider
     const currentTime = Date.now() / 1000
 
-    // Use a timeout for the node to respond
+    // Use a timeout for the node
     const promiseTimeout = (ms) =>
       new Promise<any>((_, reject) => {
         let id = setTimeout(() => {
@@ -311,7 +309,7 @@ export class Transactor {
 
       if (currentTime - latestBlock.timestamp > 300) {
         notifier.sendError(
-          `Ethereum node at ${provider.connection.url} is out sync. Latest block more than 5min old.`
+          `Ethereum node at ${provider.connection.url} is out of sync. Latest block more than 5 minutes old.`
         )
       }
     }

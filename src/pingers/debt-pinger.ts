@@ -27,7 +27,7 @@ export class DebtSettler {
     const now = await this.transactor.getLatestBlockTimestamp()
     let didSendAPopDebt = false
 
-    // Fetch auctions from 2 last days + popDelay
+    // Fetch auctions from the last 2 days + popDelay
     let auctionTimestamps = await fetchAuctionsTimestamps(
       this.gebSubgraphUrl,
       now - popDelay.toNumber() - 3600 * 48
@@ -54,13 +54,13 @@ export class DebtSettler {
       }
     }
 
-    // Calculation of the amount to settle
+    // Calculate the amount to settle
     let settleAmount: BigNumber
     if (!unqueuedDebt.isZero()) {
       // If we just popped something, settle that amount
       settleAmount = unqueuedDebt
     } else {
-      // Otherwise just settle the max that can be settled (maybe nothing)
+      // Otherwise just settle the max amount possible (can be zero)
       const surplus = await this.safeEngine.coinBalance(this.accountingEngineAddress)
       const unqueuedUnauctionedDebt = await this.accountingEngine.unqueuedUnauctionedDebt()
       const min = surplus.gt(unqueuedUnauctionedDebt) ? unqueuedUnauctionedDebt : surplus
