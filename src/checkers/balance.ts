@@ -18,7 +18,7 @@ export class BalanceChecker {
     for (let bot of this.bots) {
       const balance = await this.transactor.getBalance(bot[1])
       if (balance.lt(this.minBalance)) {
-        await notifier.sendError(`Bot ${bot[0]} address: ${bot[1]} is low balance.`)
+        await notifier.sendError(`Bot ${bot[0]} address: ${bot[1]} has a low ETH balance.`)
       }
     }
   }

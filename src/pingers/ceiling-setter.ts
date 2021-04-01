@@ -22,13 +22,13 @@ export class CeilingSetter {
   public async ping() {
     let tx: TransactionRequest
 
-    // Send the caller reward to specified address or send the reward to the pinger bot
+    // Send the caller reward to a specified address or send the reward to the pinger bot
     let rewardReceiver =
       !this.rewardReceiver || this.rewardReceiver === ''
         ? await this.transactor.getWalletAddress()
         : this.rewardReceiver
 
-    // Simulate call
+    // Simulate the call
     try {
       tx = this.ceilingSetter.autoUpdateCeiling(rewardReceiver)
       await this.transactor.ethCall(tx)
@@ -41,7 +41,7 @@ export class CeilingSetter {
       return
     }
 
-    // Send transaction
+    // Send the transaction
     const hash = await this.transactor.ethSend(tx, true, BigNumber.from('500000'))
     console.log(`Update sent, transaction hash: ${hash}`)
   }

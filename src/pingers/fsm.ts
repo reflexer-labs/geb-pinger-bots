@@ -30,7 +30,7 @@ export class CollateralFsmPinger {
     // Check if it's too early to update
     const fsmLastUpdatedTime = await this.fsm.lastUpdateTime()
 
-    // Update the FSM enough time has passed or if there is a transaction pending
+    // Update the FSM if enough time has passed or if there is a transaction pending
     // Transaction pending means that the tx from the last run got stuck in the mempool
     if (
       now().sub(fsmLastUpdatedTime).gte(this.minUpdateInterval) ||
@@ -63,28 +63,26 @@ export class CollateralFsmPinger {
 
     // == Oracle Relayer ==
 
-    // Update Oracle relayer if we just updated the fsm OR
-    // if was updated too long ago
+    // Update the OracleRelayer if we just updated a FSM OR if the relayer is stale
     if (didUpdateFsm || (await this.shouldUpdateOracleRelayer())) {
       let txRelayer = this.oracleRelayer.updateCollateralPrice(this.collateralType)
-      // Send oracle relayer transaction
+      // Send the OracleRelayer transaction
       let relayerHash = await await this.transactor.ethSend(
         txRelayer,
         !didUpdateFsm,
         BigNumber.from('200000')
       )
-      console.log(`Oracle relayer update sent, transaction hash: ${relayerHash}`)
+      console.log(`OracleRelayer update sent, transaction hash: ${relayerHash}`)
     } else {
-      console.log('To early to update the Oracle Relayer')
+      console.log('Too early to update the OracleRelayer')
     }
   }
 
-  // Check if the oracle relayer needs to be updated by looking at the last time
-  // it was updated
+  // Check if the OracleRelayer needs to be updated by looking at the last update time
   private async shouldUpdateOracleRelayer() {
     const currentBlock = await this.transactor.getBlockNumber()
 
-    // Get the last updated events
+    // Get the latest OracleRelayer update events
     // Assume a 15sec block interval
     const scanFromBlock = currentBlock - this.minUpdateInterval / 15
     const events = await this.transactor.getContractEvents(
@@ -99,7 +97,7 @@ export class CollateralFsmPinger {
       // Sort events by descending time
       .sort((a, b) => b.blockNumber - a.blockNumber)
 
-    // Update if they are no recent event or the latest one is more than minUpdateInterval old
+    // Update if there is no recent event or if the latest one is more than minUpdateInterval old
     if (lastEvents.length === 0) {
       return true
     } else {

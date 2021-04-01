@@ -48,10 +48,10 @@ export const getProvider = async (ethRpc: string, network: string) => {
 
   const providerConfigs = providers.map((p, i) => ({
     provider: p,
-    // Assign a priority based on the order in the list.
-    // We need a priority to use the same node as much possible and avoid nodes in different sync stages
+    // Assign a priority based on the order in the list
+    // We need a priority to use the same node as much as possible and avoid nodes in different sync stages
     priority: i + 1,
-    // If a node did not reply within 3s, go to the next node
+    // If a node did not reply within 3s, go to the next one
     stallTimeout: 3000,
   }))
 
