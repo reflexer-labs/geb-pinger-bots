@@ -8,11 +8,7 @@ import { CeilingSetter } from './pingers/ceiling-setter'
 import { CollateralAuctionThrottler } from './pingers/collateral-auction-throttler'
 import { DebtSettler } from './pingers/debt-pinger'
 import { CollateralFsmPinger } from './pingers/fsm'
-import {
-  ChainlinkMedianizerPinger,
-  UniswapMedianizerPinger,
-  UniswapSpotMedianizerPinger,
-} from './pingers/medianizer'
+import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
@@ -29,7 +25,6 @@ type EnvVar =
   | 'ORACLE_RELAYER_ADDRESS'
   | 'TAX_COLLECTOR_ADDRESS'
   | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
-  | 'MEDIANIZER_RAI_SPOT_ADDRESS'
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
   | 'UNI_ETH_RAI_PAIR_ADDRESS'
@@ -59,7 +54,6 @@ type EnvVar =
   | 'MIN_UPDATE_INTERVAL_RAI_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
-  | 'MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER'
 
 const env = process.env as { [key in EnvVar]: string }
@@ -183,29 +177,6 @@ export const debtSettler = async () => {
   await pinger.ping()
 }
 
-// Similar to updateUniswapRAIMedianizer but points to a different medianizer
-// contract with a shorter TWAP window. This send an update only in when price
-// deviation between Market price and redemption price.
-export const uniswapSpotMedianizerPinger = async () => {
-  const wallet = await getWallet(
-    env.ETH_RPC,
-    env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.MEDIANIZER_RAI_SPOT,
-    env.NETWORK
-  )
-  const pinger = new UniswapSpotMedianizerPinger(
-    env.MEDIANIZER_RAI_SPOT_ADDRESS,
-    env.MEDIANIZER_ETH_ADDRESS,
-    env.UNI_ETH_RAI_PAIR_ADDRESS,
-    env.ORACLE_RELAYER_ADDRESS,
-    env.ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS,
-    wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_RAI_SPOT_MEDIAN) * 60,
-    env.REWARD_RECEIVER
-  )
-  await pinger.ping()
-}
-
 // Update the debt ceiling
 export const ceilingSetter = async () => {
   const wallet = await getWallet(
@@ -246,7 +217,6 @@ export const balanceChecker = async () => {
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
     ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
     ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
-    // ['RAI spot medianizer', PingerAccount.MEDIANIZER_RAI_SPOT],
     ['Miscellaneous', PingerAccount.MISCELLANEOUS],
   ]
 
