@@ -1,7 +1,12 @@
-import { ethers, BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import {
+  CHAINLINK_MEDIANIZER__UPDATE_RESULTS_GAS,
+  COIN_MEDIANIZER__UPDATE_RESULTS_GAS,
+  RATE_SETTER__UPDATE_RATE_GAS,
+} from '../utils/constants'
 import { now } from '../utils/time'
 
 export class ChainlinkMedianizerPinger {
@@ -71,7 +76,7 @@ export class ChainlinkMedianizerPinger {
     }
 
     // Send the transaction
-    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('400000'))
+    const hash = await this.transactor.ethSend(tx, true, CHAINLINK_MEDIANIZER__UPDATE_RESULTS_GAS)
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
@@ -135,7 +140,7 @@ export class UniswapMedianizerPinger {
     }
 
     // Send transaction
-    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('500000'))
+    const hash = await this.transactor.ethSend(tx, true, COIN_MEDIANIZER__UPDATE_RESULTS_GAS)
     console.log(`Median update sent, transaction hash: ${hash}`)
 
     return true
@@ -162,7 +167,7 @@ export class UniswapMedianizerPinger {
       const hash = await await this.transactor.ethSend(
         tx,
         !didUpdateMedian,
-        BigNumber.from('400000')
+        RATE_SETTER__UPDATE_RATE_GAS
       )
       console.log(`Rate setter update sent, transaction hash: ${hash}`)
     } catch (err) {

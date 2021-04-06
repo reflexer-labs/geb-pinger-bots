@@ -8,6 +8,12 @@ import {
   GebContractAPIConstructorInterface,
 } from 'geb.js'
 import { notifier } from '..'
+import {
+  ETH_NODE_STALL_SYNC_TIMEOUT,
+  GAS_ESTIMATE_BUFFER,
+  PENDING_TRANSACTION_GAS_BUMP_PERCENT,
+  RPC_FAILED_TIMEOUT,
+} from '../utils/constants'
 
 export class Transactor {
   private provider: ethers.providers.Provider
@@ -70,7 +76,7 @@ export class Transactor {
     // == Gas limit ==
     if (!gasLimit) {
       try {
-        gasLimit = (await this.signer.estimateGas(tx)).add(100000)
+        gasLimit = (await this.signer.estimateGas(tx)).add(GAS_ESTIMATE_BUFFER)
       } catch (err) {
         if (err.code === 'NETWORK_ERROR') {
           throw err
@@ -115,10 +121,10 @@ export class Transactor {
       }
 
       await notifier.sendError(
-        `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + 30%`
+        `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + ${PENDING_TRANSACTION_GAS_BUMP_PERCENT}%`
       )
       // Add 30% gas price
-      tx.gasPrice = tx.gasPrice.mul(13).div(10)
+      tx.gasPrice = tx.gasPrice.mul(PENDING_TRANSACTION_GAS_BUMP_PERCENT + 100).div(100)
     }
 
     // == Nonce ==
@@ -296,7 +302,10 @@ export class Transactor {
       let latestBlock: ethers.providers.Block
       try {
         // Get the latest block with 10 second timeout
-        latestBlock = await Promise.race([provider.getBlock('latest'), promiseTimeout(10000)])
+        latestBlock = await Promise.race([
+          provider.getBlock('latest'),
+          promiseTimeout(RPC_FAILED_TIMEOUT),
+        ])
       } catch (err) {
         console.log(err)
         notifier.sendError(
@@ -307,7 +316,7 @@ export class Transactor {
         continue
       }
 
-      if (currentTime - latestBlock.timestamp > 300) {
+      if (currentTime - latestBlock.timestamp > ETH_NODE_STALL_SYNC_TIMEOUT) {
         notifier.sendError(
           `Ethereum node at ${provider.connection.url} is out of sync. Latest block more than 5 minutes old.`
         )

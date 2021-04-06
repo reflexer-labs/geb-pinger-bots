@@ -1,7 +1,8 @@
 import { adminContracts, TransactionRequest } from '@reflexer-finance/geb-admin'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { CEILING_SETTER_AUTO_UPDATE_CEILING } from '../utils/constants'
 
 export class CeilingSetter {
   protected ceilingSetter: adminContracts.SingleSpotDebtCeilingSetter
@@ -42,7 +43,7 @@ export class CeilingSetter {
     }
 
     // Send the transaction
-    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('500000'))
+    const hash = await this.transactor.ethSend(tx, true, CEILING_SETTER_AUTO_UPDATE_CEILING)
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
