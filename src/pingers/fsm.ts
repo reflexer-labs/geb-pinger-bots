@@ -89,7 +89,8 @@ export class CollateralFsmPinger {
 
     // Get the latest OracleRelayer update events
     // Assume a 15sec block interval
-    const scanFromBlock = currentBlock - this.minUpdateInterval / APPROXIMATED_BLOCK_INTERVAL
+    const scanFromBlock =
+      currentBlock - Math.floor(this.minUpdateInterval / APPROXIMATED_BLOCK_INTERVAL)
     const events = await this.transactor.getContractEvents(
       'event UpdateCollateralPrice(bytes32 indexed collateralType, uint256 priceFeedValue, uint256 safetyPrice, uint256 liquidationPrice)',
       this.oracleRelayer.address,
