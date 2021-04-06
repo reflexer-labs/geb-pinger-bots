@@ -58,9 +58,7 @@
     "geb",
     "pinger",
     "bot",
-    "RAI",
-    "Reflexer",
-    "FLX"
+    "Reflexer"
   ],
   "author": "Guillaume Felley <guillaume@reflexer.finance>",
   "license": "ISC"
