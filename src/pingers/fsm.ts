@@ -1,7 +1,12 @@
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { contracts, TransactionRequest, utils } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import {
+  APPROXIMATED_BLOCK_INTERVAL,
+  COLLATERAL_FSM__UPDATE_RESULTS_GAS,
+  ORACLE_RELAYER__UPDATE_COLLATERAL_PRICE_GAS,
+} from '../utils/constants'
 import { now } from '../utils/time'
 
 export class CollateralFsmPinger {
@@ -54,7 +59,7 @@ export class CollateralFsmPinger {
       }
 
       // Send FSM transaction
-      let fsmHash = await this.transactor.ethSend(txFsm, true, BigNumber.from('200000'))
+      let fsmHash = await this.transactor.ethSend(txFsm, true, COLLATERAL_FSM__UPDATE_RESULTS_GAS)
       didUpdateFsm = true
       console.log(`FSM update sent, transaction hash: ${fsmHash}`)
     } else {
@@ -70,7 +75,7 @@ export class CollateralFsmPinger {
       let relayerHash = await await this.transactor.ethSend(
         txRelayer,
         !didUpdateFsm,
-        BigNumber.from('200000')
+        ORACLE_RELAYER__UPDATE_COLLATERAL_PRICE_GAS
       )
       console.log(`OracleRelayer update sent, transaction hash: ${relayerHash}`)
     } else {
@@ -84,7 +89,7 @@ export class CollateralFsmPinger {
 
     // Get the latest OracleRelayer update events
     // Assume a 15sec block interval
-    const scanFromBlock = currentBlock - this.minUpdateInterval / 15
+    const scanFromBlock = currentBlock - this.minUpdateInterval / APPROXIMATED_BLOCK_INTERVAL
     const events = await this.transactor.getContractEvents(
       'event UpdateCollateralPrice(bytes32 indexed collateralType, uint256 priceFeedValue, uint256 safetyPrice, uint256 liquidationPrice)',
       this.oracleRelayer.address,

@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { MAX_GRAPH_NODE_BLOCK_DELAY } from '../utils/constants'
 import { StatusInfo, STATUS_KEY, Store } from '../utils/store'
 import { fetchAdminSyncedBlockNumber, fetchGlobalDebt } from '../utils/subgraph'
 import { now } from '../utils/time'
@@ -106,7 +107,7 @@ export class LivenessChecker {
 
       const ethNodeBlock = await this.transactor.getBlockNumber()
 
-      if (graphNodeSyncedBlock + 7 < ethNodeBlock) {
+      if (graphNodeSyncedBlock + MAX_GRAPH_NODE_BLOCK_DELAY < ethNodeBlock) {
         notifier.sendError(
           `The Graph node at ${url} is behind the chain. Last subgraph synced block: ${graphNodeSyncedBlock}. ETH node synced block: ${ethNodeBlock}`
         )

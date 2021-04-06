@@ -1,7 +1,8 @@
 import { adminContracts, TransactionRequest } from '@reflexer-finance/geb-admin'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { COLLATERAL_AUCTION_THROTTLER__RECOMPUTE_ON_AUCTION_SYSTEM_COIN_LIMIT_GAS } from '../utils/constants'
 import { now } from '../utils/time'
 
 export class CollateralAuctionThrottler {
@@ -54,7 +55,11 @@ export class CollateralAuctionThrottler {
     }
 
     // Send transaction
-    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('500000'))
+    const hash = await this.transactor.ethSend(
+      tx,
+      true,
+      COLLATERAL_AUCTION_THROTTLER__RECOMPUTE_ON_AUCTION_SYSTEM_COIN_LIMIT_GAS
+    )
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
