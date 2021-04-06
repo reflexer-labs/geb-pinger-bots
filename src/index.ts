@@ -19,7 +19,7 @@ type EnvVar =
   | 'ETH_RPC'
   | 'ACCOUNTS_PASSPHRASE'
   | 'MEDIANIZER_ETH_ADDRESS'
-  | 'MEDIANIZER_RAI_ADDRESS'
+  | 'MEDIANIZER_COIN_ADDRESS'
   | 'MIN_ETH_BALANCE'
   | 'FSM_ETH_ADDRESS'
   | 'ORACLE_RELAYER_ADDRESS'
@@ -27,7 +27,7 @@ type EnvVar =
   | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
   | 'ACCOUNTING_ENGINE_ADDRESS'
   | 'SAFE_ENGINE_ADDRESS'
-  | 'UNI_ETH_RAI_PAIR_ADDRESS'
+  | 'UNI_ETH_COIN_PAIR_ADDRESS'
   | 'CEILING_SETTER_ADDRESS'
   | 'COLLATERAL_AUCTION_THROTTLER_ADDRESS'
   | 'REWARD_RECEIVER'
@@ -37,7 +37,7 @@ type EnvVar =
   | 'TWILIO_SEND_NUMBER'
   | 'TWILIO_SID'
   | 'SCHEDULER_INTERVAL_ETH_MEDIAN'
-  | 'SCHEDULER_INTERVAL_RAI_MEDIAN'
+  | 'SCHEDULER_INTERVAL_COIN_MEDIAN'
   | 'SCHEDULER_INTERVAL_ETH_FSM'
   | 'SCHEDULER_INTERVAL_RATE_SETTER'
   | 'PHONE_NOTIFICATION_RECEIVER'
@@ -51,7 +51,7 @@ type EnvVar =
   | 'GNOSIS_SAFE'
   | 'NETWORK'
   | 'MIN_UPDATE_INTERVAL_ETH_MEDIAN'
-  | 'MIN_UPDATE_INTERVAL_RAI_MEDIAN'
+  | 'MIN_UPDATE_INTERVAL_COIN_MEDIAN'
   | 'MIN_UPDATE_INTERVAL_ETH_FSM'
   | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
   | 'MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER'
@@ -77,7 +77,7 @@ export const updateChainlinkETHMedianizer = async () => {
   )
   const pinger = new ChainlinkMedianizerPinger(
     env.MEDIANIZER_ETH_ADDRESS,
-    env.MEDIANIZER_RAI_ADDRESS,
+    env.MEDIANIZER_COIN_ADDRESS,
     wallet,
     parseInt(env.MIN_UPDATE_INTERVAL_ETH_MEDIAN) * 60,
     env.REWARD_RECEIVER
@@ -85,19 +85,19 @@ export const updateChainlinkETHMedianizer = async () => {
   await pinger.ping()
 }
 
-// Uniswap RAI medianizer
-export const updateUniswapRAIMedianizer = async () => {
+// Uniswap Coin medianizer
+export const updateUniswapCoinMedianizer = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.MEDIANIZER_RAI,
+    PingerAccount.MEDIANIZER_COIN,
     env.NETWORK
   )
   const pinger = new UniswapMedianizerPinger(
-    env.MEDIANIZER_RAI_ADDRESS,
+    env.MEDIANIZER_COIN_ADDRESS,
     env.RATE_SETTER_ADDRESS,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_RAI_MEDIAN) * 60,
+    parseInt(env.MIN_UPDATE_INTERVAL_COIN_MEDIAN) * 60,
     env.REWARD_RECEIVER
   )
   await pinger.ping()
@@ -211,7 +211,7 @@ export const balanceChecker = async () => {
   // List of pinger accounts to check
   const pingerList: [string, number, string?][] = [
     ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
-    ['RAI medianizer', PingerAccount.MEDIANIZER_RAI],
+    ['Coin medianizer', PingerAccount.MEDIANIZER_COIN],
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],
     ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
@@ -233,8 +233,8 @@ export const livenessChecker = async () => {
   const time = Date.now()
   // List of contracts for which we check lastUpdateTime values and their max delay tolerance (in minutes)
   const checks: [string, string, number, string?][] = [
-    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 80],
-    ['prai_medianizer', env.MEDIANIZER_RAI_ADDRESS, 260],
+    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 80], // Different from mainnet because Chainlink is update their oracle less often
+    ['coin_medianizer', env.MEDIANIZER_COIN_ADDRESS, 260], // Different from mainnet because the median on Kovan works with longer interval
     ['eth_fsm', env.FSM_ETH_ADDRESS, 80],
     ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 80, 'redemptionPriceUpdateTime'],
     ['rate_setter', env.RATE_SETTER_ADDRESS, 260],
