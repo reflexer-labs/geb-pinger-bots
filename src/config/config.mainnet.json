@@ -62,7 +62,7 @@
   "balanceChecker": {
     "enabled": true,
     "schedulerInterval": 90,
-    "minBalance": 500000000000000000
+    "minBalance": "500000000000000000"
   },
   "livenessChecker": {
     "enabled": true,

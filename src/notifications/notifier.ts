@@ -27,7 +27,7 @@ export class Notifier {
     this.logError(message)
 
     // Slack notification
-    await this.slackError(message)
+    // await this.slackError(message)
 
     // Twilio notification
     // await this.twilioError(message)
