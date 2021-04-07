@@ -1,5 +1,4 @@
 import { BigNumber } from 'ethers'
-import { ETH_A } from 'geb.js/lib/utils'
 import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
@@ -14,49 +13,30 @@ import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
+import fs from 'fs'
+import { PingerConifg } from './utils/types'
 
 type EnvVar =
   | 'ETH_RPC'
   | 'ACCOUNTS_PASSPHRASE'
-  | 'MEDIANIZER_ETH_ADDRESS'
-  | 'MEDIANIZER_COIN_ADDRESS'
-  | 'MIN_ETH_BALANCE'
-  | 'FSM_ETH_ADDRESS'
-  | 'ORACLE_RELAYER_ADDRESS'
-  | 'TAX_COLLECTOR_ADDRESS'
-  | 'ETH_A_COLLATERAL_AUCTION_HOUSE_ADDRESS'
-  | 'ACCOUNTING_ENGINE_ADDRESS'
-  | 'SAFE_ENGINE_ADDRESS'
-  | 'UNI_ETH_COIN_PAIR_ADDRESS'
-  | 'CEILING_SETTER_ADDRESS'
-  | 'COLLATERAL_AUCTION_THROTTLER_ADDRESS'
-  | 'REWARD_RECEIVER'
   | 'SLACK_HOOK_MULTISIG_URL'
   | 'SLACK_HOOK_ERROR_URL'
   | 'TWILIO_AUTH_TOKEN'
   | 'TWILIO_SEND_NUMBER'
   | 'TWILIO_SID'
-  | 'SCHEDULER_INTERVAL_ETH_MEDIAN'
-  | 'SCHEDULER_INTERVAL_COIN_MEDIAN'
-  | 'SCHEDULER_INTERVAL_ETH_FSM'
-  | 'SCHEDULER_INTERVAL_RATE_SETTER'
   | 'PHONE_NOTIFICATION_RECEIVER'
   | 'GEB_SUBGRAPH_URL'
-  | 'DS_PAUSE_ADDRESS'
-  | 'RATE_SETTER_ADDRESS'
-  | 'STABILITY_FEE_TREASURY_ADDRESS'
   | 'STATUS_BUCKET'
   | 'AWS_ID'
   | 'AWS_SECRET'
-  | 'GNOSIS_SAFE'
   | 'NETWORK'
-  | 'MIN_UPDATE_INTERVAL_ETH_MEDIAN'
-  | 'MIN_UPDATE_INTERVAL_COIN_MEDIAN'
-  | 'MIN_UPDATE_INTERVAL_ETH_FSM'
-  | 'MIN_UPDATE_INTERVAL_TAX_COLLECTOR'
-  | 'MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER'
 
 const env = process.env as { [key in EnvVar]: string }
+const network = env.NETWORK
+console.log(__dirname)
+const config: PingerConifg = JSON.parse(
+  fs.readFileSync(`${__dirname}/../../config/config.${network}.json`, 'utf-8')
+)
 
 export const notifier = new Notifier(
   env.SLACK_HOOK_ERROR_URL,
@@ -76,11 +56,11 @@ export const updateChainlinkETHMedianizer = async () => {
     env.NETWORK
   )
   const pinger = new ChainlinkMedianizerPinger(
-    env.MEDIANIZER_ETH_ADDRESS,
-    env.MEDIANIZER_COIN_ADDRESS,
+    config.chainlinkETHMedianizer.medianizerAddress,
+    config.chainlinkETHMedianizer.coinMedianizer,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_ETH_MEDIAN) * 60,
-    env.REWARD_RECEIVER
+    config.chainlinkETHMedianizer.minUpdateInterval * 60,
+    config.chainlinkETHMedianizer.rewardReceiver
   )
   await pinger.ping()
 }
@@ -94,11 +74,11 @@ export const updateUniswapCoinMedianizer = async () => {
     env.NETWORK
   )
   const pinger = new UniswapMedianizerPinger(
-    env.MEDIANIZER_COIN_ADDRESS,
-    env.RATE_SETTER_ADDRESS,
+    config.uniswapCoinMedianizer.coinMedianizerAddress,
+    config.uniswapCoinMedianizer.rateSetterAddress,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_COIN_MEDIAN) * 60,
-    env.REWARD_RECEIVER
+    config.uniswapCoinMedianizer.minUpdateInterval * 60,
+    config.uniswapCoinMedianizer.rewardReceiver
   )
   await pinger.ping()
 }
@@ -112,11 +92,11 @@ export const updateETHFsm = async () => {
     env.NETWORK
   )
   const pinger = new CollateralFsmPinger(
-    env.FSM_ETH_ADDRESS,
-    env.ORACLE_RELAYER_ADDRESS,
-    ETH_A,
+    config.ethFsm.fsmAddress,
+    config.ethFsm.oracleRelayerAddress,
+    config.ethFsm.collateralType,
     wallet,
-    parseInt(env.MIN_UPDATE_INTERVAL_ETH_FSM) * 60
+    config.ethFsm.minUpdateInterval * 60
   )
   await pinger.ping()
 }
@@ -130,10 +110,10 @@ export const updateTaxCollector = async () => {
     env.NETWORK
   )
   const pinger = new TaxCollectorPinger(
-    env.TAX_COLLECTOR_ADDRESS,
+    config.taxCollector.taxCollectorAddress,
     wallet,
-    ETH_A,
-    parseInt(env.MIN_UPDATE_INTERVAL_TAX_COLLECTOR) * 60
+    config.taxCollector.collateralType,
+    config.taxCollector.minUpdateInterval * 60
   )
   await pinger.ping()
 }
@@ -145,7 +125,10 @@ export const updateStabilityFeeTreasury = async () => {
     PingerAccount.STABILITY_FEE_TREASURY,
     env.NETWORK
   )
-  const pinger = new StabilityFeeTreasuryPinger(env.STABILITY_FEE_TREASURY_ADDRESS, wallet)
+  const pinger = new StabilityFeeTreasuryPinger(
+    config.stabilityFeeTreasury.stabilityFeeTreasuryAddress,
+    wallet
+  )
   await pinger.ping()
 }
 
@@ -157,7 +140,11 @@ export const pauseExecutor = async () => {
     PingerAccount.PAUSE_EXECUTOR,
     env.NETWORK
   )
-  const pinger = new PauseExecutor(env.DS_PAUSE_ADDRESS, wallet, env.GEB_SUBGRAPH_URL)
+  const pinger = new PauseExecutor(
+    config.pauseExecutor.dsPauseAddress,
+    wallet,
+    env.GEB_SUBGRAPH_URL
+  )
   await pinger.ping()
 }
 
@@ -169,8 +156,8 @@ export const debtSettler = async () => {
     env.NETWORK
   )
   const pinger = new DebtSettler(
-    env.ACCOUNTING_ENGINE_ADDRESS,
-    env.SAFE_ENGINE_ADDRESS,
+    config.debtSettler.accountingEngineAddress,
+    config.debtSettler.safeEngineAddress,
     wallet,
     env.GEB_SUBGRAPH_URL
   )
@@ -185,7 +172,11 @@ export const ceilingSetter = async () => {
     PingerAccount.MISCELLANEOUS,
     env.NETWORK
   )
-  const pinger = new CeilingSetter(env.CEILING_SETTER_ADDRESS, wallet, env.REWARD_RECEIVER)
+  const pinger = new CeilingSetter(
+    config.ceilingSetter.ceilingSetterAddress,
+    wallet,
+    config.ceilingSetter.rewardReceiver
+  )
   await pinger.ping()
 }
 
@@ -198,10 +189,10 @@ export const collateralAuctionThrottler = async () => {
     env.NETWORK
   )
   const pinger = new CollateralAuctionThrottler(
-    env.COLLATERAL_AUCTION_THROTTLER_ADDRESS,
+    config.collateralAuctionThrottler.collateralAuctionThrottlerAddress,
     wallet,
-    env.REWARD_RECEIVER,
-    env.MIN_UPDATE_INTERVAL_COLLATERAL_AUCTION_THROTTLER
+    config.collateralAuctionThrottler.rewardReceiver,
+    config.collateralAuctionThrottler.minUpdateInterval
   )
   await pinger.ping()
 }
@@ -225,28 +216,18 @@ export const balanceChecker = async () => {
     getAddress(env.ACCOUNTS_PASSPHRASE, x[1]),
   ])
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
-  const checker = new BalanceChecker(bots, BigNumber.from(env.MIN_ETH_BALANCE), provider)
+  const checker = new BalanceChecker(
+    bots,
+    BigNumber.from(config.balanceChecker.minBalance),
+    provider
+  )
   await checker.check()
 }
 
 export const livenessChecker = async () => {
   const time = Date.now()
   // List of contracts for which we check lastUpdateTime values and their max delay tolerance (in minutes)
-  const checks: [string, string, number, string?][] = [
-    ['eth_medianizer', env.MEDIANIZER_ETH_ADDRESS, 320], // Different from mainnet because Chainlink is update their oracle less often
-    ['coin_medianizer', env.MEDIANIZER_COIN_ADDRESS, 320], // Different from mainnet because the median on Kovan works with longer interval
-    ['eth_fsm', env.FSM_ETH_ADDRESS, 80],
-    ['oracle_relayer', env.ORACLE_RELAYER_ADDRESS, 80, 'redemptionPriceUpdateTime'],
-    ['rate_setter', env.RATE_SETTER_ADDRESS, 320], //   Different from mainnet because the median on Kovan works with longer interval
-    [
-      'stability_fee_treasury_transfer_surplus',
-      env.STABILITY_FEE_TREASURY_ADDRESS,
-      347040, // 241 Days
-      'latestSurplusTransferTime',
-    ],
-    ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 200, ETH_A],
-    ['collateral_auction_throttler', env.COLLATERAL_AUCTION_THROTTLER_ADDRESS, 420], // 7h
-  ]
+  const checks = config.livenessChecker.checks
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
   const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
@@ -255,8 +236,8 @@ export const livenessChecker = async () => {
     provider,
     store,
     env.GEB_SUBGRAPH_URL,
-    env.DS_PAUSE_ADDRESS,
-    env.GNOSIS_SAFE
+    config.livenessChecker.dsPauseAddress,
+    config.livenessChecker.gnosisSafeAddress
   )
   await checker.check()
   console.log(`Execution time: ${(Date.now() - time) / 1000}s`)
