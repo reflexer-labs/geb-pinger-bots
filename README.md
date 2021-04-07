@@ -83,23 +83,6 @@ Currently, the following variables are available:
 
 - `ETH_RPC`: comma separated list of Ethereum RPC nodes
 - `ACCOUNTS_PASSPHRASE`: secret passphrase used to derive Ethereum addresses for pingers. Each bot uses its own address. The derivation method used is the standard one. Each bot has a derivation path such as `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc. _Tip_: use a tool like https://iancoleman.io/bip39/ to manage pinger keys
-- `MEDIANIZER_ETH_ADDRESS`: address of the ETH medianizer contract
-- `MEDIANIZER_COIN_ADDRESS`: address of the system coin medianizer contract
-- `FSM_ETH_ADDRESS`: address of the ETH FSM contract
-- `ORACLE_RELAYER_ADDRESS`: address of the OracleRelayer contract
-- `TAX_COLLECTOR_ADDRESS`: address of the TaxCollector contract
-- `RATE_SETTER_ADDRESS`: address of the rate setter contract (on-chain controller)
-- `STABILITY_FEE_TREASURY_ADDRESS`: address of the stability fee treasury contract
-- `DS_PAUSE_ADDRESS`: address of the DSPause contract
-- `ACCOUNTING_ENGINE_ADDRESS`: address of the AccountingEngine contract
-- `SAFE_ENGINE_ADDRESS`: address of the SafeEngine contract
-- `GNOSIS_SAFE`: address of the Gnosis Safe administration multisig
-- `MIN_ETH_BALANCE`: minimum amount of ETH balance needed in a single pinger bot
-- `REWARD_RECEIVER`: receiving address for caller rewards (surplus coming from the stability fee treasury)
-- `SCHEDULER_INTERVAL_ETH_MEDIAN`: interval period at which the ETH median pinger is called
-- `SCHEDULER_INTERVAL_COIN_MEDIAN`: interval period at which the system coin median pinger is called
-- `SCHEDULER_INTERVAL_ETH_FSM`: interval period at which the ETH FSM pinger is called
-- `SCHEDULER_INTERVAL_RATE_SETTER` : interval period at which the rate setter pinger is called
 - `TWILIO_AUTH_TOKEN`: Twilio secret for SMS alerts
 - `TWILIO_SEND_NUMBER`: Twilio alert sending number
 - `TWILIO_SID`: Twilio API key ID for SMS alerts
@@ -110,10 +93,5 @@ Currently, the following variables are available:
 - `STATUS_BUCKET`: AWS bucket name for the status page
 - `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
 - `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
-- `MIN_UPDATE_INTERVAL_ETH_MEDIAN`: Default minimum time interval in minutes at which the pinger will send a transaction. Note that the other `SCHEDULER_INTERVAL_*` params above are specific frequencies for several Lambda function calls. Usually `SCHEDULER_INTERVAL_*` will be set to smaller values than this variable
-- `MIN_UPDATE_INTERVAL_COIN_MEDIAN`: Same as above for the system coin median pinger
-- `MIN_UPDATE_INTERVAL_ETH_FSM`: Same as above for the ETH FSM pinger
-- `MIN_UPDATE_INTERVAL_RATE_SETTER`: Same as above for the rate setter pinger
-- `MIN_UPDATE_INTERVAL_TAX_COLLECTOR`: Same as above for the tax collector pinger
 
 The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold for the liveness checker, etc.
