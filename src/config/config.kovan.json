@@ -4,7 +4,7 @@
     "schedulerInterval": 10,
     "minUpdateInterval": 60,
     "medianizerAddress": "0xBe75d5da0E80Bb222eAbCB3d2001Af3318065338",
-    "coinMedianizer": "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944",
+    "coinMedianizerAddress": "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944",
     "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
   },
   "uniswapCoinMedianizer": {

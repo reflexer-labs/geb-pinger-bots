@@ -4,7 +4,7 @@ export type PingerConifg = {
     schedulerInterval: number
     minUpdateInterval: number
     medianizerAddress: string
-    coinMedianizer: string
+    coinMedianizerAddress: string
     rewardReceiver: string
   }
   uniswapCoinMedianizer: {

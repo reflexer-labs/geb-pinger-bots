@@ -15,7 +15,7 @@ import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
 import { PingerConifg } from './utils/types'
 import kovanConfig from './config/config.kovan.json'
-// import kovanConfig from './config/config.mainnet.json'
+import mainnetConfig from './config/config.mainnet.json'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -34,7 +34,7 @@ type EnvVar =
 
 const env = process.env as { [key in EnvVar]: string }
 
-const config = kovanConfig as PingerConifg
+const config = (env.NETWORK === 'mainnet' ? mainnetConfig : kovanConfig) as PingerConifg
 
 export const notifier = new Notifier(
   env.SLACK_HOOK_ERROR_URL,
@@ -55,7 +55,7 @@ export const updateChainlinkETHMedianizer = async () => {
   )
   const pinger = new ChainlinkMedianizerPinger(
     config.chainlinkETHMedianizer.medianizerAddress,
-    config.chainlinkETHMedianizer.coinMedianizer,
+    config.chainlinkETHMedianizer.coinMedianizerAddress,
     wallet,
     config.chainlinkETHMedianizer.minUpdateInterval * 60,
     config.chainlinkETHMedianizer.rewardReceiver
