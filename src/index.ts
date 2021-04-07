@@ -13,8 +13,9 @@ import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
 import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
-import fs from 'fs'
 import { PingerConifg } from './utils/types'
+import kovanConfig from './config/config.kovan.json'
+// import kovanConfig from './config/config.mainnet.json'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -32,11 +33,8 @@ type EnvVar =
   | 'NETWORK'
 
 const env = process.env as { [key in EnvVar]: string }
-const network = env.NETWORK
-console.log(__dirname)
-const config: PingerConifg = JSON.parse(
-  fs.readFileSync(`${__dirname}/../../config/config.${network}.json`, 'utf-8')
-)
+
+const config = kovanConfig as PingerConifg
 
 export const notifier = new Notifier(
   env.SLACK_HOOK_ERROR_URL,
