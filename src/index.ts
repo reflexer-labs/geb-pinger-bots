@@ -245,7 +245,7 @@ export const livenessChecker = async () => {
       'latestSurplusTransferTime',
     ],
     ['tax_collector', env.TAX_COLLECTOR_ADDRESS, 200, ETH_A],
-    // ['collateral_auction_throttler', env.COLLATERAL_AUCTION_THROTTLER_ADDRESS, 420], // 7h
+    ['collateral_auction_throttler', env.COLLATERAL_AUCTION_THROTTLER_ADDRESS, 10080], // 1 week
   ]
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
