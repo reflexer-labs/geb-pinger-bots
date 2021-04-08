@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
