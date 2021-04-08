@@ -14,8 +14,8 @@ import { TaxCollectorPinger } from './pingers/tax-collector'
 import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
 import { PingerConifg } from './utils/types'
-import kovanConfig from './config/config.kovan.json'
-import mainnetConfig from './config/config.mainnet.json'
+import kovanConfig from './../config/config.kovan.json'
+import mainnetConfig from './../config/config.mainnet.json'
 
 type EnvVar =
   | 'ETH_RPC'
