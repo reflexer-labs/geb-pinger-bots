@@ -1,7 +1,7 @@
 {
   "name": "geb-pinger-bots",
   "version": "1.0.0",
-  "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex bond system.",
+  "description": "This a collection of pinger bots running on AWS lambda to maintain the GEB reflex index system.",
   "main": "index.js",
   "scripts": {
     "local-kovan": "serverless invoke local --stage kovan --function",
@@ -11,7 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@reflexer-finance/geb-admin": "0.0.22",
+    "@reflexer-finance/geb-admin": "1.0.7",
     "aws-sdk": "^2.771.0",
     "axios": "^0.20.0",
     "ethers": "^5.0.14",
@@ -58,9 +58,7 @@
     "geb",
     "pinger",
     "bot",
-    "RAI",
-    "Reflexer",
-    "FLX"
+    "Reflexer"
   ],
   "author": "Guillaume Felley <guillaume@reflexer.finance>",
   "license": "ISC"

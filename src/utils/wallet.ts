@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { PingerAccount } from '../chains/accounts'
+import { RPC_FAILED_TIMEOUT, RPC_STALL_TIMEOUT } from './constants'
 
 export const getPrivateKeyFromHdWallet = (passphrase: string, index: number) => {
   const hdWallet = ethers.utils.HDNode.fromMnemonic(passphrase)
@@ -30,7 +31,10 @@ export const getProvider = async (ethRpc: string, network: string) => {
   // Create the individual providers
   let providers = urls.map((x) => {
     let provider: ethers.providers.StaticJsonRpcProvider
-    provider = new ethers.providers.StaticJsonRpcProvider({ url: x, timeout: 10000 }, network)
+    provider = new ethers.providers.StaticJsonRpcProvider(
+      { url: x, timeout: RPC_FAILED_TIMEOUT },
+      network
+    )
 
     // To debug do:
     provider.on('debug', (x) =>
@@ -48,11 +52,11 @@ export const getProvider = async (ethRpc: string, network: string) => {
 
   const providerConfigs = providers.map((p, i) => ({
     provider: p,
-    // Assign a priority based on the order in the list.
-    // We need a priority to use the same node as much possible and avoid nodes in different sync stages
+    // Assign a priority based on the order in the list
+    // We need a priority to use the same node as much as possible and avoid nodes in different sync stages
     priority: i + 1,
-    // If a node did not reply within 3s, go to the next node
-    stallTimeout: 3000,
+    // If a node did not reply within 3s, go to the next one
+    stallTimeout: RPC_STALL_TIMEOUT,
   }))
 
   const fallBackProvider = new ethers.providers.FallbackProvider(providerConfigs, quorum)

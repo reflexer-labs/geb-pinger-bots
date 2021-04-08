@@ -10,7 +10,8 @@
     "outDir": "lib",
     "sourceMap": true,
     "target": "ES2019",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules"]
 }

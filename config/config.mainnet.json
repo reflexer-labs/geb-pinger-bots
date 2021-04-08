@@ -1,0 +1,98 @@
+{
+  "chainlinkETHMedianizer": {
+    "enabled": true,
+    "schedulerInterval": 10,
+    "minUpdateInterval": 60,
+    "medianizerAddress": "0x6A4B575Ba61D2FB86ad0Ff5e5BE286960580E71A",
+    "coinMedianizerAddress": "0x12A5E1c81B10B264A575930aEae80681DDF595fe",
+    "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+  },
+  "uniswapCoinMedianizer": {
+    "enabled": true,
+    "schedulerInterval": 10,
+    "minUpdateInterval": 240,
+    "coinMedianizerAddress": "0x12A5E1c81B10B264A575930aEae80681DDF595fe",
+    "rateSetterAddress": "0x005FaB4C9D1ef0f3E41CD27b26cF05680C3bF947",
+    "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+  },
+  "ethFsm": {
+    "enabled": true,
+    "schedulerInterval": 10,
+    "minUpdateInterval": 60,
+    "fsmAddress": "0xE6F5377DE93A361cd5531bdFbDf0f4b522E16B2B",
+    "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
+    "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
+  },
+  "taxCollector": {
+    "enabled": true,
+    "schedulerInterval": 15,
+    "minUpdateInterval": 180,
+    "taxCollectorAddress": "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
+    "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
+  },
+  "stabilityFeeTreasury": {
+    "enabled": true,
+    "schedulerInterval": 2880,
+    "stabilityFeeTreasuryAddress": "0x83533fdd3285f48204215E9CF38C785371258E76"
+  },
+  "pauseExecutor": {
+    "enabled": true,
+    "schedulerInterval": 15,
+    "dsPauseAddress": "0x2cDE6A1147B0EE61726b86d83Fd548401B1162c7"
+  },
+  "debtSettler": {
+    "enabled": true,
+    "schedulerInterval": 20,
+    "accountingEngineAddress": "0xcEe6Aa1aB47d0Fb0f24f51A3072EC16E20F90fcE",
+    "safeEngineAddress": "0xCC88a9d330da1133Df3A7bD823B95e52511A6962"
+  },
+  "ceilingSetter": {
+    "enabled": false,
+    "schedulerInterval": 20,
+    "ceilingSetterAddress": "0x504b0B9B2fa7fEb434820058061f73E7e86ed38A",
+    "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+  },
+  "collateralAuctionThrottler": {
+    "enabled": true,
+    "schedulerInterval": 20,
+    "minUpdateInterval": 604800,
+    "collateralAuctionThrottlerAddress": "0x59536C9Ad1a390fA0F60813b2a4e8B957903Efc7",
+    "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+  },
+  "balanceChecker": {
+    "enabled": true,
+    "schedulerInterval": 90,
+    "minBalance": "500000000000000000"
+  },
+  "livenessChecker": {
+    "enabled": true,
+    "schedulerInterval": 60,
+    "dsPauseAddress": "0x2cDE6A1147B0EE61726b86d83Fd548401B1162c7",
+    "gnosisSafeAddress": "",
+    "checks": [
+      ["eth_medianizer", "0x6A4B575Ba61D2FB86ad0Ff5e5BE286960580E71A", 80],
+      ["coin_medianizer", "0x12A5E1c81B10B264A575930aEae80681DDF595fe", 260],
+      ["eth_fsm", "0xE6F5377DE93A361cd5531bdFbDf0f4b522E16B2B", 80],
+      [
+        "oracle_relayer",
+        "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
+        80,
+        "redemptionPriceUpdateTime"
+      ],
+      ["rate_setter", "0x005FaB4C9D1ef0f3E41CD27b26cF05680C3bF947", 260],
+      [
+        "stability_fee_treasury_transfer_surplus",
+        "0x83533fdd3285f48204215E9CF38C785371258E76",
+        347040,
+        "latestSurplusTransferTime"
+      ],
+      [
+        "tax_collector",
+        "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
+        200,
+        "0x4554482d41000000000000000000000000000000000000000000000000000000"
+      ],
+      ["collateral_auction_throttler", "", 10080]
+    ]
+  }
+}

@@ -17,7 +17,7 @@ export class PauseExecutor {
     const proposals = await fetchPendingProposals(this.gebSubgraphUrl)
     console.log(`${proposals.length} pending found`)
 
-    // We will force override only the first pending proposals in case some transaction are pending from the previous run
+    // We will force an override for the first proposal executions in case some transactions are pending from the previous run
     let override = true
 
     for (let proposal of proposals) {
@@ -26,12 +26,12 @@ export class PauseExecutor {
 
       if (!isSchedule) {
         notifier.sendError(
-          `Transaction found in subgraph not scheduled on chain. Full hash: ${fullHash} target ${proposal.proposalTarget} description: "${proposal.transactionDescription}"`
+          `Transaction found in subgraph not scheduled on chain. Full hash: ${fullHash}, target ${proposal.proposalTarget}, description: "${proposal.transactionDescription}"`
         )
         continue
       }
 
-      // Prepare transaction
+      // Prepare a transaction
       const tx = await this.dsPause.executeTransaction(
         proposal.proposalTarget,
         proposal.codeHash,
@@ -39,14 +39,14 @@ export class PauseExecutor {
         proposal.earliestExecutionTime
       )
 
-      // Simulate call and handle potential errors
+      // Simulate the call and handle potential errors
       let hash: string
       try {
         hash = await this.transactor.ethCall(tx)
       } catch (err) {
         if ((err as string).startsWith('ds-protest-pause-delegatecall-error')) {
           // The proposal itself is failing
-          notifier.sendError(
+          console.log(
             `Proposal with full hash: ${fullHash} target: ${proposal.proposalTarget} and description: "${proposal.transactionDescription}" is a failing at execution.`
           )
         } else if ((err as string).startsWith('ds-protest-pause-expired-tx')) {
@@ -65,11 +65,11 @@ export class PauseExecutor {
 
         continue
       }
-      // !! Overriding here is a bit risky since we might override a different transaction.
+      // !! Overriding here is a bit risky since we might override a different transaction
       hash = await this.transactor.ethSend(tx, override)
       override = false
       notifier.sendMultisigMessage(
-        `Executed proposal in DsPause with description: "${proposal.transactionDescription}" \n Transaction hash ${hash}`
+        `Executed a proposal in DsPause with the description: "${proposal.transactionDescription}". \n Transaction hash ${hash}`
       )
     }
   }

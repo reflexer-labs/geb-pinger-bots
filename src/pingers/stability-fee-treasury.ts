@@ -2,6 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
+import { STABILITY_FEE_TREASURY__TRANSFER_SURPLUS_FUNDS_GAS } from '../utils/constants'
 
 export class StabilityFeeTreasuryPinger {
   private stabilityFeeTreasury: contracts.StabilityFeeTreasury
@@ -17,7 +18,7 @@ export class StabilityFeeTreasuryPinger {
   public async ping() {
     let tx: TransactionRequest
 
-    // Simulate call
+    // Simulate the call
     try {
       tx = this.stabilityFeeTreasury.transferSurplusFunds()
       await this.transactor.ethCall(tx)
@@ -30,7 +31,11 @@ export class StabilityFeeTreasuryPinger {
       return
     }
 
-    const hash = await this.transactor.ethSend(tx, true, BigNumber.from('400000'))
+    const hash = await this.transactor.ethSend(
+      tx,
+      true,
+      STABILITY_FEE_TREASURY__TRANSFER_SURPLUS_FUNDS_GAS
+    )
     console.log(`Surplus funds transferred, transaction hash: ${hash}`)
   }
 }
