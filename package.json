@@ -12,12 +12,10 @@
   },
   "dependencies": {
     "@reflexer-finance/geb-admin": "1.0.7",
-    "aws-sdk": "^2.771.0",
     "axios": "^0.20.0",
     "ethers": "^5.0.14",
     "mongoose": "^5.9.10",
-    "patch-package": "^6.2.2",
-    "twilio": "^3.49.4"
+    "patch-package": "^6.2.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",

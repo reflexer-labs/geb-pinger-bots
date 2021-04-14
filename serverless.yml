@@ -26,14 +26,6 @@ custom:
     NETWORK: ${opt:stage}
     ETH_RPC: ${param:ETH_RPC}
     ACCOUNTS_PASSPHRASE: ${param:ACCOUNTS_PASSPHRASE}
-    TWILIO_AUTH_TOKEN: ${param:TWILIO_AUTH_TOKEN, ''}
-    TWILIO_SEND_NUMBER: ${param:TWILIO_SEND_NUMBER, ''}
-    TWILIO_SID: ${param:TWILIO_SID, ''}
-    PHONE_NOTIFICATION_RECEIVER: ${param:PHONE_NOTIFICATION_RECEIVER, '[]'}
-    GEB_SUBGRAPH_URL: ${param:GEB_SUBGRAPH_URL}
-    AWS_SECRET: ${param:AWS_SECRET}
-    AWS_ID: ${param:AWS_ID}
-    STATUS_BUCKET: ${param:STATUS_BUCKET}
     SLACK_HOOK_ERROR_URL: ${param:SLACK_HOOK_ERROR_URL}
     SLACK_HOOK_MULTISIG_URL: ${param:SLACK_HOOK_MULTISIG_URL}
 
@@ -48,8 +40,8 @@ functions:
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):chainlinkETHMedianizer.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):chainlinkETHMedianizer.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.schedulerInterval} minutes)
 
 
   updateUniswapCoinMedianizer:
@@ -57,77 +49,77 @@ functions:
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):uniswapCoinMedianizer.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):uniswapCoinMedianizer.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer.schedulerInterval} minutes)
 
   updateETHFsm:
     handler: src/index.updateETHFsm
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):ethFsm.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):ethFsm.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.ethFsm.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.ethFsm.schedulerInterval} minutes)
 
   updateTaxCollector:
     handler: src/index.updateTaxCollector
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):taxCollector.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):taxCollector.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.taxCollector.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.taxCollector.schedulerInterval} minutes)
 
   updateStabilityFeeTreasury:
     handler: src/index.updateStabilityFeeTreasury
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):stabilityFeeTreasury.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):stabilityFeeTreasury.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.stabilityFeeTreasury.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.stabilityFeeTreasury.schedulerInterval} minutes)
 
   pauseExecutor:
     handler: src/index.pauseExecutor
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):pauseExecutor.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):pauseExecutor.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.pauseExecutor.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.pauseExecutor.schedulerInterval} minutes)
 
   debtSettler:
     handler: src/index.debtSettler
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):debtSettler.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):debtSettler.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.debtSettler.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.debtSettler.schedulerInterval} minutes)
 
   ceilingSetter:
     handler: src/index.ceilingSetter
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):ceilingSetter.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):ceilingSetter.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.ceilingSetter.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.ceilingSetter.schedulerInterval} minutes)
 
   collateralAuctionThrottler:
     handler: src/index.collateralAuctionThrottler
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):collateralAuctionThrottler.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):collateralAuctionThrottler.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.collateralAuctionThrottler.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.collateralAuctionThrottler.schedulerInterval} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):balanceChecker.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):balanceChecker.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.balanceChecker.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.balanceChecker.schedulerInterval} minutes)
 
   livenessChecker:
     handler: src/index.livenessChecker
     timeout: 240
     events:
       - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):livenessChecker.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):livenessChecker.schedulerInterval} minutes)
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.livenessChecker.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.livenessChecker.schedulerInterval} minutes)

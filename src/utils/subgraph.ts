@@ -16,9 +16,7 @@ export const postQuery = async (host: string, query: string) => {
   return resp.data.data
 }
 
-const graphQlQueryWithFallback = async (url: string, query: string) => {
-  const urls = url.split(',')
-
+const graphQlQueryWithFallback = async (urls: string[], query: string) => {
   try {
     return await postQuery(urls[0], query)
   } catch (errPrimary) {
@@ -52,7 +50,7 @@ type ProposalQueryData = {
   createdAt: string
 }
 
-export const fetchRecentProposals = async (gebSubgraphUrl: string, since: number) => {
+export const fetchRecentProposals = async (gebSubgraphUrls: string[], since: number) => {
   const query = `{
     dsPauseScheduledTransactions(where: {createdAt_gte: ${since.toString()} }){
     proposalSender
@@ -66,12 +64,12 @@ export const fetchRecentProposals = async (gebSubgraphUrl: string, since: number
     }
   }`
 
-  const resp = await graphQlQueryWithFallback(gebSubgraphUrl, query)
+  const resp = await graphQlQueryWithFallback(gebSubgraphUrls, query)
 
   return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
 }
 
-export const fetchPendingProposals = async (gebSubgraphUrl: string) => {
+export const fetchPendingProposals = async (gebSubgraphUrls: string[]) => {
   const query = `{
     dsPauseScheduledTransactions(where: {executed: false, abandoned: false}){
     proposalSender
@@ -85,7 +83,7 @@ export const fetchPendingProposals = async (gebSubgraphUrl: string) => {
     }
   }`
 
-  const resp = await graphQlQueryWithFallback(gebSubgraphUrl, query)
+  const resp = await graphQlQueryWithFallback(gebSubgraphUrls, query)
 
   return (await resp.dsPauseScheduledTransactions) as ProposalQueryData[]
 }
@@ -106,44 +104,41 @@ export const fetchGlobalDebt = async (gebSubgraphUrl: string) => {
   return parseInt(await resp.systemState.globalDebt)
 }
 
-export const fetchAuctionsTimestamps = async (gebSubgraphUrl: string, since: number) => {
+export const fetchAuctionsTimestamps = async (gebSubgraphUrls: string[], since: number) => {
   const query = `{
     fixedDiscountAuctions(where: {createdAt_gte: ${since}}) {
       createdAt
     }
   }`
 
-  const resp = (await graphQlQueryWithFallback(gebSubgraphUrl, query)).fixedDiscountAuctions as {
+  const resp = (await graphQlQueryWithFallback(gebSubgraphUrls, query)).fixedDiscountAuctions as {
     createdAt: string
   }[]
   return resp.map((x) => parseInt(x.createdAt))
 }
 
 export const fetchAdminSyncedBlockNumber = async (gebSubgraphUrl: string) => {
-  // We need to calculate the admin endpoint, which is different from the subgraph query endpoint
-  // !! To use this we need whitelisted access to the admin endpoint (port 8030 of the node)
+  // Dummy query that will return an error telling up to which block we are synced
+  const query = `
+{
+    systemStates(block: {number: 999999999}) {
+        id
+    }
+}
+  `
+  const prom = Axios.post(gebSubgraphUrl, {
+    query,
+  })
 
-  // Get the base domain
-  const domain = gebSubgraphUrl.match(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/)
-  if (!domain) {
-    throw 'Invalid subgraph url'
+  let resp: any
+  try {
+    resp = await prom
+  } catch (err) {
+    throw Error('Error with fetching synced block number: ' + err)
   }
+  const errorMessage = resp.data.errors[0].message
 
-  let adminUrl: string
-  if (domain[0] == 'https://api.thegraph.com') {
-    // This is a Graph protocol hosted service
-    adminUrl = `https://api.thegraph.com/index-node/graphql`
-  } else {
-    // This a self hosted subgraph
-    adminUrl = domain[0] + ':8030/graphql'
-  }
-
-  // Select the part of the URL corresponding the subgraph name e.g: reflexer-labs/rai
-  let subgraphPath = gebSubgraphUrl.split('/').slice(-2).join('/')
-  let query = `{indexingStatusForCurrentVersion(subgraphName: "${subgraphPath}") { chains { latestBlock { number }}}}`
-  const block = parseInt(
-    (await postQuery(adminUrl, query)).indexingStatusForCurrentVersion.chains[0].latestBlock.number
-  )
-
+  // Extract the last synced block form the error message
+  const block = Number(errorMessage.match(/indexed up to block number ([0-9]*)/)[1])
   return block
 }

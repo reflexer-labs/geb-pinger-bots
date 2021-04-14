@@ -83,14 +83,6 @@ Currently, the following variables are available:
 
 - `ETH_RPC`: comma separated list of Ethereum RPC nodes
 - `ACCOUNTS_PASSPHRASE`: secret passphrase used to derive Ethereum addresses for pingers. Each bot uses its own address. The derivation method used is the standard one. Each bot has a derivation path such as `m/44'/60'/0'/0/0`, `m/44'/60'/0'/0/1`, etc. _Tip_: use a tool like https://iancoleman.io/bip39/ to manage pinger keys
-- `TWILIO_AUTH_TOKEN`: Twilio secret for SMS alerts
-- `TWILIO_SEND_NUMBER`: Twilio alert sending number
-- `TWILIO_SID`: Twilio API key ID for SMS alerts
-- `PHONE_NOTIFICATION_RECEIVER`: list of phone numbers with specified timezones and available hours for SMS alerts. Example: `[{"phone":"+33376233981","timeZone":"Europe/Zurich","available":"8-20"},{"phone":"+448885859181","timeZone":"Europe/London","available":"10-2"}]`
-- `GEB_SUBGRAPH_URL`: comma separated list of subgraph nodes
-- `AWS_SECRET`: AWS deploy key
-- `AWS_ID`: AWS deploy ID
-- `STATUS_BUCKET`: AWS bucket name for the status page
 - `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
 - `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
 

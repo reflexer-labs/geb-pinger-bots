@@ -11,7 +11,6 @@ import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/me
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
-import { Store } from './utils/store'
 import { getAddress, getProvider, getWallet } from './utils/wallet'
 import { PingerConifg } from './utils/types'
 import kovanConfig from './../config/config.kovan.json'
@@ -22,28 +21,13 @@ type EnvVar =
   | 'ACCOUNTS_PASSPHRASE'
   | 'SLACK_HOOK_MULTISIG_URL'
   | 'SLACK_HOOK_ERROR_URL'
-  | 'TWILIO_AUTH_TOKEN'
-  | 'TWILIO_SEND_NUMBER'
-  | 'TWILIO_SID'
-  | 'PHONE_NOTIFICATION_RECEIVER'
-  | 'GEB_SUBGRAPH_URL'
-  | 'STATUS_BUCKET'
-  | 'AWS_ID'
-  | 'AWS_SECRET'
   | 'NETWORK'
 
 const env = process.env as { [key in EnvVar]: string }
 
 const config = (env.NETWORK === 'mainnet' ? mainnetConfig : kovanConfig) as PingerConifg
 
-export const notifier = new Notifier(
-  env.SLACK_HOOK_ERROR_URL,
-  env.SLACK_HOOK_MULTISIG_URL,
-  env.TWILIO_AUTH_TOKEN,
-  env.TWILIO_SID,
-  env.TWILIO_SEND_NUMBER,
-  JSON.parse(env.PHONE_NOTIFICATION_RECEIVER)
-)
+export const notifier = new Notifier(env.SLACK_HOOK_ERROR_URL, env.SLACK_HOOK_MULTISIG_URL)
 
 // Chainlink ETH medianizer
 export const updateChainlinkETHMedianizer = async () => {
@@ -54,11 +38,11 @@ export const updateChainlinkETHMedianizer = async () => {
     env.NETWORK
   )
   const pinger = new ChainlinkMedianizerPinger(
-    config.chainlinkETHMedianizer.medianizerAddress,
-    config.chainlinkETHMedianizer.coinMedianizerAddress,
+    config.pingers.chainlinkETHMedianizer.medianizerAddress,
+    config.pingers.chainlinkETHMedianizer.coinMedianizerAddress,
     wallet,
-    config.chainlinkETHMedianizer.minUpdateInterval * 60,
-    config.chainlinkETHMedianizer.rewardReceiver
+    config.pingers.chainlinkETHMedianizer.minUpdateInterval * 60,
+    config.pingers.chainlinkETHMedianizer.rewardReceiver
   )
   await pinger.ping()
 }
@@ -72,11 +56,11 @@ export const updateUniswapCoinMedianizer = async () => {
     env.NETWORK
   )
   const pinger = new UniswapMedianizerPinger(
-    config.uniswapCoinMedianizer.coinMedianizerAddress,
-    config.uniswapCoinMedianizer.rateSetterAddress,
+    config.pingers.uniswapCoinMedianizer.coinMedianizerAddress,
+    config.pingers.uniswapCoinMedianizer.rateSetterAddress,
     wallet,
-    config.uniswapCoinMedianizer.minUpdateInterval * 60,
-    config.uniswapCoinMedianizer.rewardReceiver
+    config.pingers.uniswapCoinMedianizer.minUpdateInterval * 60,
+    config.pingers.uniswapCoinMedianizer.rewardReceiver
   )
   await pinger.ping()
 }
@@ -90,11 +74,11 @@ export const updateETHFsm = async () => {
     env.NETWORK
   )
   const pinger = new CollateralFsmPinger(
-    config.ethFsm.fsmAddress,
-    config.ethFsm.oracleRelayerAddress,
-    config.ethFsm.collateralType,
+    config.pingers.ethFsm.fsmAddress,
+    config.pingers.ethFsm.oracleRelayerAddress,
+    config.pingers.ethFsm.collateralType,
     wallet,
-    config.ethFsm.minUpdateInterval * 60
+    config.pingers.ethFsm.minUpdateInterval * 60
   )
   await pinger.ping()
 }
@@ -108,10 +92,10 @@ export const updateTaxCollector = async () => {
     env.NETWORK
   )
   const pinger = new TaxCollectorPinger(
-    config.taxCollector.taxCollectorAddress,
+    config.pingers.taxCollector.taxCollectorAddress,
     wallet,
-    config.taxCollector.collateralType,
-    config.taxCollector.minUpdateInterval * 60
+    config.pingers.taxCollector.collateralType,
+    config.pingers.taxCollector.minUpdateInterval * 60
   )
   await pinger.ping()
 }
@@ -124,7 +108,7 @@ export const updateStabilityFeeTreasury = async () => {
     env.NETWORK
   )
   const pinger = new StabilityFeeTreasuryPinger(
-    config.stabilityFeeTreasury.stabilityFeeTreasuryAddress,
+    config.pingers.stabilityFeeTreasury.stabilityFeeTreasuryAddress,
     wallet
   )
   await pinger.ping()
@@ -139,9 +123,9 @@ export const pauseExecutor = async () => {
     env.NETWORK
   )
   const pinger = new PauseExecutor(
-    config.pauseExecutor.dsPauseAddress,
+    config.pingers.pauseExecutor.dsPauseAddress,
     wallet,
-    env.GEB_SUBGRAPH_URL
+    config.graphNodes
   )
   await pinger.ping()
 }
@@ -154,10 +138,10 @@ export const debtSettler = async () => {
     env.NETWORK
   )
   const pinger = new DebtSettler(
-    config.debtSettler.accountingEngineAddress,
-    config.debtSettler.safeEngineAddress,
+    config.pingers.debtSettler.accountingEngineAddress,
+    config.pingers.debtSettler.safeEngineAddress,
     wallet,
-    env.GEB_SUBGRAPH_URL
+    config.graphNodes
   )
   await pinger.ping()
 }
@@ -171,9 +155,9 @@ export const ceilingSetter = async () => {
     env.NETWORK
   )
   const pinger = new CeilingSetter(
-    config.ceilingSetter.ceilingSetterAddress,
+    config.pingers.ceilingSetter.ceilingSetterAddress,
     wallet,
-    config.ceilingSetter.rewardReceiver
+    config.pingers.ceilingSetter.rewardReceiver
   )
   await pinger.ping()
 }
@@ -187,10 +171,10 @@ export const collateralAuctionThrottler = async () => {
     env.NETWORK
   )
   const pinger = new CollateralAuctionThrottler(
-    config.collateralAuctionThrottler.collateralAuctionThrottlerAddress,
+    config.pingers.collateralAuctionThrottler.collateralAuctionThrottlerAddress,
     wallet,
-    config.collateralAuctionThrottler.rewardReceiver,
-    config.collateralAuctionThrottler.minUpdateInterval
+    config.pingers.collateralAuctionThrottler.rewardReceiver,
+    config.pingers.collateralAuctionThrottler.minUpdateInterval
   )
   await pinger.ping()
 }
@@ -216,7 +200,7 @@ export const balanceChecker = async () => {
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
   const checker = new BalanceChecker(
     bots,
-    BigNumber.from(config.balanceChecker.minBalance),
+    BigNumber.from(config.pingers.balanceChecker.minBalance),
     provider
   )
   await checker.check()
@@ -225,18 +209,10 @@ export const balanceChecker = async () => {
 export const livenessChecker = async () => {
   const time = Date.now()
   // List of contracts for which we check lastUpdateTime values and their max delay tolerance (in minutes)
-  const checks = config.livenessChecker.checks
+  const checks = config.pingers.livenessChecker.checks
 
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
-  const store = new Store(env.STATUS_BUCKET, env.AWS_ID, env.AWS_SECRET)
-  const checker = new LivenessChecker(
-    checks,
-    provider,
-    store,
-    env.GEB_SUBGRAPH_URL,
-    config.livenessChecker.dsPauseAddress,
-    config.livenessChecker.gnosisSafeAddress
-  )
+  const checker = new LivenessChecker(checks, provider, config.graphNodes)
   await checker.check()
   console.log(`Execution time: ${(Date.now() - time) / 1000}s`)
 }

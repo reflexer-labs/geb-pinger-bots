@@ -8,13 +8,13 @@ export class PauseExecutor {
   private dsPause: adminContracts.DsProtestPause
   private transactor: Transactor
 
-  constructor(dsPauseAddress: string, wallet: ethers.Signer, private gebSubgraphUrl: string) {
+  constructor(dsPauseAddress: string, wallet: ethers.Signer, private gebSubgraphUrls: string[]) {
     this.transactor = new Transactor(wallet)
     this.dsPause = this.transactor.getGebContract(adminContracts.DsProtestPause, dsPauseAddress)
   }
 
   public async ping() {
-    const proposals = await fetchPendingProposals(this.gebSubgraphUrl)
+    const proposals = await fetchPendingProposals(this.gebSubgraphUrls)
     console.log(`${proposals.length} pending found`)
 
     // We will force an override for the first proposal executions in case some transactions are pending from the previous run

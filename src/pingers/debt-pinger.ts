@@ -18,7 +18,7 @@ export class DebtSettler {
     private accountingEngineAddress: string,
     safeEngineAddress: string,
     wallet: ethers.Signer,
-    private gebSubgraphUrl: string
+    private gebSubgraphUrls: string[]
   ) {
     this.transactor = new Transactor(wallet)
     this.accountingEngine = this.transactor.getGebContract(
@@ -35,7 +35,7 @@ export class DebtSettler {
 
     // Fetch auctions from the last 2 days + popDelay
     let auctionTimestamps = await fetchAuctionsTimestamps(
-      this.gebSubgraphUrl,
+      this.gebSubgraphUrls,
       now - popDelay.toNumber() - SECONDS_PER_DAY * 2
     )
 
