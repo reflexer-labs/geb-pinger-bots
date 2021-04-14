@@ -66,9 +66,9 @@
   },
   "livenessChecker": {
     "enabled": true,
-    "schedulerInterval": 60,
+    "schedulerInterval": 30,
     "dsPauseAddress": "0x2cDE6A1147B0EE61726b86d83Fd548401B1162c7",
-    "gnosisSafeAddress": "",
+    "gnosisSafeAddress": "0x427A277eA53e25143B3b509C684aA4D0EB8bA01b",
     "checks": [
       ["eth_medianizer", "0x6A4B575Ba61D2FB86ad0Ff5e5BE286960580E71A", 80],
       ["coin_medianizer", "0x12A5E1c81B10B264A575930aEae80681DDF595fe", 260],
