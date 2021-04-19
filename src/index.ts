@@ -183,7 +183,6 @@ export const collateralAuctionThrottler = async () => {
 export const balanceChecker = async () => {
   // List of pinger accounts to check
   const pingerList: [string, number, string?][] = [
-    ['ETH medianizer', PingerAccount.MEDIANIZER_ETH],
     ['Coin medianizer', PingerAccount.MEDIANIZER_COIN],
     ['ETH FSM', PingerAccount.FSM_ETH],
     ['Tax collector', PingerAccount.TAX_COLLECTOR],

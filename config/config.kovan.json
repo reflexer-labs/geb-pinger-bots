@@ -5,7 +5,7 @@
   ],
   "pingers": {
     "chainlinkETHMedianizer": {
-      "enabled": true,
+      "enabled": false,
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
       "medianizerAddress": "0xBe75d5da0E80Bb222eAbCB3d2001Af3318065338",
@@ -75,7 +75,12 @@
       "dsPauseAddress": "0x2ef5240F19B45C02c6eb53211e034bD504Ea1f82",
       "gnosisSafeAddress": "0xFdFD0fed99F100600CC8Ed69d9777806bd627773",
       "checks": [
-        ["eth_medianizer", "0xBe75d5da0E80Bb222eAbCB3d2001Af3318065338", 320],
+        [
+          "chainlink_eth_oracle",
+          "0x9326BFA02ADD2366b30bacB125260Af641031331",
+          60,
+          "latestTimestamp"
+        ],
         ["coin_medianizer", "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944", 320],
         ["eth_fsm", "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675", 80],
         [
