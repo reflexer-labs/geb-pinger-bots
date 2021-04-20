@@ -78,7 +78,7 @@
         [
           "chainlink_eth_oracle",
           "0x9326BFA02ADD2366b30bacB125260Af641031331",
-          60,
+          240,
           "latestTimestamp"
         ],
         ["coin_medianizer", "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944", 320],
