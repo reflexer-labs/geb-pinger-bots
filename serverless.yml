@@ -4,7 +4,7 @@ service: geb-pinger-bots
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   region: 'us-west-2'
   environment: ${self:custom.${opt:stage}}
   vpc:
@@ -20,6 +20,11 @@ custom:
   # Redirect to either to conf
   kovan: ${self:custom.prod}
   mainnet: ${self:custom.prod}
+  
+  custom:
+  webpack:
+    webpackConfig: './webpack.config.js'
+    includeModules: true
 
   # Fetch env vars from the severless dashboard (depends on the stage which can be either kovan or mainnet)
   prod:
@@ -30,8 +35,7 @@ custom:
     SLACK_HOOK_MULTISIG_URL: ${param:SLACK_HOOK_MULTISIG_URL}
 
 plugins:
-  - serverless-plugin-typescript
-  - serverless-offline
+  - 'serverless-webpack'
 
 functions:
 
