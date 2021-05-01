@@ -52,9 +52,9 @@
       "safeEngineAddress": "0x7f63fE955fFF8EA474d990f1Fc8979f2C650edbE"
     },
     "ceilingSetter": {
-      "enabled": false,
-      "schedulerInterval": 20,
-      "ceilingSetterAddress": "0x2747c5eE7692717EE2B284749bC1062BEAdab85d",
+      "enabled": true,
+      "schedulerInterval": 1440,
+      "ceilingSetterAddress": "0x8637682C5f7EF0A60Ed685Cf335aEC747991EfFb",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
     "collateralAuctionThrottler": {
