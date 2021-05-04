@@ -56,6 +56,14 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer.schedulerInterval} minutes)
 
+  updateUniswapCoinMedianizer2:
+    handler: src/index.updateUniswapCoinMedianizer
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer2.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.uniswapCoinMedianizer2.schedulerInterval} minutes)
+
   updateETHFsm:
     handler: src/index.updateETHFsm
     timeout: 240

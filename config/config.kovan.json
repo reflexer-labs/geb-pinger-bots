@@ -20,6 +20,14 @@
       "rateSetterAddress": "0x0641C280B21A31daf1518a91A68Ad396EcC6f2f0",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
+    "uniswapCoinMedianizer2": {
+      "enabled": true,
+      "schedulerInterval": 15,
+      "minUpdateInterval": 180,
+      "coinMedianizerAddress": "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944",
+      "rateSetterAddress": "0x0641C280B21A31daf1518a91A68Ad396EcC6f2f0",
+      "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
+    },
     "ethFsm": {
       "enabled": true,
       "schedulerInterval": 15,
