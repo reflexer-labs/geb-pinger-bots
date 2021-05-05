@@ -83,6 +83,24 @@ export const updateETHFsm = async () => {
   await pinger.ping()
 }
 
+// ETH OSM
+export const updateETHFsm2 = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new CollateralFsmPinger(
+    config.pingers.ethFsm2.fsmAddress,
+    config.pingers.ethFsm2.oracleRelayerAddress,
+    config.pingers.ethFsm2.collateralType,
+    wallet,
+    config.pingers.ethFsm2.minUpdateInterval * 60
+  )
+  await pinger.ping()
+}
+
 // Tax collector
 export const updateTaxCollector = async () => {
   const wallet = await getWallet(

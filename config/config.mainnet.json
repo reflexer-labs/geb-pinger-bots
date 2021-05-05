@@ -17,19 +17,19 @@
       "rateSetterAddress": "0x005FaB4C9D1ef0f3E41CD27b26cF05680C3bF947",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
-    "uniswapCoinMedianizer2": {
-      "enabled": true,
-      "schedulerInterval": 10,
-      "minUpdateInterval": 240,
-      "coinMedianizerAddress": "0x12A5E1c81B10B264A575930aEae80681DDF595fe",
-      "rateSetterAddress": "0x005FaB4C9D1ef0f3E41CD27b26cF05680C3bF947",
-      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
-    },
     "ethFsm": {
       "enabled": true,
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
       "fsmAddress": "0xE6F5377DE93A361cd5531bdFbDf0f4b522E16B2B",
+      "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
+      "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
+    },
+    "ethFsm2": {
+      "enabled": true,
+      "schedulerInterval": 10,
+      "minUpdateInterval": 60,
+      "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
