@@ -26,7 +26,7 @@
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
     "ethFsm2": {
-      "enabled": true,
+      "enabled": false,
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
