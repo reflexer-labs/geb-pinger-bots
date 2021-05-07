@@ -23,8 +23,8 @@ export const PENDING_TRANSACTION_GAS_BUMP_PERCENT = 30
 // Naming pattern: <Contract name>__<function name>_GAS
 export const TAX_COLLECTOR__TAX_SINGLE_GAS = BigNumber.from('200000')
 export const STABILITY_FEE_TREASURY__TRANSFER_SURPLUS_FUNDS_GAS = BigNumber.from('400000')
-export const RATE_SETTER__UPDATE_RATE_GAS = BigNumber.from('400000')
-export const COIN_MEDIANIZER__UPDATE_RESULTS_GAS = BigNumber.from('500000')
+export const RATE_SETTER__UPDATE_RATE_GAS = BigNumber.from('500000')
+export const COIN_MEDIANIZER__UPDATE_RESULTS_GAS = BigNumber.from('550000')
 export const CHAINLINK_MEDIANIZER__UPDATE_RESULTS_GAS = BigNumber.from('400000')
 export const COLLATERAL_FSM__UPDATE_RESULTS_GAS = BigNumber.from('300000')
 export const ORACLE_RELAYER__UPDATE_COLLATERAL_PRICE_GAS = BigNumber.from('200000')
