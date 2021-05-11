@@ -47,7 +47,6 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.schedulerInterval} minutes)
 
-
   updateUniswapCoinMedianizer:
     handler: src/index.updateUniswapCoinMedianizer
     timeout: 240
@@ -58,14 +57,6 @@ functions:
 
   updateETHFsm:
     handler: src/index.updateETHFsm
-    timeout: 240
-    events:
-      - schedule: 
-          enabled: ${file(./config/config.${opt:stage}.json):pingers.ethFsm.enabled}
-          rate: rate(${file(./config/config.${opt:stage}.json):pingers.ethFsm.schedulerInterval} minutes)
-  
-  updateETHFsm2:
-    handler: src/index.updateETHFsm2
     timeout: 240
     events:
       - schedule: 

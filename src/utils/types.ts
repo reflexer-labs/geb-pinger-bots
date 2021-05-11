@@ -25,14 +25,6 @@ export type PingerConifg = {
       oracleRelayerAddress: string
       collateralType: string
     }
-    ethFsm2: {
-      enabled: boolean
-      schedulerInterval: number
-      minUpdateInterval: number
-      fsmAddress: string
-      oracleRelayerAddress: string
-      collateralType: string
-    }
     taxCollector: {
       enabled: boolean
       schedulerInterval: number

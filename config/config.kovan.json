@@ -28,14 +28,6 @@
       "oracleRelayerAddress": "0xE5Ae4E49bEA485B5E5172EE6b1F99243cB15225c",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
-    "ethFsm2": {
-      "enabled": false,
-      "schedulerInterval": 15,
-      "minUpdateInterval": 60,
-      "fsmAddress": "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675",
-      "oracleRelayerAddress": "0xE5Ae4E49bEA485B5E5172EE6b1F99243cB15225c",
-      "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
-    },
     "taxCollector": {
       "enabled": true,
       "schedulerInterval": 15,
@@ -61,7 +53,7 @@
     },
     "ceilingSetter": {
       "enabled": true,
-      "schedulerInterval": 1440,
+      "schedulerInterval": 60,
       "ceilingSetterAddress": "0x8637682C5f7EF0A60Ed685Cf335aEC747991EfFb",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },

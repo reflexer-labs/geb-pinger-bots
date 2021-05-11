@@ -10,7 +10,7 @@ export class Notifier {
     this.logError(message)
 
     // Slack notification
-    // await this.slackError(message)
+    await this.slackError(message)
   }
 
   public async sendMultisigMessage(message) {
