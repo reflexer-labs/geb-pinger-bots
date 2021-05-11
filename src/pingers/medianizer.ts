@@ -171,7 +171,7 @@ export class UniswapMedianizerPinger {
       )
       console.log(`Rate setter update sent, transaction hash: ${hash}`)
     } catch (err) {
-      if (typeof err == 'string' && err.startsWith('RateSetter/wait-more')) {
+      if (typeof err == 'string' && err.startsWith('PIRateSetter/wait-more')) {
         // Rate setter was updated too recently. This should not be the case because we checked for the update above
         // await notifier.sendError(`RateSetter/wait-more`)
         console.log('Too early to update Rate Setter')
