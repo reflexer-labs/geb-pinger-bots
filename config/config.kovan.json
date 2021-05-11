@@ -67,7 +67,16 @@
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,
-      "minBalance": "500000000000000000"
+      "mention": "U018QF2QUVA",
+      "checks": [
+        ["Coin medianizer", 1, 0.5],
+        ["ETH FSM", 2, 2],
+        ["Tax collector", 4, 0.5],
+        ["Pause executor", 5, 0.5],
+        ["Stability fee treasury", 8, 0.5],
+        ["Debt settler", 9, 0.5],
+        ["Miscellaneous", 11, 0.5]
+      ]
     },
     "livenessChecker": {
       "enabled": true,

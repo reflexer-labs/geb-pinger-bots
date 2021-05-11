@@ -64,7 +64,8 @@ export type PingerConifg = {
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number
-      minBalance: string
+      mention?: string
+      checks: [string, number, number][]
     }
     livenessChecker: {
       enabled: boolean
