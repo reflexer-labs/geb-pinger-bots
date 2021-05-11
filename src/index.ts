@@ -199,27 +199,13 @@ export const collateralAuctionThrottler = async () => {
 
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {
-  // List of pinger accounts to check
-  const pingerList: [string, number, string?][] = [
-    ['Coin medianizer', PingerAccount.MEDIANIZER_COIN],
-    ['ETH FSM', PingerAccount.FSM_ETH],
-    ['Tax collector', PingerAccount.TAX_COLLECTOR],
-    ['Pause executor', PingerAccount.PAUSE_EXECUTOR],
-    ['Stability fee treasury', PingerAccount.STABILITY_FEE_TREASURY],
-    ['Debt settler', PingerAccount.ACCOUNTING_ENGINE],
-    ['Miscellaneous', PingerAccount.MISCELLANEOUS],
-  ]
-
-  const bots: [string, string][] = pingerList.map((x) => [
+  const bots: [string, string, number][] = config.pingers.balanceChecker.checks.map((x) => [
     x[0],
     getAddress(env.ACCOUNTS_PASSPHRASE, x[1]),
+    x[2],
   ])
   const provider = await getProvider(env.ETH_RPC, env.NETWORK)
-  const checker = new BalanceChecker(
-    bots,
-    BigNumber.from(config.pingers.balanceChecker.minBalance),
-    provider
-  )
+  const checker = new BalanceChecker(bots, provider, config.pingers.balanceChecker.mention)
   await checker.check()
 }
 
