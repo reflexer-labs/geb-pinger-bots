@@ -53,7 +53,7 @@
     },
     "ceilingSetter": {
       "enabled": true,
-      "schedulerInterval": 1440,
+      "schedulerInterval": 60,
       "ceilingSetterAddress": "0x8637682C5f7EF0A60Ed685Cf335aEC747991EfFb",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },

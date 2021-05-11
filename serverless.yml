@@ -47,7 +47,6 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.chainlinkETHMedianizer.schedulerInterval} minutes)
 
-
   updateUniswapCoinMedianizer:
     handler: src/index.updateUniswapCoinMedianizer
     timeout: 240
