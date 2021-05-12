@@ -111,7 +111,7 @@
           200,
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
-        ["collateral_auction_throttler", "0xB64a4106bF6ACf5128b5010F37aC1AFE6868aB1d", 10080]
+        ["collateral_auction_throttler", "0xB64a4106bF6ACf5128b5010F37aC1AFE6868aB1d", 10140]
       ]
     }
   }
