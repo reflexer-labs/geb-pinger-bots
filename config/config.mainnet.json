@@ -50,8 +50,8 @@
     },
     "ceilingSetter": {
       "enabled": false,
-      "schedulerInterval": 60,
-      "ceilingSetterAddress": "0x504b0B9B2fa7fEb434820058061f73E7e86ed38A",
+      "schedulerInterval": 360,
+      "ceilingSetterAddress": "0xB2df48A0C4A07031F538353AA35D7fFa24e25eC1",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "collateralAuctionThrottler": {
