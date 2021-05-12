@@ -84,7 +84,7 @@ export class ChainlinkMedianizerPinger {
 export class UniswapMedianizerPinger {
   protected medianizer: contracts.UniswapConsecutiveSlotsMedianRaiusd
   protected transactor: Transactor
-  protected rateSetter: contracts.RateSetter
+  protected rateSetter: contracts.PiRateSetter
 
   constructor(
     medianizerAddress: string,
@@ -98,7 +98,7 @@ export class UniswapMedianizerPinger {
       contracts.UniswapConsecutiveSlotsMedianRaiusd,
       medianizerAddress
     )
-    this.rateSetter = this.transactor.getGebContract(contracts.RateSetter, rateSetterAddress)
+    this.rateSetter = this.transactor.getGebContract(contracts.PiRateSetter, rateSetterAddress)
   }
 
   public async ping() {
