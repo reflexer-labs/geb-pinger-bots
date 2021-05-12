@@ -20,7 +20,7 @@
     "ethFsm": {
       "enabled": true,
       "schedulerInterval": 10,
-      "minUpdateInterval": 60,
+      "minUpdateInterval": 120,
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
@@ -88,7 +88,7 @@
           "latestTimestamp"
         ],
         ["coin_medianizer", "0xB7E06D980b17f168CE1b57189F8aa34D0254FEe2", 380],
-        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 80],
+        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 140],
         [
           "oracle_relayer",
           "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
