@@ -92,7 +92,7 @@
         [
           "oracle_relayer",
           "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
-          80,
+          140,
           "redemptionPriceUpdateTime"
         ],
         ["rate_setter", "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48", 380],
