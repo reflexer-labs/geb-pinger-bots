@@ -49,7 +49,9 @@ export class CollateralFsmPinger {
       } catch (err) {
         if (
           typeof err == 'string' &&
-          (err.startsWith('OSM/not-passed') || err.startsWith('DSM/not-passed'))
+          (err.startsWith('OSM/not-passed') ||
+            err.startsWith('DSM/not-passed') ||
+            err.startsWith('ExternallyFundedOSM/not-passed'))
         ) {
           console.log('FSM not yet ready to be updated')
         } else {
