@@ -9,15 +9,15 @@
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
       "medianizerAddress": "0xBe75d5da0E80Bb222eAbCB3d2001Af3318065338",
-      "coinMedianizerAddress": "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944",
+      "coinMedianizerAddress": "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
     "uniswapCoinMedianizer": {
       "enabled": true,
       "schedulerInterval": 15,
       "minUpdateInterval": 180,
-      "coinMedianizerAddress": "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944",
-      "rateSetterAddress": "0x0641C280B21A31daf1518a91A68Ad396EcC6f2f0",
+      "coinMedianizerAddress": "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3",
+      "rateSetterAddress": "0x97533CD0c5997bce2504378CB29a091830de0F94",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
     "ethFsm": {
@@ -90,7 +90,7 @@
           240,
           "latestTimestamp"
         ],
-        ["coin_medianizer", "0x82bEAd00751EFA3286c9Dd17e4Ea2570916B3944", 320],
+        ["coin_medianizer", "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3", 380],
         ["eth_fsm", "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675", 80],
         [
           "oracle_relayer",
@@ -98,7 +98,7 @@
           80,
           "redemptionPriceUpdateTime"
         ],
-        ["rate_setter", "0x0641C280B21A31daf1518a91A68Ad396EcC6f2f0", 320],
+        ["rate_setter", "0x97533CD0c5997bce2504378CB29a091830de0F94", 380],
         [
           "stability_fee_treasury_transfer_surplus",
           "0xE8B3b96D632D7257639de137FB6aD191F0515c8d",
@@ -111,7 +111,7 @@
           200,
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
-        ["collateral_auction_throttler", "0xB64a4106bF6ACf5128b5010F37aC1AFE6868aB1d", 420]
+        ["collateral_auction_throttler", "0xB64a4106bF6ACf5128b5010F37aC1AFE6868aB1d", 10080]
       ]
     }
   }
