@@ -51,7 +51,7 @@
     "ceilingSetter": {
       "enabled": false,
       "schedulerInterval": 360,
-      "ceilingSetterAddress": "0xB2df48A0C4A07031F538353AA35D7fFa24e25eC1",
+      "ceilingSetterAddress": "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "collateralAuctionThrottler": {
@@ -66,13 +66,13 @@
       "schedulerInterval": 90,
       "mention": "U018QF2QUVA",
       "checks": [
-        ["Coin medianizer", 1 , 0.5],
-        ["ETH FSM", 2 , 2],
-        ["Tax collector", 4 , 0.5],
-        ["Pause executor", 5 , 0.5],
-        ["Stability fee treasury", 8 , 0.5],
-        ["Debt settler", 9 , 0.5],
-        ["Miscellaneous", 11 , 0.5]
+        ["Coin medianizer", 1, 0.5],
+        ["ETH FSM", 2, 2],
+        ["Tax collector", 4, 0.5],
+        ["Pause executor", 5, 0.5],
+        ["Stability fee treasury", 8, 0.5],
+        ["Debt settler", 9, 0.5],
+        ["Miscellaneous", 11, 0.5]
       ]
     },
     "livenessChecker": {
