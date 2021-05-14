@@ -54,7 +54,7 @@
     "ceilingSetter": {
       "enabled": true,
       "schedulerInterval": 60,
-      "ceilingSetterAddress": "0x8637682C5f7EF0A60Ed685Cf335aEC747991EfFb",
+      "ceilingSetterAddress": "0x27c5A7B619FFBc074f9653bD39335Eac49Cd7A44",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
     "collateralAuctionThrottler": {
