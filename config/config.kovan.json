@@ -93,7 +93,7 @@
           "latestTimestamp"
         ],
         ["coin_medianizer", "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3", 380],
-        ["eth_fsm", "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675", 80],
+        ["eth_fsm", "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675", 200],
         [
           "oracle_relayer",
           "0xE5Ae4E49bEA485B5E5172EE6b1F99243cB15225c",
