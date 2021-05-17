@@ -19,7 +19,9 @@ export class CollateralFsmPinger {
     oracleRelayerAddress: string,
     private collateralType: string,
     wallet: ethers.Signer,
-    protected minUpdateInterval: number
+    private minUpdateInterval: number,
+    private maxUpdateNoUpdateInterval: number,
+    private minUpdateIntervalDeviation: number
   ) {
     this.transactor = new Transactor(wallet)
     this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
@@ -31,16 +33,7 @@ export class CollateralFsmPinger {
 
   public async ping() {
     let didUpdateFsm = false
-
-    // Check if it's too early to update
-    const fsmLastUpdatedTime = await this.fsm.lastUpdateTime()
-
-    // Update the FSM if enough time has passed or if there is a transaction pending
-    // Transaction pending means that the tx from the last run got stuck in the mempool
-    if (
-      now().sub(fsmLastUpdatedTime).gte(this.minUpdateInterval) ||
-      (await this.transactor.isAnyTransactionPending())
-    ) {
+    if (await this.shouldUpdateFsm()) {
       // Simulate call
       let txFsm: TransactionRequest
       try {
@@ -82,6 +75,46 @@ export class CollateralFsmPinger {
       console.log(`OracleRelayer update sent, transaction hash: ${relayerHash}`)
     } else {
       console.log('Too early to update the OracleRelayer')
+    }
+  }
+
+  // Evaluate wether we should update the FSM or not
+  private async shouldUpdateFsm() {
+    if (await this.transactor.isAnyTransactionPending()) {
+      // A transaction from a previous run is pending and therefore needs a gas bump so we should update
+      return true
+    }
+    const fsmLastUpdatedTime = await this.fsm.lastUpdateTime()
+    const timeSinceLastUpdate = now().sub(fsmLastUpdatedTime)
+
+    if (timeSinceLastUpdate.gte(this.maxUpdateNoUpdateInterval)) {
+      // The fsm wasn't update in a very long time, more than the upper limit, update it now.
+      return true
+    } else if (timeSinceLastUpdate.lt(this.minUpdateInterval)) {
+      // The fsm was update too recently, don't update.
+      return false
+    } else {
+      // we're between minUpdateInterval and maxUpdateNoUpdateInterval update only if the price deviation is large (more than minUpdateIntervalDeviation %).
+      const pendingFsmPrice = (await this.fsm.getNextResultWithValidity())[0] // RAY
+      const priceSourceAddress = await this.fsm.priceSource()
+      const priceRelayContract = this.transactor.getGebContract(
+        contracts.ChainlinkRelayer,
+        priceSourceAddress
+      )
+      const nextPendingFsmPrice = (await priceRelayContract.getResultWithValidity())[0] // RAY
+
+      const priceDeviation = nextPendingFsmPrice
+        .sub(pendingFsmPrice)
+        .abs()
+        .mul(utils.RAY)
+        .div(pendingFsmPrice)
+
+      // If the price deviation is larger than the threshold..
+      if (utils.rayToFixed(priceDeviation).toUnsafeFloat() >= this.minUpdateIntervalDeviation) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 

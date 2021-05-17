@@ -20,7 +20,9 @@
     "ethFsm": {
       "enabled": true,
       "schedulerInterval": 10,
-      "minUpdateInterval": 120,
+      "minUpdateInterval": 60,
+      "maxNoUpdateInterval": 180,
+      "minUpdateIntervalDeviation": 0.04,
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"

@@ -21,6 +21,8 @@ export type PingerConifg = {
       enabled: boolean
       schedulerInterval: number
       minUpdateInterval: number
+      minUpdateIntervalDeviation: number
+      maxNoUpdateInterval: number
       fsmAddress: string
       oracleRelayerAddress: string
       collateralType: string

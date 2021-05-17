@@ -78,7 +78,9 @@ export const updateETHFsm = async () => {
     config.pingers.ethFsm.oracleRelayerAddress,
     config.pingers.ethFsm.collateralType,
     wallet,
-    config.pingers.ethFsm.minUpdateInterval * 60
+    config.pingers.ethFsm.minUpdateInterval * 60,
+    config.pingers.ethFsm.maxNoUpdateInterval * 60,
+    config.pingers.ethFsm.minUpdateIntervalDeviation,
   )
   await pinger.ping()
 }
