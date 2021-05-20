@@ -33,7 +33,7 @@
     "taxCollector": {
       "enabled": true,
       "schedulerInterval": 10,
-      "minUpdateInterval": 180,
+      "minUpdateInterval": 1440,
       "taxCollectorAddress": "0xc1a94C5ad9FCD79b03F79B34d8C0B0C8192fdc16",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },

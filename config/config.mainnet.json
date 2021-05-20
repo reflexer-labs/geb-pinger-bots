@@ -30,7 +30,7 @@
     "taxCollector": {
       "enabled": true,
       "schedulerInterval": 10,
-      "minUpdateInterval": 180,
+      "minUpdateInterval": 1440,
       "taxCollectorAddress": "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
@@ -51,7 +51,7 @@
       "safeEngineAddress": "0xCC88a9d330da1133Df3A7bD823B95e52511A6962"
     },
     "ceilingSetter": {
-      "enabled": false,
+      "enabled": true,
       "schedulerInterval": 360,
       "ceilingSetterAddress": "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
