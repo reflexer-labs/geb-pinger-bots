@@ -107,7 +107,7 @@
         [
           "tax_collector",
           "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
-          200,
+          1460,
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
         ["collateral_auction_throttler", "0x59536C9Ad1a390fA0F60813b2a4e8B957903Efc7", 10140]
