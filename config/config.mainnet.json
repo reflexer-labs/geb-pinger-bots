@@ -6,14 +6,14 @@
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
       "medianizerAddress": "0x6A4B575Ba61D2FB86ad0Ff5e5BE286960580E71A",
-      "coinMedianizerAddress": "0xB7E06D980b17f168CE1b57189F8aa34D0254FEe2",
+      "coinMedianizerAddress": "0x535d1A96048605Fb90f8592A46fD43979243388E",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "uniswapCoinMedianizer": {
       "enabled": true,
       "schedulerInterval": 10,
       "minUpdateInterval": 240,
-      "coinMedianizerAddress": "0xB7E06D980b17f168CE1b57189F8aa34D0254FEe2",
+      "coinMedianizerAddress": "0x535d1A96048605Fb90f8592A46fD43979243388E",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
@@ -89,7 +89,7 @@
           60,
           "latestTimestamp"
         ],
-        ["coin_medianizer", "0xB7E06D980b17f168CE1b57189F8aa34D0254FEe2", 380],
+        ["coin_medianizer", "0x535d1A96048605Fb90f8592A46fD43979243388E", 380],
         ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 200],
         [
           "oracle_relayer",
