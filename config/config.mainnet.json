@@ -21,7 +21,7 @@
       "enabled": true,
       "schedulerInterval": 10,
       "minUpdateInterval": 60,
-      "maxNoUpdateInterval": 180,
+      "maxNoUpdateInterval": 240,
       "minUpdateIntervalDeviation": 0.04,
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
@@ -90,7 +90,7 @@
           "latestTimestamp"
         ],
         ["coin_medianizer", "0xFbF4849a06F6e6F53EcB31D2f8BD61aA7874b268", 380],
-        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 200],
+        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 260],
         [
           "oracle_relayer",
           "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
