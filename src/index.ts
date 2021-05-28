@@ -59,7 +59,8 @@ export const updateUniswapCoinMedianizer = async () => {
     config.pingers.uniswapCoinMedianizer.coinMedianizerAddress,
     config.pingers.uniswapCoinMedianizer.rateSetterAddress,
     wallet,
-    config.pingers.uniswapCoinMedianizer.minUpdateInterval * 60,
+    config.pingers.uniswapCoinMedianizer.minUpdateIntervalMedian * 60,
+    config.pingers.uniswapCoinMedianizer.minUpdateIntervalRateSetter * 60,
     config.pingers.uniswapCoinMedianizer.rewardReceiver
   )
   await pinger.ping()

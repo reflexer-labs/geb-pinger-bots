@@ -15,7 +15,8 @@
     "uniswapCoinMedianizer": {
       "enabled": true,
       "schedulerInterval": 15,
-      "minUpdateInterval": 180,
+      "minUpdateIntervalMedian": 180,
+      "minUpdateIntervalRateSetter": 360,
       "coinMedianizerAddress": "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3",
       "rateSetterAddress": "0x97533CD0c5997bce2504378CB29a091830de0F94",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"

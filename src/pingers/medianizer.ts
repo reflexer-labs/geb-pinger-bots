@@ -91,6 +91,7 @@ export class UniswapMedianizerPinger {
     rateSetterAddress: string,
     wallet: ethers.Signer,
     protected minUpdateIntervalMedian: number,
+    protected minUpdateIntervalRateSetter: number,
     protected rewardReceiver: string
   ) {
     this.transactor = new Transactor(wallet)
@@ -150,7 +151,7 @@ export class UniswapMedianizerPinger {
     let tx: TransactionRequest
 
     const lastUpdatedTime = await this.rateSetter.lastUpdateTime()
-    const needsUpdate = now().sub(lastUpdatedTime).gte(this.minUpdateIntervalMedian)
+    const needsUpdate = now().sub(lastUpdatedTime).gte(this.minUpdateIntervalRateSetter)
 
     if (!didUpdateMedian && !needsUpdate) {
       // If the median was not updated or if it was updated too recently, skip
