@@ -111,6 +111,14 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.collateralAuctionThrottler.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.collateralAuctionThrottler.schedulerInterval} minutes)
 
+  debtFloorAdjuster:
+    handler: src/index.debtFloorAdjuster
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.debtFloorAdjuster.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.debtFloorAdjuster.schedulerInterval} minutes)
+
   balanceChecker:
     handler: src/index.balanceChecker
     timeout: 240

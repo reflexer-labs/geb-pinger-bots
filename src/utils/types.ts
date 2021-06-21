@@ -64,6 +64,13 @@ export type PingerConifg = {
       collateralAuctionThrottlerAddress: string
       rewardReceiver: string
     }
+    debtFloorAdjuster: {
+      enabled: boolean
+      schedulerInterval: number
+      minUpdateInterval: number
+      collateralAuctionThrottlerAddress: string
+      rewardReceiver: string
+    }
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number

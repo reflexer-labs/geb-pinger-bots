@@ -15,6 +15,7 @@ import { getAddress, getProvider, getWallet } from './utils/wallet'
 import { PingerConifg } from './utils/types'
 import kovanConfig from './../config/config.kovan.json'
 import mainnetConfig from './../config/config.mainnet.json'
+import { DebtFloorAdjuster } from './pingers/debt-floor-adjuster'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -178,6 +179,23 @@ export const collateralAuctionThrottler = async () => {
     wallet,
     config.pingers.collateralAuctionThrottler.rewardReceiver,
     config.pingers.collateralAuctionThrottler.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
+// Set the debt floor according to some gas oracle, eth price and redemption price
+export const debtFloorAdjuster = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new DebtFloorAdjuster(
+    config.pingers.debtFloorAdjuster.collateralAuctionThrottlerAddress,
+    wallet,
+    config.pingers.debtFloorAdjuster.rewardReceiver,
+    config.pingers.debtFloorAdjuster.minUpdateInterval
   )
   await pinger.ping()
 }

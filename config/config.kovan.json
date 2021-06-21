@@ -67,6 +67,13 @@
       "collateralAuctionThrottlerAddress": "0xB64a4106bF6ACf5128b5010F37aC1AFE6868aB1d",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
+    "debtFloorAdjuster": {
+      "enabled": true,
+      "schedulerInterval": 20,
+      "minUpdateInterval": 7200,
+      "collateralAuctionThrottlerAddress": "0xf79cc27b8DCf9A945187F860912bF4D7985e6722",
+      "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,
