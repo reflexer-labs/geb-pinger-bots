@@ -111,7 +111,7 @@ export const fetchAuctionsTimestamps = async (gebSubgraphUrls: string[], since: 
     }
   }`
 
-  const resp = (await graphQlQueryWithFallback(gebSubgraphUrls, query)).fixedDiscountAuctions as {
+  const resp = (await graphQlQueryWithFallback(gebSubgraphUrls, query)).discountAuctions as {
     createdAt: string
   }[]
   return resp.map((x) => parseInt(x.createdAt))
