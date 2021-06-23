@@ -106,7 +106,7 @@ export const fetchGlobalDebt = async (gebSubgraphUrl: string) => {
 
 export const fetchAuctionsTimestamps = async (gebSubgraphUrls: string[], since: number) => {
   const query = `{
-    fixedDiscountAuctions(where: {createdAt_gte: ${since}}) {
+    discountAuctions(where: {createdAt_gte: ${since}}) {
       createdAt
     }
   }`
