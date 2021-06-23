@@ -1,8 +1,5 @@
 {
-  "graphNodes": [
-    "https://subgraph-kovan.reflexer.finance/subgraphs/name/reflexer-labs/rai",
-    "https://api.thegraph.com/subgraphs/name/reflexer-labs/rai-kovan"
-  ],
+  "graphNodes": ["https://subgraph-kovan.reflexer.finance/subgraphs/name/reflexer-labs/rai"],
   "pingers": {
     "chainlinkETHMedianizer": {
       "enabled": false,
