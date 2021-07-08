@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 
 export const ZERO_BN = BigNumber.from(0)
 
-export const SECONDS_PER_DAY = 3600 * 48
+export const SECONDS_PER_DAY = 3600 * 24
 
 // In seconds
 export const APPROXIMATED_BLOCK_INTERVAL = 13
