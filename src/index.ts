@@ -16,6 +16,9 @@ import { PingerConifg } from './utils/types'
 import kovanConfig from './../config/config.kovan.json'
 import mainnetConfig from './../config/config.mainnet.json'
 import { DebtFloorAdjuster } from './pingers/debt-floor-adjuster'
+import { AutoSurplusAuctionedSetter } from './pingers/auto-surplus-auctioned-setter'
+import { AutoSurplusBufferSetter } from './pingers/auto-surplus-buffer-setter'
+import { DebtAuctionInitialParameterSetter } from './pingers/debt-auction-initial-param-setter'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -199,6 +202,56 @@ export const debtFloorAdjuster = async () => {
   )
   await pinger.ping()
 }
+
+export const autoSurplusAuctionedSetter = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new AutoSurplusAuctionedSetter(
+    config.pingers.autoSurplusAuctionedSetter.setterAddress,
+    wallet,
+    config.pingers.autoSurplusAuctionedSetter.rewardReceiver,
+    config.pingers.autoSurplusAuctionedSetter.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
+export const autoSurplusBufferSetter = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new AutoSurplusBufferSetter(
+    config.pingers.autoSurplusBufferSetter.setterAddress,
+    wallet,
+    config.pingers.autoSurplusBufferSetter.rewardReceiver,
+    config.pingers.autoSurplusBufferSetter.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
+export const debtAuctionInitialParameterSetter = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new DebtAuctionInitialParameterSetter(
+    config.pingers.debtAuctionInitialParameterSetter.setterAddress,
+    wallet,
+    config.pingers.debtAuctionInitialParameterSetter.rewardReceiver,
+    config.pingers.debtAuctionInitialParameterSetter.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
+
 
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {

@@ -71,6 +71,27 @@
       "debtFloorAdjusterAddress": "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
+    "autoSurplusAuctionedSetter": {
+      "enabled": true,
+      "schedulerInterval": 86400,
+      "minUpdateInterval": 1814400,
+      "setterAddress": "0xfCD7BcC44C3778880AEd0E025fd0aE5f7ce5Ba44",
+      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+    },
+    "autoSurplusBufferSetter": {
+      "enabled": true,
+      "schedulerInterval": 86400,
+      "minUpdateInterval": 1814400,
+      "setterAddress": "0x1450f40E741F2450A95F9579Be93DD63b8407a25",
+      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+    },
+    "debtAuctionInitialParameterSetter": {
+      "enabled": true,
+      "schedulerInterval": 86400,
+      "minUpdateInterval": 1814400,
+      "setterAddress": "0x840E4e438711962DAc1a0c37B0588C08C92c29A5",
+      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,

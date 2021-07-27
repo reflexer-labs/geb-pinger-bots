@@ -70,6 +70,27 @@ export type PingerConifg = {
       minUpdateInterval: number
       debtFloorAdjusterAddress: string
       rewardReceiver: string
+    },
+    autoSurplusAuctionedSetter: {
+      enabled: boolean
+      schedulerInterval: number
+      minUpdateInterval: number
+      setterAddress: string
+      rewardReceiver: string
+    },
+    autoSurplusBufferSetter: {
+      enabled: boolean
+      schedulerInterval: number
+      minUpdateInterval: number
+      setterAddress: string
+      rewardReceiver: string
+    },
+    debtAuctionInitialParameterSetter: {
+      enabled: boolean
+      schedulerInterval: number
+      minUpdateInterval: number
+      setterAddress: string
+      rewardReceiver: string
     }
     balanceChecker: {
       enabled: boolean

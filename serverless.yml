@@ -119,6 +119,30 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.debtFloorAdjuster.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.debtFloorAdjuster.schedulerInterval} minutes)
 
+  autoSurplusAuctionedSetter:
+    handler: src/index.autoSurplusAuctionedSetter
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.autoSurplusAuctionedSetter.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.autoSurplusAuctionedSetter.schedulerInterval} minutes)
+    
+  autoSurplusBufferSetter:
+    handler: src/index.autoSurplusBufferSetter
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.autoSurplusBufferSetter.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.autoSurplusBufferSetter.schedulerInterval} minutes)
+  
+  debtAuctionInitialParameterSetter:
+    handler: src/index.debtAuctionInitialParameterSetter
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.debtAuctionInitialParameterSetter.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.debtAuctionInitialParameterSetter.schedulerInterval} minutes)
+
   balanceChecker:
     handler: src/index.balanceChecker
     timeout: 240
