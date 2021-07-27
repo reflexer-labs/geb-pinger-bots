@@ -28,7 +28,7 @@ git clone git@github.com:reflexer-labs/geb-pinger-bots.git
 npm i
 ```
 
-The pinger bots are deployed on AWS Lambda using the serverless framework. You will need an account on https://app.serverless.com/. This account will have to be added to the `reflexer` organization.
+The pinger bots are deployed on AWS Lambda using the serverless framework. You will need an account on https://app.serverless.com/. This account will have to be added to the `reflexer` organization. You can change the organization/serverless account in the `serveless.yml` file.
 
 Install serverless locally and authenticate to your serverless account with the CLI:
 
@@ -72,8 +72,8 @@ Any changes merged and pushed to the `kovan` and `mainnet` branches will automat
 
 Bot environment variables can be configured from the serverless dashboard:
 
-- Mainnet: https://app.serverless.com/reflexer/apps/geb-pinger-bots/geb-pinger-bots/settings/stages/mainnet
-- Kovan: https://app.serverless.com/reflexer/apps/geb-pinger-bots/geb-pinger-bots/settings/stages/kovan
+- Mainnet: https://app.serverless.com/<ORG_NAME>/apps/geb-pinger-bots/geb-pinger-bots/settings/stages/mainnet
+- Kovan: https://app.serverless.com/<ORG_NAME>/apps/geb-pinger-bots/geb-pinger-bots/settings/stages/kovan
 
 After changing a variable, the bots also need to be redeployed. To do that, open the serverless dashboard and go to App -> Kovan/Mainnet -> Deploys and click on "Redeploy".
 
@@ -86,4 +86,4 @@ Currently, the following variables are available:
 - `SLACK_HOOK_ERROR_URL`: Slack hook to send error notifications to
 - `SLACK_HOOK_MULTISIG_URL`: Slack hook to send multisig notifications to
 
-The above variables cover the most important pinger bot parameters. Some additional useful configurations are located in `src/index.ts`. For example, you can include/exclude a bot from the balance checker, set the alert threshold for the liveness checker, etc.
+Important configuration including contract addresses, execution interval and more is located in `config/config.mainnet.json` or `config/config.kovan.json`. These file currently contain the configuration the main RAI deployment.
