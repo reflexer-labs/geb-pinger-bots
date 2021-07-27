@@ -66,9 +66,9 @@
     },
     "debtFloorAdjuster": {
       "enabled": true,
-      "schedulerInterval": 20,
-      "minUpdateInterval": 7200,
-      "collateralAuctionThrottlerAddress": "0xf79cc27b8DCf9A945187F860912bF4D7985e6722",
+      "schedulerInterval": 86400,
+      "minUpdateInterval": 1814400,
+      "debtFloorAdjusterAddress": "0xf79cc27b8DCf9A945187F860912bF4D7985e6722",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
     "balanceChecker": {

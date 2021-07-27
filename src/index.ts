@@ -192,7 +192,7 @@ export const debtFloorAdjuster = async () => {
     env.NETWORK
   )
   const pinger = new DebtFloorAdjuster(
-    config.pingers.debtFloorAdjuster.collateralAuctionThrottlerAddress,
+    config.pingers.debtFloorAdjuster.debtFloorAdjusterAddress,
     wallet,
     config.pingers.debtFloorAdjuster.rewardReceiver,
     config.pingers.debtFloorAdjuster.minUpdateInterval
