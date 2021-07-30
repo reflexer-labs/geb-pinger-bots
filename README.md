@@ -11,11 +11,17 @@ This repo includes the following bots:
 
 - `updateUniswapCoinMedianizer` Call the update function of the system coin medianizer pulling the price from a Uniswap TWAP
 - `updateETHFsm` Update the ETH FSM (OSM) and subsequently call the OracleRelayer contract to push the new price inside the core system
-- `updateRateSetter` Call the on-chain controller to calculate and set a new redemption rate
+<!-- - `updateRateSetter` Call the on-chain controller to calculate and set a new redemption rate -->
 - `updateTaxCollector` Call the Tax Collector to collect stability fees from open safes
 - `updateStabilityFeeTreasury` Transfer any potential stability fee surplus from the treasury
 - `pauseExecutor` Execute pending proposals from DSPause like contracts
 - `debtSettler` Call the settle debt function in the AccountingEngine contract
+- `ceilingSetter` Set the debt ceiling according to the current amount of RAI outstanding
+- `collateralAuctionThrottler` Set the maximum amount of collateral that can be auctioned at once according to the amount of lock collateral
+- `debtFloorAdjuster` Set the debt floor according to a gas oracle
+- `autoSurplusAuctionedSetter` Set surplus auction parameters
+- `autoSurplusBufferSetter` Set the surplus buffer size according to the locked collateral
+- `debtAuctionInitialParameterSetter` Set debt auction parameters
 - `balanceChecker` Check that the ETH balance of a pinger is sufficient to pay for gas costs
 - `livenessChecker` Check that the the FSMs, medianizers and the TaxCollector were recently updated. Check that the Ethereum nodes used by the pinger are responsive and up to date. Check the the subgraph nodes are responsive and up to date. Send notifications upon detecting new multisig transactions. Update the status file at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
 
