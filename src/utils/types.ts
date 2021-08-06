@@ -91,7 +91,12 @@ export type PingerConifg = {
       minUpdateInterval: number
       setterAddress: string
       rewardReceiver: string
-    }
+    },
+    stakedTokensToKeepSetter: {
+      enabled: boolean
+      schedulerInterval: number
+      setterAddress: string
+    },
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number

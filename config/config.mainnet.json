@@ -92,6 +92,11 @@
       "setterAddress": "0x840E4e438711962DAc1a0c37B0588C08C92c29A5",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
+    "stakedTokensToKeepSetter": {
+      "enabled": true,
+      "schedulerInterval": 259200,
+      "setterAddress": "0xaa5f19B87cC8F8A17D20f0697F1B37E112930Ae4"
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,

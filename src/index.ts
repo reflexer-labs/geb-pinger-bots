@@ -19,6 +19,7 @@ import { DebtFloorAdjuster } from './pingers/debt-floor-adjuster'
 import { AutoSurplusAuctionedSetter } from './pingers/auto-surplus-auctioned-setter'
 import { AutoSurplusBufferSetter } from './pingers/auto-surplus-buffer-setter'
 import { DebtAuctionInitialParameterSetter } from './pingers/debt-auction-initial-param-setter'
+import { StakedTokensToKeepSetter } from './pingers/staked-token-to-keep-setter'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -251,6 +252,20 @@ export const debtAuctionInitialParameterSetter = async () => {
   await pinger.ping()
 }
 
+
+export const stakedTokensToKeepSetter = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new StakedTokensToKeepSetter(
+    config.pingers.stakedTokensToKeepSetter.setterAddress,
+    wallet
+  )
+  await pinger.ping()
+}
 
 
 // Check that all bots have sufficient balance

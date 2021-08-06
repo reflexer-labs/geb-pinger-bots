@@ -22,6 +22,7 @@ This repo includes the following bots:
 - `autoSurplusAuctionedSetter` Set surplus auction parameters
 - `autoSurplusBufferSetter` Set the surplus buffer size according to the locked collateral
 - `debtAuctionInitialParameterSetter` Set debt auction parameters
+- `stakedTokensToKeepSetter` Set the percentage of maximum staked protocol token LP that can be auctioned
 - `balanceChecker` Check that the ETH balance of a pinger is sufficient to pay for gas costs
 - `livenessChecker` Check that the the FSMs, medianizers and the TaxCollector were recently updated. Check that the Ethereum nodes used by the pinger are responsive and up to date. Check the the subgraph nodes are responsive and up to date. Send notifications upon detecting new multisig transactions. Update the status file at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
 

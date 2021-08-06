@@ -142,6 +142,14 @@ functions:
       - schedule: 
           enabled: ${file(./config/config.${opt:stage}.json):pingers.debtAuctionInitialParameterSetter.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.debtAuctionInitialParameterSetter.schedulerInterval} minutes)
+  
+  stakedTokensToKeepSetter:
+      handler: src/index.stakedTokensToKeepSetter
+      timeout: 240
+      events:
+        - schedule: 
+            enabled: ${file(./config/config.${opt:stage}.json):pingers.stakedTokensToKeepSetter.enabled}
+            rate: rate(${file(./config/config.${opt:stage}.json):pingers.stakedTokensToKeepSetter.schedulerInterval} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker
