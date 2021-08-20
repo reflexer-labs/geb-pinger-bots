@@ -33,6 +33,7 @@ custom:
     ACCOUNTS_PASSPHRASE: ${param:ACCOUNTS_PASSPHRASE}
     SLACK_HOOK_ERROR_URL: ${param:SLACK_HOOK_ERROR_URL}
     SLACK_HOOK_MULTISIG_URL: ${param:SLACK_HOOK_MULTISIG_URL}
+    BLOCKNATIVE_API_KEY: ${param:BLOCKNATIVE_API_KEY, null}
 
 plugins:
   - 'serverless-webpack'

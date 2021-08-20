@@ -1,12 +1,6 @@
-import Axios from 'axios'
+import axios from 'axios'
 import { BigNumber, ethers } from 'ethers'
-import {
-  TransactionRequest,
-  utils,
-  Geb,
-  BaseContractAPI,
-  GebContractAPIConstructorInterface,
-} from 'geb.js'
+import { utils, Geb, BaseContractAPI, GebContractAPIConstructorInterface } from 'geb.js'
 import { notifier } from '..'
 import {
   ETH_NODE_STALL_SYNC_TIMEOUT,
@@ -33,7 +27,7 @@ export class Transactor {
     }
   }
 
-  public async ethCall(tx: TransactionRequest): Promise<any> {
+  public async ethCall(tx: ethers.providers.TransactionRequest): Promise<any> {
     try {
       const res = await this.provider.call(tx)
 
@@ -59,7 +53,7 @@ export class Transactor {
   }
 
   public async ethSend(
-    tx: TransactionRequest,
+    tx: ethers.providers.TransactionRequest,
     // If set to true, the current confirmed nonce will be used and potentially override pending transactions
     forceOverride: boolean,
     gasLimit?: BigNumber
@@ -102,20 +96,23 @@ export class Transactor {
 
     // == Gas Price ==
 
-    // Try to fetch the gas price from gasnow.org or use a default node
     try {
-      tx.gasPrice = BigNumber.from(await this.gasNowPriceAPI())
+      const { maxFeePerGas, maxPriorityFeePerGas } = await this.blockNativeGasPrice(80)
+      tx.maxFeePerGas = maxFeePerGas
+      tx.maxPriorityFeePerGas = maxPriorityFeePerGas
     } catch {
-      tx.gasPrice = await this.provider.getGasPrice()
+      tx.maxFeePerGas = undefined
+      tx.maxPriorityFeePerGas = undefined
+      tx.gasPrice = await this.gasNowPriceAPI()
     } finally {
-      if (!BigNumber.isBigNumber(tx.gasPrice)) {
+      if (!tx.gasPrice && !(tx.maxFeePerGas && tx.maxPriorityFeePerGas)) {
         const err = 'Could not determine the gas price'
         await notifier.sendError(err)
         throw err
       }
     }
 
-    const bumpGasPrice = async (tx: TransactionRequest) => {
+    const bumpGasPrice = async (tx: ethers.providers.TransactionRequest) => {
       if (!tx.gasPrice) {
         throw Error('Undefined gas price to bump')
       }
@@ -124,7 +121,19 @@ export class Transactor {
         `Potential pending transaction from previous run (pending nonce: ${pendingNonce}, current nonce: ${currentNonce}). Keep calm and override transaction with current gas price + ${PENDING_TRANSACTION_GAS_BUMP_PERCENT}%`
       )
       // Add 30% gas price
-      tx.gasPrice = tx.gasPrice.mul(PENDING_TRANSACTION_GAS_BUMP_PERCENT + 100).div(100)
+
+      if (tx.gasPrice) {
+        tx.gasPrice = BigNumber.from(tx.gasPrice)
+          .mul(PENDING_TRANSACTION_GAS_BUMP_PERCENT + 100)
+          .div(100)
+      } else {
+        tx.maxFeePerGas = BigNumber.from(tx.maxFeePerGas)
+          .mul(PENDING_TRANSACTION_GAS_BUMP_PERCENT + 100)
+          .div(100)
+        tx.maxPriorityFeePerGas = BigNumber.from(tx.maxPriorityFeePerGas)
+          .mul(PENDING_TRANSACTION_GAS_BUMP_PERCENT + 100)
+          .div(100)
+      }
     }
 
     // == Nonce ==
@@ -280,8 +289,40 @@ export class Transactor {
 
   private async gasNowPriceAPI() {
     const url = 'https://www.gasnow.org/api/v3/gas/price?utm_source=:RFX'
-    const resp = await Axios.get(url)
-    return resp.data.data.fast as string
+    const resp = await axios.get(url)
+    return BigNumber.from(resp.data.data.fast as string)
+  }
+
+  private async blockNativeGasPrice(nextBlockConfidence: 70 | 80 | 90 | 95 | 99): Promise<{
+    price: BigNumber
+    maxPriorityFeePerGas: BigNumber
+    maxFeePerGas: BigNumber
+  }> {
+    if (!process.env.BLOCKNATIVE_API_KEY) {
+      throw Error('No blocknative key')
+    }
+
+    const url = 'https://api.blocknative.com/gasprices/blockprices'
+    const resp = await axios.get(url, {
+      headers: {
+        Authorization: process.env.BLOCKNATIVE_API_KEY,
+      },
+    })
+    const match = resp.data.blockPrices[0].estimatedPrices.find(
+      (x: any) => x.confidence === nextBlockConfidence
+    )
+
+    const e9 = '000000000'
+    if (match) {
+    console.log(match)
+      return {
+        price: BigNumber.from(match.price + e9),
+        maxFeePerGas: BigNumber.from(match.maxFeePerGas + e9),
+        maxPriorityFeePerGas: BigNumber.from(match.maxPriorityFeePerGas + e9),
+      }
+    } else {
+      throw Error('Blocknative broken API')
+    }
   }
 
   public async checkNodes() {
