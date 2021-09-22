@@ -29,7 +29,7 @@
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
     "taxCollector": {
-      "enabled": true,
+      "enabled": false,
       "schedulerInterval": 10,
       "minUpdateInterval": 0,
       "taxCollectorAddress": "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
