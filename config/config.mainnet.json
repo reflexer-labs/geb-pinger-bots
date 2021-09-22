@@ -97,6 +97,12 @@
       "schedulerInterval": 259200,
       "setterAddress": "0xaa5f19B87cC8F8A17D20f0697F1B37E112930Ae4"
     },
+    "stakeRewardRefill": {
+      "enabled": true,
+      "schedulerInterval": 7200,
+      "minUpdateInterval": 432000,
+      "setterAddress": "0xc5fEcD1080d546F9494884E834b03D7AD208cc02"
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,

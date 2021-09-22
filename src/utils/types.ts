@@ -97,6 +97,12 @@ export type PingerConifg = {
       schedulerInterval: number
       setterAddress: string
     },
+    stakeRewardRefill: {
+      enabled: boolean
+      schedulerInterval: number
+      minUpdateInterval: number
+      setterAddress: string
+    },
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number

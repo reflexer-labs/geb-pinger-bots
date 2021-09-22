@@ -20,6 +20,7 @@ import { AutoSurplusAuctionedSetter } from './pingers/auto-surplus-auctioned-set
 import { AutoSurplusBufferSetter } from './pingers/auto-surplus-buffer-setter'
 import { DebtAuctionInitialParameterSetter } from './pingers/debt-auction-initial-param-setter'
 import { StakedTokensToKeepSetter } from './pingers/staked-token-to-keep-setter'
+import { StakeRewardRefill } from './pingers/stake-reward-refill'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -266,6 +267,22 @@ export const stakedTokensToKeepSetter = async () => {
   )
   await pinger.ping()
 }
+
+export const stakeRewardRefill = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new StakeRewardRefill(
+    config.pingers.stakeRewardRefill.setterAddress,
+    wallet,
+    config.pingers.stakeRewardRefill.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
 
 
 // Check that all bots have sufficient balance
