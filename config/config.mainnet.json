@@ -13,7 +13,7 @@
       "enabled": true,
       "schedulerInterval": 10,
       "minUpdateIntervalMedian": 240,
-      "minUpdateIntervalRateSetter": 480,
+      "minUpdateIntervalRateSetter": 720,
       "coinMedianizerAddress": "0xFbF4849a06F6e6F53EcB31D2f8BD61aA7874b268",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
@@ -137,7 +137,7 @@
           410,
           "redemptionPriceUpdateTime"
         ],
-        ["rate_setter", "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48", 500],
+        ["rate_setter", "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48", 740],
         [
           "stability_fee_treasury_transfer_surplus",
           "0x83533fdd3285f48204215E9CF38C785371258E76",
