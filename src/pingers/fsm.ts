@@ -123,9 +123,11 @@ export class CollateralFsmPinger {
     const currentBlock = await this.transactor.getBlockNumber()
 
     // Get the latest OracleRelayer update events
-    // Assume a 15sec block interval
+    // Assume a 13sec block interval
+    // Update if it has been more than the max OSM update interval + 30min
+    // This is meant as a backup if somehow the piped update after the OSM one fails
     const scanFromBlock =
-      currentBlock - Math.floor(this.minUpdateInterval / APPROXIMATED_BLOCK_INTERVAL)
+      currentBlock - Math.floor((this.maxUpdateNoUpdateInterval + 30) / APPROXIMATED_BLOCK_INTERVAL)
     const events = await this.transactor.getContractEvents(
       'event UpdateCollateralPrice(bytes32 indexed collateralType, uint256 priceFeedValue, uint256 safetyPrice, uint256 liquidationPrice)',
       this.oracleRelayer.address,
