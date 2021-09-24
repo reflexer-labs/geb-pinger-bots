@@ -66,40 +66,40 @@
     },
     "debtFloorAdjuster": {
       "enabled": false,
-      "schedulerInterval": 86400,
+      "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "debtFloorAdjusterAddress": "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "autoSurplusAuctionedSetter": {
       "enabled": true,
-      "schedulerInterval": 86400,
+      "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0xa43BFA2a04c355128F3f10788232feeB2f42FE98",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "autoSurplusBufferSetter": {
       "enabled": true,
-      "schedulerInterval": 86400,
+      "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0x1450f40E741F2450A95F9579Be93DD63b8407a25",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "debtAuctionInitialParameterSetter": {
       "enabled": true,
-      "schedulerInterval": 86400,
+      "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "stakedTokensToKeepSetter": {
       "enabled": true,
-      "schedulerInterval": 259200,
+      "schedulerInterval": 4320,
       "setterAddress": "0xaa5f19B87cC8F8A17D20f0697F1B37E112930Ae4"
     },
     "stakeRewardRefill": {
       "enabled": true,
-      "schedulerInterval": 7200,
+      "schedulerInterval": 120,
       "minUpdateInterval": 432000,
       "setterAddress": "0xc5fEcD1080d546F9494884E834b03D7AD208cc02"
     },
@@ -155,7 +155,17 @@
         ["debt_floor_adjuster", "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447", 1900800],
         ["auto_surplus_auctioned_setter", "0xa43BFA2a04c355128F3f10788232feeB2f42FE98", 1900800],
         ["auto_surplus_buffer_setter", "0x1450f40E741F2450A95F9579Be93DD63b8407a25", 1900800],
-        ["debt_auction_initial_parameter_setter", "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E", 1900800]
+        [
+          "debt_auction_initial_parameter_setter",
+          "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E",
+          1900800
+        ],
+        [
+          "stake_reward_refiller",
+          "0xc5fEcD1080d546F9494884E834b03D7AD208cc02",
+          518400,
+          "lastRefillTime"
+        ]
       ]
     }
   }
