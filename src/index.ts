@@ -88,6 +88,7 @@ export const updateETHFsm = async () => {
     config.pingers.ethFsm.minUpdateInterval * 60,
     config.pingers.ethFsm.maxNoUpdateInterval * 60,
     config.pingers.ethFsm.minUpdateIntervalDeviation,
+    config.pingers.ethFsm.callBundlerAddress
   )
   await pinger.ping()
 }
@@ -253,7 +254,6 @@ export const debtAuctionInitialParameterSetter = async () => {
   await pinger.ping()
 }
 
-
 export const stakedTokensToKeepSetter = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
@@ -282,8 +282,6 @@ export const stakeRewardRefill = async () => {
   )
   await pinger.ping()
 }
-
-
 
 // Check that all bots have sufficient balance
 export const balanceChecker = async () => {

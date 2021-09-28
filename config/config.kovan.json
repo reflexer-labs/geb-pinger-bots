@@ -26,7 +26,8 @@
       "minUpdateIntervalDeviation": 0.04,
       "fsmAddress": "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675",
       "oracleRelayerAddress": "0xE5Ae4E49bEA485B5E5172EE6b1F99243cB15225c",
-      "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
+      "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000",
+      "callBundlerAddress": null
     },
     "taxCollector": {
       "enabled": true,

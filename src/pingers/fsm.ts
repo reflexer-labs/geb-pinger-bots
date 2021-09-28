@@ -21,7 +21,8 @@ export class CollateralFsmPinger {
     wallet: ethers.Signer,
     private minUpdateInterval: number,
     private maxUpdateNoUpdateInterval: number,
-    private minUpdateIntervalDeviation: number
+    private minUpdateIntervalDeviation: number,
+    private callBundlerAddress?: string
   ) {
     this.transactor = new Transactor(wallet)
     this.fsm = this.transactor.getGebContract(contracts.Osm, osmAddress)
@@ -33,11 +34,19 @@ export class CollateralFsmPinger {
 
   public async ping() {
     let didUpdateFsm = false
+
     if (await this.shouldUpdateFsm()) {
       // Simulate call
       let txFsm: TransactionRequest
       try {
-        txFsm = this.fsm.updateResult()
+        // Use the call bundler if available
+        if (this.callBundlerAddress) {
+          txFsm = await new ethers.Contract(this.callBundlerAddress, [
+            'function updateOsmAndEthAOracleRelayer() external',
+          ]).populateTransaction.updateOsmAndEthAOracleRelayer()
+        } else {
+          txFsm = this.fsm.updateResult()
+        }
         await this.transactor.ethCall(txFsm)
       } catch (err) {
         if (
@@ -62,6 +71,11 @@ export class CollateralFsmPinger {
     }
 
     // == Oracle Relayer ==
+
+    if (this.callBundlerAddress) {
+      // If we're using the call bundler, no need to update the FSM
+      return
+    }
 
     // Update the OracleRelayer if we just updated a FSM OR if the relayer is stale
     if (didUpdateFsm || (await this.shouldUpdateOracleRelayer())) {

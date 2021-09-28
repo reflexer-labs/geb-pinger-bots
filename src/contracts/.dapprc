@@ -1,0 +1,2 @@
+export HEVM_RPC=yes
+export DAPP_TEST_NUMBER=13313383
