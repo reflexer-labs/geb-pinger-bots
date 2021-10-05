@@ -101,9 +101,7 @@ export class Transactor {
       tx.maxFeePerGas = maxFeePerGas
       tx.maxPriorityFeePerGas = maxPriorityFeePerGas
     } catch {
-      tx.maxFeePerGas = undefined
-      tx.maxPriorityFeePerGas = undefined
-      tx.gasPrice = await this.gasNowPriceAPI()
+      tx = await this.signer.populateTransaction(tx)
     } finally {
       if (!tx.gasPrice && !(tx.maxFeePerGas && tx.maxPriorityFeePerGas)) {
         const err = 'Could not determine the gas price'
@@ -285,12 +283,6 @@ export class Transactor {
     address: string
   ): T {
     return Geb.getGebContract(gebContractClass, address, this.provider)
-  }
-
-  private async gasNowPriceAPI() {
-    const url = 'https://www.gasnow.org/api/v3/gas/price?utm_source=:RFX'
-    const resp = await axios.get(url)
-    return BigNumber.from(resp.data.data.fast as string)
   }
 
   private async blockNativeGasPrice(nextBlockConfidence: 70 | 80 | 90 | 95 | 99): Promise<{
