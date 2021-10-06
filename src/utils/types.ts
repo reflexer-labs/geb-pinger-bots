@@ -55,6 +55,7 @@ export type PingerConifg = {
     ceilingSetter: {
       enabled: boolean
       schedulerInterval: number
+      minUpdateInterval: number
       ceilingSetterAddress: string
       rewardReceiver: string
     }

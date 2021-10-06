@@ -167,7 +167,8 @@ export const ceilingSetter = async () => {
   const pinger = new CeilingSetter(
     config.pingers.ceilingSetter.ceilingSetterAddress,
     wallet,
-    config.pingers.ceilingSetter.rewardReceiver
+    config.pingers.ceilingSetter.rewardReceiver,
+    config.pingers.ceilingSetter.minUpdateInterval
   )
   await pinger.ping()
 }

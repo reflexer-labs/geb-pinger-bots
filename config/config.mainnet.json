@@ -54,8 +54,9 @@
     },
     "ceilingSetter": {
       "enabled": true,
-      "schedulerInterval": 360,
+      "schedulerInterval": 180,
       "ceilingSetterAddress": "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa",
+      "minUpdateInterval": 259200,
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "collateralAuctionThrottler": {
@@ -152,7 +153,7 @@
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
         ["collateral_auction_throttler", "0x59536C9Ad1a390fA0F60813b2a4e8B957903Efc7", 10140],
-        ["ceiling_setter", "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa", 97200],
+        ["ceiling_setter", "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa", 345600],
         ["debt_floor_adjuster", "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447", 1900800],
         ["auto_surplus_auctioned_setter", "0xa43BFA2a04c355128F3f10788232feeB2f42FE98", 1900800],
         ["auto_surplus_buffer_setter", "0x1450f40E741F2450A95F9579Be93DD63b8407a25", 1900800],
