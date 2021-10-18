@@ -111,7 +111,7 @@ export class Transactor {
     }
 
     const bumpGasPrice = async (tx: ethers.providers.TransactionRequest) => {
-      if (!tx.gasPrice) {
+      if (!tx.gasPrice || !(tx.maxFeePerGas && tx.maxPriorityFeePerGas)) {
         throw Error('Undefined gas price to bump')
       }
 
@@ -306,7 +306,7 @@ export class Transactor {
 
     const e9 = '000000000'
     if (match) {
-    console.log(match)
+      console.log(match)
       return {
         price: BigNumber.from(match.price + e9),
         maxFeePerGas: BigNumber.from(match.maxFeePerGas + e9),
