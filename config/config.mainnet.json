@@ -2,7 +2,7 @@
   "graphNodes": ["https://subgraph.reflexer.finance/subgraphs/name/reflexer-labs/rai"],
   "pingers": {
     "chainlinkETHMedianizer": {
-      "enabled": false,
+      "enabled": true,
       "schedulerInterval": 10,
       "minUpdateInterval": 10,
       "medianizerAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
