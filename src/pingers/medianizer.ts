@@ -11,19 +11,18 @@ import { now } from '../utils/time'
 
 export class ChainlinkMedianizerPinger {
   // We use an UniswapMedian contract but it can be a Chainlink median as well
-  protected medianizer: contracts.ChainlinkMedianEthusd
+  protected medianizer: contracts.UniswapConsecutiveSlotsMedianRaiusd
   protected transactor: Transactor
 
   constructor(
     chainlinkMedianizerAddress: string,
-    protected uniswapMedianizerAddress: string,
     wallet: ethers.Signer,
     protected minUpdateInterval: number,
     protected rewardReceiver: string
   ) {
     this.transactor = new Transactor(wallet)
     this.medianizer = this.transactor.getGebContract(
-      contracts.ChainlinkMedianEthusd,
+      contracts.UniswapConsecutiveSlotsMedianRaiusd,
       chainlinkMedianizerAddress
     )
   }
@@ -57,21 +56,13 @@ export class ChainlinkMedianizerPinger {
       tx = this.medianizer.updateResult(rewardReceiver)
       await this.transactor.ethCall(tx)
     } catch (err) {
-      if (err.startsWith('ChainlinkPriceFeedMedianizer/invalid-timestamp')) {
+      if (err.startsWith('ChainlinkTWAP/invalid-timestamp')) {
         console.log('Chainlink aggregator is stale waiting for an update')
+      } else if (err.startsWith('ChainlinkTWAP/wait-more')) {
+        console.log('Too early to update')
       } else {
         await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }
-      return
-    }
-
-    // Since UniswapMedianizerPinger is also updating the Chainlink ETH pinger, do
-    // not update the Chainlink ETH pinger if the UniswapMedianizerPinger has a
-    // pending transaction (meaning that it's updating the Chainlink oracle)
-    if (await this.transactor.isAnyTransactionPending(this.uniswapMedianizerAddress)) {
-      console.log(
-        'UniswapMedianizerPinger has a pending transaction. Do not send a Chainlink median update since UniswapMedianizerPinger will update the Chainlink median by itself.'
-      )
       return
     }
 

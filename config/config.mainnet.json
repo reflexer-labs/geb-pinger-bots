@@ -4,9 +4,8 @@
     "chainlinkETHMedianizer": {
       "enabled": false,
       "schedulerInterval": 10,
-      "minUpdateInterval": 60,
-      "medianizerAddress": "0x6A4B575Ba61D2FB86ad0Ff5e5BE286960580E71A",
-      "coinMedianizerAddress": "0xFbF4849a06F6e6F53EcB31D2f8BD61aA7874b268",
+      "minUpdateInterval": 10,
+      "medianizerAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "uniswapCoinMedianizer": {

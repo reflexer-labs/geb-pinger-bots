@@ -40,8 +40,8 @@ plugins:
 
 functions:
 
-  updateChainlinkETHMedianizer:
-    handler: src/index.updateChainlinkETHMedianizer
+  updateChainlinkRAIMedianizer:
+    handler: src/index.updateChainlinkRAIMedianizer
     timeout: 240
     events:
       - schedule: 

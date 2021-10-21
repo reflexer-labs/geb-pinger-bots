@@ -36,16 +36,15 @@ const config = (env.NETWORK === 'mainnet' ? mainnetConfig : kovanConfig) as Ping
 export const notifier = new Notifier(env.SLACK_HOOK_ERROR_URL, env.SLACK_HOOK_MULTISIG_URL)
 
 // Chainlink ETH medianizer
-export const updateChainlinkETHMedianizer = async () => {
+export const updateChainlinkRAIMedianizer = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.MEDIANIZER_ETH,
+    PingerAccount.MISCELLANEOUS,
     env.NETWORK
   )
   const pinger = new ChainlinkMedianizerPinger(
     config.pingers.chainlinkETHMedianizer.medianizerAddress,
-    config.pingers.chainlinkETHMedianizer.coinMedianizerAddress,
     wallet,
     config.pingers.chainlinkETHMedianizer.minUpdateInterval * 60,
     config.pingers.chainlinkETHMedianizer.rewardReceiver
