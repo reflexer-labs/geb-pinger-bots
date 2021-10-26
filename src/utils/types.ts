@@ -104,6 +104,11 @@ export type PingerConifg = {
       minUpdateInterval: number
       setterAddress: string
     }
+    rewardAdjusterBundler: {
+      enabled: boolean
+      schedulerInterval: number
+      setterAddress: string
+    }
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number

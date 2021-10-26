@@ -103,6 +103,11 @@
       "minUpdateInterval": 432000,
       "setterAddress": "0x0000000000000000000000000000000000000000"
     },
+    "rewardAdjusterBundler": {
+      "enabled": false,
+      "schedulerInterval": 14400,
+      "setterAddress": "0x0000000000000000000000000000000000000000"
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,

@@ -159,6 +159,14 @@ functions:
       - schedule: 
           enabled: ${file(./config/config.${opt:stage}.json):pingers.stakeRewardRefill.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.stakeRewardRefill.schedulerInterval} minutes)
+  
+  rewardAdjusterBundler:
+    handler: src/index.rewardAdjusterBundler
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.rewardAdjusterBundler.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.rewardAdjusterBundler.schedulerInterval} minutes)
 
   balanceChecker:
     handler: src/index.balanceChecker

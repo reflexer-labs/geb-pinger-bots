@@ -21,6 +21,7 @@ import { AutoSurplusBufferSetter } from './pingers/auto-surplus-buffer-setter'
 import { DebtAuctionInitialParameterSetter } from './pingers/debt-auction-initial-param-setter'
 import { StakedTokensToKeepSetter } from './pingers/staked-token-to-keep-setter'
 import { StakeRewardRefill } from './pingers/stake-reward-refill'
+import { RewardAdjusterBundlerPinger } from './pingers/reward-adjuster-bundler'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -279,6 +280,20 @@ export const stakeRewardRefill = async () => {
     config.pingers.stakeRewardRefill.setterAddress,
     wallet,
     config.pingers.stakeRewardRefill.minUpdateInterval
+  )
+  await pinger.ping()
+}
+
+export const rewardAdjusterBundler = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new RewardAdjusterBundlerPinger(
+    config.pingers.rewardAdjusterBundler.setterAddress,
+    wallet
   )
   await pinger.ping()
 }
