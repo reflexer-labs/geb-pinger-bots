@@ -7,19 +7,25 @@ import { SETTER_GAS_500K } from '../utils/constants'
 export class RewardAdjusterBundlerPinger {
   protected transactor: Transactor
 
-  constructor(private pingerAddress: string, wallet: ethers.Signer) {
+  constructor(private pingerAddress: string, private wallet: ethers.Signer) {
+    if (!wallet.provider) {
+      throw new Error('The signer needs a provider')
+    }
+
     this.transactor = new Transactor(wallet)
   }
 
   public async ping() {
     let tx: TransactionRequest
 
-    const contract = new ethers.Contract(this.pingerAddress, [
-      'function recomputeAllRewards() external',
-    ])
+    const contract = new ethers.Contract(
+      this.pingerAddress,
+      ['function recomputeAllRewards() external'],
+      this.wallet.provider
+    )
     // Simulate the call
     try {
-      tx = contract.recomputeAllRewards()
+      tx = await contract.populateTransaction.recomputeAllRewards()
       await this.transactor.ethCall(tx)
     } catch (err) {
       await notifier.sendError(`Unknown error while simulating call: ${err}`)
