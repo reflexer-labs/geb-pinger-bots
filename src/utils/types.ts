@@ -109,6 +109,13 @@ export type PingerConifg = {
       schedulerInterval: number
       setterAddress: string
     }
+    redemptionPriceSnapOracle: {
+      enabled: boolean
+      schedulerInterval: number
+      snapOracleAddress: string
+      oracleRelayer: string
+      minDeviationThreshold: number
+    }
     balanceChecker: {
       enabled: boolean
       schedulerInterval: number

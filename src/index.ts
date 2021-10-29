@@ -22,6 +22,7 @@ import { DebtAuctionInitialParameterSetter } from './pingers/debt-auction-initia
 import { StakedTokensToKeepSetter } from './pingers/staked-token-to-keep-setter'
 import { StakeRewardRefill } from './pingers/stake-reward-refill'
 import { RewardAdjusterBundlerPinger } from './pingers/reward-adjuster-bundler'
+import { RedemptionPriceSnapOracle } from './pingers/redemption-price-snap-oracle'
 
 type EnvVar =
   | 'ETH_RPC'
@@ -293,6 +294,22 @@ export const rewardAdjusterBundler = async () => {
   )
   const pinger = new RewardAdjusterBundlerPinger(
     config.pingers.rewardAdjusterBundler.setterAddress,
+    wallet
+  )
+  await pinger.ping()
+}
+
+export const redemptionPriceSnapOracle = async () => {
+  const wallet = await getWallet(
+    env.ETH_RPC,
+    env.ACCOUNTS_PASSPHRASE,
+    PingerAccount.MISCELLANEOUS,
+    env.NETWORK
+  )
+  const pinger = new RedemptionPriceSnapOracle(
+    config.pingers.redemptionPriceSnapOracle.snapOracleAddress,
+    config.pingers.redemptionPriceSnapOracle.oracleRelayer,
+    config.pingers.redemptionPriceSnapOracle.minDeviationThreshold,
     wallet
   )
   await pinger.ping()

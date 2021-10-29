@@ -108,6 +108,13 @@
       "schedulerInterval": 14400,
       "setterAddress": "0x0000000000000000000000000000000000000000"
     },
+    "redemptionPriceSnapOracle": {
+      "enabled": false,
+      "schedulerInterval": 14400,
+      "snapOracleAddress": "0x0000000000000000000000000000000000000000",
+      "oracleRelayer": "0x0000000000000000000000000000000000000000",
+      "minDeviationThreshold": 0.0005
+    },
     "balanceChecker": {
       "enabled": true,
       "schedulerInterval": 90,

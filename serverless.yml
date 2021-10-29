@@ -168,6 +168,14 @@ functions:
           enabled: ${file(./config/config.${opt:stage}.json):pingers.rewardAdjusterBundler.enabled}
           rate: rate(${file(./config/config.${opt:stage}.json):pingers.rewardAdjusterBundler.schedulerInterval} minutes)
 
+  redemptionPriceSnapOracle:
+    handler: src/index.redemptionPriceSnapOracle
+    timeout: 240
+    events:
+      - schedule: 
+          enabled: ${file(./config/config.${opt:stage}.json):pingers.redemptionPriceSnapOracle.enabled}
+          rate: rate(${file(./config/config.${opt:stage}.json):pingers.redemptionPriceSnapOracle.schedulerInterval} minutes)
+
   balanceChecker:
     handler: src/index.balanceChecker
     timeout: 240
