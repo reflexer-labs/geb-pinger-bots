@@ -1,6 +1,6 @@
 export enum PingerAccount {
   MEDIANIZER_ETH = 0,
-  MEDIANIZER_COIN = 1,
+  COIN_TWAP_AND_RATE_SETTER = 1,
   FSM_ETH = 2,
   RATE_SETTER = 3,
   TAX_COLLECTOR = 4,

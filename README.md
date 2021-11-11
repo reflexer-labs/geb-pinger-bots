@@ -9,7 +9,7 @@ This repo is a collection of AWS Lambda functions built with the serverless fram
 
 This repo includes the following bots:
 
-- `updateUniswapCoinMedianizer` Call the update function of the system coin medianizer pulling the price from a Uniswap TWAP
+- `updateCoinTwapAndRateSetter` Call the update function of the system coin medianizer pulling the price from a Uniswap TWAP
 - `updateETHFsm` Update the ETH FSM (OSM) and subsequently call the OracleRelayer contract to push the new price inside the core system
 <!-- - `updateRateSetter` Call the on-chain controller to calculate and set a new redemption rate -->
 - `updateTaxCollector` Call the Tax Collector to collect stability fees from open safes

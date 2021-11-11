@@ -1,19 +1,12 @@
 {
   "graphNodes": ["https://subgraph-kovan.reflexer.finance/subgraphs/name/reflexer-labs/rai"],
   "pingers": {
-    "chainlinkETHMedianizer": {
-      "enabled": false,
-      "schedulerInterval": 10,
-      "minUpdateInterval": 60,
-      "medianizerAddress": "0xBe75d5da0E80Bb222eAbCB3d2001Af3318065338",
-      "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
-    },
-    "uniswapCoinMedianizer": {
+    "coinTwapAndRateSetter": {
       "enabled": true,
       "schedulerInterval": 15,
-      "minUpdateIntervalMedian": 180,
+      "minUpdateIntervalTwap": 180,
       "minUpdateIntervalRateSetter": 360,
-      "coinMedianizerAddress": "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3",
+      "coinTwapAddress": "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3",
       "rateSetterAddress": "0x97533CD0c5997bce2504378CB29a091830de0F94",
       "rewardReceiver": "0x7eb8caf136Ba45DD16483188cbe8b615f6251ca7"
     },
@@ -120,7 +113,7 @@
       "schedulerInterval": 90,
       "mention": "U018QF2QUVA",
       "checks": [
-        ["Coin medianizer", 1, 0.5],
+        ["Coin twap", 1, 0.5],
         ["ETH FSM", 2, 2],
         ["Tax collector", 4, 0.5],
         ["Pause executor", 5, 0.5],
@@ -141,7 +134,7 @@
           240,
           "latestTimestamp"
         ],
-        ["coin_medianizer", "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3", 380],
+        ["coin_twap", "0xcede0Fa68bCCc0910d5355725BfDb7AdAfC7Aeb3", 380],
         ["eth_fsm", "0xD047A920140390b16A0aB8A77c4aa2FCBa5C6675", 200],
         [
           "oracle_relayer",

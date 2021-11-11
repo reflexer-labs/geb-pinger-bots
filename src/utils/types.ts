@@ -1,19 +1,12 @@
 export type PingerConifg = {
   graphNodes: string[]
   pingers: {
-    chainlinkETHMedianizer: {
+    coinTwapAndRateSetter: {
       enabled: boolean
       schedulerInterval: number
-      minUpdateInterval: number
-      medianizerAddress: string
-      rewardReceiver: string
-    }
-    uniswapCoinMedianizer: {
-      enabled: boolean
-      schedulerInterval: number
-      minUpdateIntervalMedian: number
+      minUpdateIntervalTwap: number
       minUpdateIntervalRateSetter: number
-      coinMedianizerAddress: string
+      coinTwapAddress: string
       rateSetterAddress: string
       rewardReceiver: string
     }

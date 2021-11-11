@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { PingerAccount } from './chains/accounts'
 import { BalanceChecker } from './checkers/balance'
 import { LivenessChecker } from './checkers/liveness'
@@ -7,7 +6,7 @@ import { CeilingSetter } from './pingers/ceiling-setter'
 import { CollateralAuctionThrottler } from './pingers/collateral-auction-throttler'
 import { DebtSettler } from './pingers/debt-pinger'
 import { CollateralFsmPinger } from './pingers/fsm'
-import { ChainlinkMedianizerPinger, UniswapMedianizerPinger } from './pingers/medianizer'
+import { CoinTwapAndRateSetter } from './pingers/coin-twap-and-rate-setter'
 import { PauseExecutor } from './pingers/pause-executor'
 import { StabilityFeeTreasuryPinger } from './pingers/stability-fee-treasury'
 import { TaxCollectorPinger } from './pingers/tax-collector'
@@ -37,38 +36,21 @@ const config = (env.NETWORK === 'mainnet' ? mainnetConfig : kovanConfig) as Ping
 
 export const notifier = new Notifier(env.SLACK_HOOK_ERROR_URL, env.SLACK_HOOK_MULTISIG_URL)
 
-// Chainlink ETH medianizer
-export const updateChainlinkRAIMedianizer = async () => {
-  const wallet = await getWallet(
-    env.ETH_RPC,
-    env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.MISCELLANEOUS,
-    env.NETWORK
-  )
-  const pinger = new ChainlinkMedianizerPinger(
-    config.pingers.chainlinkETHMedianizer.medianizerAddress,
-    wallet,
-    config.pingers.chainlinkETHMedianizer.minUpdateInterval * 60,
-    config.pingers.chainlinkETHMedianizer.rewardReceiver
-  )
-  await pinger.ping()
-}
-
 // Uniswap Coin medianizer
-export const updateUniswapCoinMedianizer = async () => {
+export const updateCoinTwapAndRateSetter = async () => {
   const wallet = await getWallet(
     env.ETH_RPC,
     env.ACCOUNTS_PASSPHRASE,
-    PingerAccount.MEDIANIZER_COIN,
+    PingerAccount.COIN_TWAP_AND_RATE_SETTER,
     env.NETWORK
   )
-  const pinger = new UniswapMedianizerPinger(
-    config.pingers.uniswapCoinMedianizer.coinMedianizerAddress,
-    config.pingers.uniswapCoinMedianizer.rateSetterAddress,
+  const pinger = new CoinTwapAndRateSetter(
+    config.pingers.coinTwapAndRateSetter.coinTwapAddress,
+    config.pingers.coinTwapAndRateSetter.rateSetterAddress,
     wallet,
-    config.pingers.uniswapCoinMedianizer.minUpdateIntervalMedian * 60,
-    config.pingers.uniswapCoinMedianizer.minUpdateIntervalRateSetter * 60,
-    config.pingers.uniswapCoinMedianizer.rewardReceiver
+    config.pingers.coinTwapAndRateSetter.minUpdateIntervalTwap * 60,
+    config.pingers.coinTwapAndRateSetter.minUpdateIntervalRateSetter * 60,
+    config.pingers.coinTwapAndRateSetter.rewardReceiver
   )
   await pinger.ping()
 }

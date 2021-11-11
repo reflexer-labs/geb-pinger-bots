@@ -1,19 +1,12 @@
 {
   "graphNodes": ["https://subgraph.reflexer.finance/subgraphs/name/reflexer-labs/rai"],
   "pingers": {
-    "chainlinkETHMedianizer": {
+    "coinTwapAndRateSetter": {
       "enabled": true,
-      "schedulerInterval": 10,
-      "minUpdateInterval": 10,
-      "medianizerAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
-    },
-    "uniswapCoinMedianizer": {
-      "enabled": true,
-      "schedulerInterval": 10,
-      "minUpdateIntervalMedian": 240,
-      "minUpdateIntervalRateSetter": 720,
-      "coinMedianizerAddress": "0xFbF4849a06F6e6F53EcB31D2f8BD61aA7874b268",
+      "schedulerInterval": 30,
+      "minUpdateIntervalTwap": 30,
+      "minUpdateIntervalRateSetter": 1440,
+      "coinTwapAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
@@ -121,8 +114,8 @@
       "schedulerInterval": 90,
       "mention": "U018QF2QUVA",
       "checks": [
-        ["Coin medianizer", 1, 0.5],
-        ["ETH FSM", 2, 2],
+        ["Coin twap", 1, 0.5],
+        ["ETH FSM", 2, 0.5],
         ["Tax collector", 4, 0.5],
         ["Pause executor", 5, 0.5],
         ["Stability fee treasury", 8, 0.5],
@@ -142,7 +135,7 @@
           60,
           "latestTimestamp"
         ],
-        ["coin_medianizer", "0xFbF4849a06F6e6F53EcB31D2f8BD61aA7874b268", 260],
+        ["coin_twap", "0x92dC9b16be52De059279916c1eF810877f85F960", 1500],
         ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 500],
         [
           "oracle_relayer",
