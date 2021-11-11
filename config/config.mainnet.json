@@ -29,7 +29,7 @@
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
     "stabilityFeeTreasury": {
-      "enabled": true,
+      "enabled": false,
       "schedulerInterval": 2880,
       "stabilityFeeTreasuryAddress": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
@@ -147,7 +147,7 @@
         [
           "stability_fee_treasury_transfer_surplus",
           "0x83533fdd3285f48204215E9CF38C785371258E76",
-          347040,
+          347040e10,
           "latestSurplusTransferTime"
         ],
         [
