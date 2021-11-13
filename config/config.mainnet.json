@@ -4,7 +4,7 @@
     "coinTwapAndRateSetter": {
       "enabled": true,
       "schedulerInterval": 30,
-      "minUpdateIntervalTwap": 30,
+      "minUpdateIntervalTwap": 1440,
       "minUpdateIntervalRateSetter": 1440,
       "coinTwapAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
@@ -98,7 +98,7 @@
       "setterAddress": "0xc5fEcD1080d546F9494884E834b03D7AD208cc02"
     },
     "rewardAdjusterBundler": {
-      "enabled": true,
+      "enabled": false,
       "schedulerInterval": 10080,
       "setterAddress": "0x7F55e74C25647c100256D87629dee379D68bdCDe"
     },
@@ -143,7 +143,7 @@
           500,
           "redemptionPriceUpdateTime"
         ],
-        ["rate_setter", "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48", 740],
+        ["rate_setter", "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48", 1500],
         [
           "stability_fee_treasury_transfer_surplus",
           "0x83533fdd3285f48204215E9CF38C785371258E76",

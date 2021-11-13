@@ -2,7 +2,7 @@ import { TransactionRequest } from '@reflexer-finance/geb-admin'
 import { ethers } from 'ethers'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
-import { SETTER_GAS_500K } from '../utils/constants'
+import { REWARD_ADJUSTER_BUNDLER_GAS } from '../utils/constants'
 
 export class RewardAdjusterBundlerPinger {
   protected transactor: Transactor
@@ -33,7 +33,7 @@ export class RewardAdjusterBundlerPinger {
     }
 
     // Send the transaction
-    const hash = await this.transactor.ethSend(tx, true, SETTER_GAS_500K)
+    const hash = await this.transactor.ethSend(tx, true, REWARD_ADJUSTER_BUNDLER_GAS)
     console.log(`Update sent, transaction hash: ${hash}`)
   }
 }
