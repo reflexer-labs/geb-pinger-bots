@@ -19,7 +19,7 @@
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000",
-      "callBundlerAddress": "0x36ec8A20360890C1284736283E17ee3Ac40d8f15"
+      "callBundlerAddress": "0x6B805305Fb04fF6F018D6EF21c195E8b06D5E371"
     },
     "taxCollector": {
       "enabled": true,
