@@ -13,7 +13,7 @@ export const RPC_FAILED_TIMEOUT = 10000
 // If the timestamp of the latest block is older than this amount of seconds, throw alert
 export const ETH_NODE_STALL_SYNC_TIMEOUT = 300 // 5 min
 // If a graph node is behind the chain by this number of block, trigger the alert
-export const MAX_GRAPH_NODE_BLOCK_DELAY = 7
+export const MAX_GRAPH_NODE_BLOCK_DELAY = 20
 // Amount of gas to add on the top of a gas estimate
 export const GAS_ESTIMATE_BUFFER = 100000
 // Percentage of gas gas price bump when a tx gets stuck in the mempool
