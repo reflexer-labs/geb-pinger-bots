@@ -98,7 +98,7 @@
       "setterAddress": "0xc5fEcD1080d546F9494884E834b03D7AD208cc02"
     },
     "rewardAdjusterBundler": {
-      "enabled": false,
+      "enabled": true,
       "schedulerInterval": 10080,
       "setterAddress": "0x7F55e74C25647c100256D87629dee379D68bdCDe"
     },
