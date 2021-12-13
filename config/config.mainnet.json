@@ -99,7 +99,7 @@
     },
     "rewardAdjusterBundler": {
       "enabled": true,
-      "schedulerInterval": 10080,
+      "schedulerInterval": 2880,
       "setterAddress": "0x7F55e74C25647c100256D87629dee379D68bdCDe"
     },
     "redemptionPriceSnapOracle": {
