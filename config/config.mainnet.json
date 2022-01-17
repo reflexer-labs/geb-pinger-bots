@@ -76,7 +76,7 @@
       "enabled": true,
       "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
-      "setterAddress": "0x1450f40E741F2450A95F9579Be93DD63b8407a25",
+      "setterAddress": "0x9fe16154582ecCe3414536FdE57A201c17398b2A",
       "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
     },
     "debtAuctionInitialParameterSetter": {
