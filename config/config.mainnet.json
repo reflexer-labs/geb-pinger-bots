@@ -4,8 +4,8 @@
     "coinTwapAndRateSetter": {
       "enabled": true,
       "schedulerInterval": 30,
-      "minUpdateIntervalTwap": 1440,
-      "minUpdateIntervalRateSetter": 1440,
+      "minUpdateIntervalTwap": 720,
+      "minUpdateIntervalRateSetter": 720,
       "coinTwapAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
