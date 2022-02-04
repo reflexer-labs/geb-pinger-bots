@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, Contract, ethers } from 'ethers'
 import { contracts, TransactionRequest } from 'geb.js'
 import { notifier } from '..'
 import { Transactor } from '../chains/transactor'
@@ -58,6 +58,24 @@ export class CoinTwapAndRateSetter {
     } catch (err) {
       if (err.startsWith('ChainlinkTWAP/wait-more')) {
         console.log('The twap cannot be updated just yet')
+      } else if (err.startsWith('ChainlinkTWAP/invalid-timestamp')) {
+        // We can't update because chainlink is stall, throw error only if it was stall for a long time
+        
+        // Fetch the latest chainlink timestamp from the chainlink aggregator
+        const chainlinkAggregatorAddress: string = await new Contract(this.twap.address, [
+          'function chainlinkAggregator() public view returns (address)',
+        ], this.transactor.provider).chainlinkAggregator()
+        const lastChainlinkUpdate: BigNumber = await new Contract(chainlinkAggregatorAddress, [
+          'function latestTimestamp() public view returns (uint256)',
+        ], this.transactor.provider).latestTimestamp()
+
+        if (
+          now()
+            .sub(lastChainlinkUpdate)
+            .gt(3600 * 36)
+        ) {
+          await notifier.sendError(`Chainlink aggregator stall for more than 36h`)
+        }
       } else {
         await notifier.sendError(`Unknown error while simulating call: ${err}`)
       }

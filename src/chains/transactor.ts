@@ -10,7 +10,7 @@ import {
 } from '../utils/constants'
 
 export class Transactor {
-  private provider: ethers.providers.Provider
+  public provider: ethers.providers.Provider
   private signer?: ethers.Signer
   private nonce: number | null = null
   constructor(signerOrProvider: ethers.Signer | ethers.providers.Provider) {
