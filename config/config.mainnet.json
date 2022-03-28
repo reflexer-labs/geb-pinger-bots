@@ -49,42 +49,42 @@
       "schedulerInterval": 180,
       "ceilingSetterAddress": "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa",
       "minUpdateInterval": 259200,
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "collateralAuctionThrottler": {
       "enabled": true,
       "schedulerInterval": 20,
       "minUpdateInterval": 604800,
       "collateralAuctionThrottlerAddress": "0x59536C9Ad1a390fA0F60813b2a4e8B957903Efc7",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "debtFloorAdjuster": {
       "enabled": true,
       "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "debtFloorAdjusterAddress": "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "autoSurplusAuctionedSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0xa43BFA2a04c355128F3f10788232feeB2f42FE98",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "autoSurplusBufferSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0x9fe16154582ecCe3414536FdE57A201c17398b2A",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "debtAuctionInitialParameterSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
       "minUpdateInterval": 1814400,
       "setterAddress": "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E",
-      "rewardReceiver": "0x83533fdd3285f48204215E9CF38C785371258E76"
+      "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "stakedTokensToKeepSetter": {
       "enabled": true,
