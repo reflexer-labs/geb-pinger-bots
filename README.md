@@ -29,7 +29,7 @@ This repo includes the following bots:
 - `balanceChecker` Check that the ETH balance of a pinger is sufficient to pay for gas costs
 - `livenessChecker` Check that the the FSMs, medianizers and the TaxCollector were recently updated. Check that the Ethereum nodes used by the pinger are responsive and up to date. Check the the subgraph nodes are responsive and up to date. Send notifications upon detecting new multisig transactions. Update the status file at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
 
-Important: Rewards accrued by the `ETHFsm` pinger are accrued in a separated contract. To claim the reward of this pinger, call the `withdrawPayout` function on its `callBundlerAddress` contract address (See the `ETHFsm` config)
+Important: Rewards accrued by the `ETHFsm` pinger are accrued in a separated contract. To claim the rewards of this pinger, call the `withdrawPayout` function on its `callBundlerAddress` contract (See the `ETHFsm` config)
 ## Setup
 
 Clone the repo & install dependencies
