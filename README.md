@@ -9,11 +9,11 @@ This repo is a collection of AWS Lambda functions built with the serverless fram
 
 This repo includes the following bots:
 
-- `updateCoinTwapAndRateSetter` Call the update function of the system coin medianizer pulling the price from a Uniswap TWAP
-- `updateETHFsm` Update the ETH FSM (OSM) and subsequently call the OracleRelayer contract to push the new price inside the core system
+- `coinTwapAndRateSetter` Call the update function of the system coin medianizer pulling the price from a Uniswap TWAP
+- `ETHFsm` Update the ETH FSM (OSM) and subsequently call the OracleRelayer contract to push the new price inside the core system
 <!-- - `updateRateSetter` Call the on-chain controller to calculate and set a new redemption rate -->
-- `updateTaxCollector` Call the Tax Collector to collect stability fees from open safes
-- `updateStabilityFeeTreasury` Transfer any potential stability fee surplus from the treasury
+- `taxCollector` Call the Tax Collector to collect stability fees from open safes
+- `stabilityFeeTreasury` Transfer any potential stability fee surplus from the treasury
 - `pauseExecutor` Execute pending proposals from DSPause like contracts
 - `debtSettler` Call the settle debt function in the AccountingEngine contract
 - `ceilingSetter` Set the debt ceiling according to the current amount of RAI outstanding
@@ -23,9 +23,13 @@ This repo includes the following bots:
 - `autoSurplusBufferSetter` Set the surplus buffer size according to the locked collateral
 - `debtAuctionInitialParameterSetter` Set debt auction parameters
 - `stakedTokensToKeepSetter` Set the percentage of maximum staked protocol token LP that can be auctioned
+- `stakeRewardRefill` Call the function will refill the protocol token staking reward from the stakingRewardRefiller contract
+- `rewardAdjusterBundler` Call the bundler contract that update all the pinger reward amount parameters
+- `redemptionPriceSnapOracle` Update the snapshot oracle of the redemption price. The oracle is used by the Curve pool and others
 - `balanceChecker` Check that the ETH balance of a pinger is sufficient to pay for gas costs
 - `livenessChecker` Check that the the FSMs, medianizers and the TaxCollector were recently updated. Check that the Ethereum nodes used by the pinger are responsive and up to date. Check the the subgraph nodes are responsive and up to date. Send notifications upon detecting new multisig transactions. Update the status file at https://status.reflexer.finance/ or https://status-kovan.reflexer.finance/
 
+Important: Rewards accrued by the `ETHFsm` pinger are accrued in a separated contract. To claim the reward of this pinger, call the `withdrawPayout` function on its `callBundlerAddress` contract address (See the `ETHFsm` config)
 ## Setup
 
 Clone the repo & install dependencies
