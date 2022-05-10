@@ -118,8 +118,6 @@ export type PingerConifg = {
     livenessChecker: {
       enabled: boolean
       schedulerInterval: number
-      dsPauseAddress: string
-      gnosisSafeAddress: string
       checks: [string, string, number, string?][]
     }
   }

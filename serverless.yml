@@ -7,6 +7,9 @@ provider:
   runtime: nodejs14.x
   region: 'us-west-2'
   environment: ${self:custom.${opt:stage}}
+  # This section is needed if you wish to give a dedicated IP to the lambda function
+  # Useful if your ETH node is behind a firewall
+  # Comment-out if not needed
   vpc:
     subnetIds:
       # A VPC with a subnet needs to be manually configured on the AWS dashboard

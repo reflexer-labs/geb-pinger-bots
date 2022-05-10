@@ -126,8 +126,6 @@
     "livenessChecker": {
       "enabled": true,
       "schedulerInterval": 30,
-      "dsPauseAddress": "0x2cDE6A1147B0EE61726b86d83Fd548401B1162c7",
-      "gnosisSafeAddress": "0x427A277eA53e25143B3b509C684aA4D0EB8bA01b",
       "checks": [
         [
           "chainlink_eth_oracle",
