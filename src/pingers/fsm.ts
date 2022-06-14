@@ -72,13 +72,17 @@ export class CollateralFsmPinger {
 
     // == Oracle Relayer ==
 
+    let shouldUpdateOracleRelayer = await this.shouldUpdateOracleRelayer()
     if (this.callBundlerAddress) {
-      // If we're using the call bundler, no need to update the FSM
-      return
+      // If we're using the call bundler, no need to update the FSM unless we're late
+      shouldUpdateOracleRelayer = shouldUpdateOracleRelayer && !didUpdateFsm
+    } else {
+      // Without call bundler we need to update the oracle relayer after a call to the fsm
+      shouldUpdateOracleRelayer = shouldUpdateOracleRelayer || didUpdateFsm
     }
 
     // Update the OracleRelayer if we just updated a FSM OR if the relayer is stale
-    if (didUpdateFsm || (await this.shouldUpdateOracleRelayer())) {
+    if (shouldUpdateOracleRelayer) {
       let txRelayer = this.oracleRelayer.updateCollateralPrice(this.collateralType)
       // Send the OracleRelayer transaction
       let relayerHash = await await this.transactor.ethSend(
