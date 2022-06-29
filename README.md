@@ -216,9 +216,9 @@ Important configuration including contract addresses, execution interval and mor
           1460,
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
-        ["collateral_auction_throttler", "0x59536C9Ad1a390fA0F60813b2a4e8B957903Efc7", 10140],
+        ["collateral_auction_throttler", "0x709310eB91d1902A9b5EDEdf793b057f0da8DECb", 10140],
         ["ceiling_setter", "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa", 345600],
-        ["debt_floor_adjuster", "0x0262Bd031B99c5fb99B47Dc4bEa691052f671447", 66240],
+        ["debt_floor_adjuster", "0x2de894805e1c8F955a81219F1D32b902E919a855", 66240],
         ["auto_surplus_auctioned_setter", "0xa43BFA2a04c355128F3f10788232feeB2f42FE98", 31680],
         [
           "debt_auction_initial_parameter_setter",
