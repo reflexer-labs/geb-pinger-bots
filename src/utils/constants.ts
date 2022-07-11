@@ -9,7 +9,7 @@ export const APPROXIMATED_BLOCK_INTERVAL = 13
 // If a RPC did not reply within this timeout, start querying other nodes
 export const RPC_STALL_TIMEOUT = 3000
 // Timeout after which the RPC query is considered failed
-export const RPC_FAILED_TIMEOUT = 10000
+export const RPC_FAILED_TIMEOUT = 25000
 // If the timestamp of the latest block is older than this amount of seconds, throw alert
 export const ETH_NODE_STALL_SYNC_TIMEOUT = 300 // 5 min
 // If a graph node is behind the chain by this number of block, trigger the alert
