@@ -12,9 +12,9 @@
     },
     "ethFsm": {
       "enabled": true,
-      "schedulerInterval": 10,
+      "schedulerInterval": 20,
       "minUpdateInterval": 60,
-      "maxNoUpdateInterval": 480,
+      "maxNoUpdateInterval": 7200,
       "minUpdateIntervalDeviation": 0.05,
       "fsmAddress": "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91",
       "oracleRelayerAddress": "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
@@ -23,8 +23,8 @@
     },
     "taxCollector": {
       "enabled": true,
-      "schedulerInterval": 10,
-      "minUpdateInterval": 1440,
+      "schedulerInterval": 120,
+      "minUpdateInterval": 20160,
       "taxCollectorAddress": "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
       "collateralType": "0x4554482d41000000000000000000000000000000000000000000000000000000"
     },
@@ -35,12 +35,12 @@
     },
     "pauseExecutor": {
       "enabled": true,
-      "schedulerInterval": 15,
+      "schedulerInterval": 60,
       "dsPauseAddress": "0x2cDE6A1147B0EE61726b86d83Fd548401B1162c7"
     },
     "debtSettler": {
       "enabled": true,
-      "schedulerInterval": 20,
+      "schedulerInterval": 120,
       "accountingEngineAddress": "0xcEe6Aa1aB47d0Fb0f24f51A3072EC16E20F90fcE",
       "safeEngineAddress": "0xCC88a9d330da1133Df3A7bD823B95e52511A6962"
     },
@@ -48,58 +48,58 @@
       "enabled": true,
       "schedulerInterval": 180,
       "ceilingSetterAddress": "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa",
-      "minUpdateInterval": 259200,
+      "minUpdateInterval": 604800,
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "collateralAuctionThrottler": {
       "enabled": true,
-      "schedulerInterval": 20,
-      "minUpdateInterval": 604800,
+      "schedulerInterval": 180,
+      "minUpdateInterval": 1209600,
       "collateralAuctionThrottlerAddress": "0x709310eB91d1902A9b5EDEdf793b057f0da8DECb",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "debtFloorAdjuster": {
       "enabled": true,
       "schedulerInterval": 1440,
-      "minUpdateInterval": 1814400,
+      "minUpdateInterval": 4838400,
       "debtFloorAdjusterAddress": "0x2de894805e1c8F955a81219F1D32b902E919a855",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "autoSurplusAuctionedSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
-      "minUpdateInterval": 1814400,
+      "minUpdateInterval": 3628800,
       "setterAddress": "0xa43BFA2a04c355128F3f10788232feeB2f42FE98",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "autoSurplusBufferSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
-      "minUpdateInterval": 1814400,
+      "minUpdateInterval": 3628800,
       "setterAddress": "0x5376BC11C92189684B4B73282F8d6b30a434D31C",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "debtAuctionInitialParameterSetter": {
       "enabled": true,
       "schedulerInterval": 1440,
-      "minUpdateInterval": 1814400,
+      "minUpdateInterval": 4838400,
       "setterAddress": "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
     "stakedTokensToKeepSetter": {
       "enabled": true,
-      "schedulerInterval": 4320,
+      "schedulerInterval": 10080,
       "setterAddress": "0xaa5f19B87cC8F8A17D20f0697F1B37E112930Ae4"
     },
     "stakeRewardRefill": {
       "enabled": true,
       "schedulerInterval": 120,
-      "minUpdateInterval": 432000,
+      "minUpdateInterval": 1209600,
       "setterAddress": "0xc5fEcD1080d546F9494884E834b03D7AD208cc02"
     },
     "rewardAdjusterBundler": {
       "enabled": true,
-      "schedulerInterval": 20160,
+      "schedulerInterval": 80640,
       "setterAddress": "0x7F55e74C25647c100256D87629dee379D68bdCDe"
     },
     "redemptionPriceSnapOracle": {
@@ -134,7 +134,7 @@
           "latestTimestamp"
         ],
         ["coin_twap", "0x92dC9b16be52De059279916c1eF810877f85F960", 1500],
-        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 500],
+        ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 7260],
         [
           "oracle_relayer",
           "0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851",
@@ -151,22 +151,22 @@
         [
           "tax_collector",
           "0xcDB05aEda142a1B0D6044C09C64e4226c1a281EB",
-          1460,
+          20340,
           "0x4554482d41000000000000000000000000000000000000000000000000000000"
         ],
-        ["collateral_auction_throttler", "0x709310eB91d1902A9b5EDEdf793b057f0da8DECb", 10140],
-        ["ceiling_setter", "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa", 345600],
-        ["debt_floor_adjuster", "0x2de894805e1c8F955a81219F1D32b902E919a855", 66240],
-        ["auto_surplus_auctioned_setter", "0xa43BFA2a04c355128F3f10788232feeB2f42FE98", 31680],
+        ["collateral_auction_throttler", "0x709310eB91d1902A9b5EDEdf793b057f0da8DECb", 20520],
+        ["ceiling_setter", "0x54999Ee378b339f405a4a8a1c2f7722CD25960fa", 10320],
+        ["debt_floor_adjuster", "0x2de894805e1c8F955a81219F1D32b902E919a855", 83520],
+        ["auto_surplus_auctioned_setter", "0xa43BFA2a04c355128F3f10788232feeB2f42FE98", 60528],
         [
           "debt_auction_initial_parameter_setter",
           "0x7df2d51e69aA58B69C3dF18D75b8e9ACc3C1B04E",
-          31680
+          80688
         ],
         [
           "stake_reward_refiller",
           "0xc5fEcD1080d546F9494884E834b03D7AD208cc02",
-          518400,
+          20400,
           "lastRefillTime"
         ]
       ]
