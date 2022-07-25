@@ -118,7 +118,6 @@
         ["ETH FSM", 2, 0.5],
         ["Tax collector", 4, 0.5],
         ["Pause executor", 5, 0.5],
-        ["Stability fee treasury", 8, 0.5],
         ["Debt settler", 9, 0.5],
         ["Miscellaneous", 11, 0.5]
       ]
