@@ -6,7 +6,7 @@
       "schedulerInterval": 30,
       "minUpdateIntervalTwap": 720,
       "minUpdateIntervalRateSetter": 720,
-      "coinTwapAddress": "0x92dC9b16be52De059279916c1eF810877f85F960",
+      "coinTwapAddress": "0x345000502A9b6c0536C4b1930F1ed75412984AEA",
       "rateSetterAddress": "0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48",
       "rewardReceiver": "0xBd3f90047B14e4f392d6877276d52D0aC59F4CF8"
     },
@@ -132,7 +132,7 @@
           60,
           "latestTimestamp"
         ],
-        ["coin_twap", "0x92dC9b16be52De059279916c1eF810877f85F960", 1500],
+        ["coin_twap", "0x345000502A9b6c0536C4b1930F1ed75412984AEA", 1500],
         ["eth_fsm", "0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91", 7260],
         [
           "oracle_relayer",

@@ -16,7 +16,7 @@ contract PingerBundledCallTest is DSTest {
         bundler = new PingerBundledCall(
             0xD4A0E3EC2A937E7CCa4A192756a8439A8BF4bA91,
             0x4ed9C0dCa0479bC64d8f4EB3007126D5791f7851,
-            0x92dC9b16be52De059279916c1eF810877f85F960,
+            0x345000502A9b6c0536C4b1930F1ed75412984AEA,
             0x7Acfc14dBF2decD1c9213Db32AE7784626daEb48,
             address(this),
             0x0A5653CCa4DB1B6E265F47CAf6969e64f1CFdC45,
